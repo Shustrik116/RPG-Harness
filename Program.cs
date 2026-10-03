@@ -1,4 +1,5 @@
 using System.Net;
+using System.Diagnostics;
 using RPG_Harness.Components;
 using RPG_Harness.Services;
 
@@ -89,5 +90,32 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+// Опубликованная настольная сборка сама открывает локальную страницу. В Development
+// это отключено через appsettings.Development.json: браузером управляет launchSettings.
+if (app.Configuration.GetValue<bool>("Harness:OpenBrowserOnStart"))
+{
+    app.Lifetime.ApplicationStarted.Register(() =>
+    {
+        var localUrl = app.Urls
+            .Select(url => url.Replace("0.0.0.0", "127.0.0.1", StringComparison.Ordinal)
+                              .Replace("[::]", "127.0.0.1", StringComparison.Ordinal))
+            .FirstOrDefault(url => Uri.TryCreate(url, UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttp);
+
+        if (localUrl is null)
+        {
+            return;
+        }
+
+        try
+        {
+            Process.Start(new ProcessStartInfo(localUrl) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogWarning(ex, "Не удалось автоматически открыть браузер. Откройте {Url} вручную.", localUrl);
+        }
+    });
+}
 
 app.Run();
