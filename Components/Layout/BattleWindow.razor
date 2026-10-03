@@ -1,0 +1,560 @@
+@implements IDisposable
+@inject BattleFlow Battle
+@inject BattleLog BattleLogSvc
+@inject RpgStateStore RpgStore
+@inject ChatStore Store
+@inject ItemCatalog Catalog
+@inject ItemEconomy Economy
+@inject PartyFlow PartyFlow
+@inject IJSRuntime JS
+
+@if (_open)
+{
+ <div class="bw-backdrop" @onclick="Close"><div class="bw-wrap" @onclick:stopPropagation="true"><section class="bw-modal">
+  <header>
+   <div>
+    <h2>⚔ @Lang.T("Бой", "Combat")</h2>
+    <span>@(Victory ? Lang.T("Победа — можно обыскать противников", "Victory — the adversaries can be searched") : _state.CombatRound>0 ? Lang.T($"Раунд {_state.CombatRound} · ход: {_state.CombatCurrentActor}", $"Round {_state.CombatRound} · turn: {_state.CombatCurrentActor}") : Lang.T("Выберите цель и действие", "Choose a target and an action"))</span>
+    <span class="bw-chat-status @(_status.Length>0?"busy":"idle")" title="@Lang.T("Состояние чата мастера", "The master's chat status")">
+      <i></i>@(_status.Length>0?_status:Lang.T("Рассказчик готов", "The narrator is ready"))
+    </span>
+   </div>
+   <button @onclick="Close">✕</button>
+  </header>
+  <div class="bw-arena">
+   <div class="bw-side">
+    <h3>@Genre.PickT("Группа", "Команда", "Команда", "Party", "Crew", "Team")</h3>
+    @* ===== Герой ===== *@
+    <div class="bw-actor bw-ally @ShakeClass(HeroTarget)">
+     <span class="bw-ally-portrait" style="@HeroPortrait"></span>
+     <div class="bw-ally-main">
+      <b class="bw-name"><span class="bw-name-t" title="@HeroTitle(_state.Character.Name)">@HeroTitle(_state.Character.Name)</span>@SeatBadge(_state.Character.Name,true)</b>
+      <div class="bw-bar">
+       <span class="bw-bar-label">@Lang.T("Жизнь", "HP"): @_state.Character.HpCurrent/@_state.Character.HpMax@if(_state.Character.Shield>0){<text> · @Lang.T("щит", "shield") @_state.Character.Shield</text>}</span>
+       <div class="bw-track"><i class="hp" style="@Css.Percent(_state.Character.HpCurrent,_state.Character.HpMax)"></i>@if(_state.Character.Shield>0){<em style="@Css.Percent(Math.Min(_state.Character.Shield,_state.Character.HpMax),_state.Character.HpMax)"></em>}</div>
+      </div>
+      @if(_state.Character.ManaMax>0){
+       <div class="bw-bar">
+        <span class="bw-bar-label">@Genre.PickT("Мана", "ОЗУ", "Концентрация", "Mana", "RAM", "Focus"): @_state.Character.ManaCurrent/@_state.Character.ManaMax</span>
+        <div class="bw-track mana"><i style="@Css.Percent(_state.Character.ManaCurrent,_state.Character.ManaMax)"></i></div>
+       </div>
+      }
+      @if(_state.Character.Status.Count>0){<small class="bw-effects-list">@string.Join(" · ",_state.Character.Status)</small>}
+      @if(_state.Character.HpCurrent<=0){<small class="bw-effects-list">@DeathText(_state.Character.DeathState,_state.Character.DeathSaveSuccesses,_state.Character.DeathSaveFailures)</small>}
+     </div>
+     <div class="bw-actor-btns">
+      <button class="bw-inv-btn @(_invOpenFor=="hero"?"is-open":"")" title="@Lang.T("Инвентарь героя", "The hero's inventory")" @onclick='()=>ToggleInv("hero")'>🎒 @Lang.T("Инвентарь", "Inventory")</button>
+      <button class="bw-inv-btn @(_skillOpenFor=="hero"?"is-open":"")" title="@Lang.T("Навыки героя", "The hero's skills")" @onclick='()=>ToggleSkills("hero")'>✦ @Lang.T("Навыки", "Skills")</button>
+     </div>
+     @if(_invOpenFor=="hero"){<BattleInventory ChatId="@_chatId" State="@_state" IsHero="true" Member="null" OnMessage="@OnInvMsg" />}
+     @if(_skillOpenFor=="hero"){<BattleSkills State="@_state" IsHero="true" />}
+     @FxLayer(HeroTarget)
+    </div>
+    @* ===== Спутники ===== *@
+    @foreach(var p in _state.Party){
+     var member=p;
+     <div class="bw-actor bw-ally @ShakeClass(member.Name)">
+      <span class="bw-ally-portrait" style="@PartyPortrait(member)"></span>
+      <div class="bw-ally-main">
+       <b class="bw-name"><span class="bw-name-t" title="@HeroTitle(member.Name)">@HeroTitle(member.Name)</span>@SeatBadge(member.Name,false)</b>
+       <small>@member.Race · @member.CharClass</small>
+       <div class="bw-bar">
+        <span class="bw-bar-label">@Lang.T("Жизнь", "HP"): @member.HpCurrent/@member.HpMax@if(member.Shield>0){<text> · @Lang.T("щит", "shield") @member.Shield</text>}</span>
+        <div class="bw-track"><i class="hp" style="@Css.Percent(member.HpCurrent,member.HpMax)"></i>@if(member.Shield>0){<em style="@Css.Percent(Math.Min(member.Shield,member.HpMax),member.HpMax)"></em>}</div>
+       </div>
+       @if(member.ManaMax>0){
+        <div class="bw-bar">
+         <span class="bw-bar-label">@Genre.PickT("Мана", "ОЗУ", "Концентрация", "Mana", "RAM", "Focus"): @member.ManaCurrent/@member.ManaMax</span>
+         <div class="bw-track mana"><i style="@Css.Percent(member.ManaCurrent,member.ManaMax)"></i></div>
+        </div>
+       }
+       @if(member.Status.Count>0){<small class="bw-effects-list">@string.Join(" · ",member.Status)</small>}
+       @if(member.HpCurrent<=0){<small class="bw-effects-list">@DeathText(member.DeathState,member.DeathSaveSuccesses,member.DeathSaveFailures)</small>}
+      </div>
+      <div class="bw-actor-btns">
+       <button class="bw-inv-btn @(_invOpenFor==member.Name?"is-open":"")" title="@(Lang.T("Инвентарь ", "Inventory of ") + member.Name)" @onclick='()=>ToggleInv(member.Name)'>🎒 @Lang.T("Инвентарь", "Inventory")</button>
+       <button class="bw-inv-btn @(_skillOpenFor==member.Name?"is-open":"")" title="@(Lang.T("Навыки ", "Skills of ") + member.Name)" @onclick='()=>ToggleSkills(member.Name)'>✦ @Lang.T("Навыки", "Skills")</button>
+      </div>
+      @if(_invOpenFor==member.Name){<BattleInventory ChatId="@_chatId" State="@_state" IsHero="false" Member="@member" OnMessage="@OnInvMsg" />}
+      @if(_skillOpenFor==member.Name){<BattleSkills IsHero="false" Member="@member" />}
+      @FxLayer(member.Name)
+     </div>
+    }
+   </div>
+   <div class="bw-vs">VS</div>
+   <div class="bw-side enemies"><h3>@Lang.T("Противники", "Adversaries")</h3>@foreach(var e in _state.Adversaries){<button class="bw-actor bw-enemy @(e.Name==_target?"selected":"") @(!e.InFight?"dead":"") @ShakeClass(e.Name) tier-@e.ThreatTier" @onclick="()=>_target=e.Name"><span class="bw-enemy-portrait" style="@EnemyPortrait(e)"></span><b class="bw-name"><span class="bw-name-t" title="@e.Name">@e.Name</span><em class="bw-tier">@ThreatTitle(e.ThreatTier)</em>@SeatBadge(e.Name,false)</b><small>@LevelText(e.Level) @e.Status@MoraleText(e)</small>@if(EnemyStats(e) is {Length:>0} stats){<small class="bw-enemy-stats">@stats</small>}<div class="bw-track"><i style="@Css.Percent(e.HpCurrent,e.HpMax)"></i>@if(e.Shield>0){<em style="@Css.Percent(Math.Min(e.Shield,e.HpMax),e.HpMax)"></em>}</div><span>@e.HpCurrent/@e.HpMax@if(e.Shield>0){<text> +@e.Shield @Lang.T("щит", "shield")</text>}</span>@if(e.Effects.Count>0){<small class="bw-effects-list">@string.Join(" · ",e.Effects)</small>}@FxLayer(e.Name)</button>}</div>
+
+   @* ===== Оверлей броска кубика ===== *@
+   @if (_dice is { } d)
+   {
+    <div class="bw-dice" @key="d.Key">
+     <div class="bw-die @(d.Crit?"crit":d.Fail?"fail":"")"><span>@d.Value</span></div>
+     @if(!string.IsNullOrWhiteSpace(d.Label)){<small>@d.Label</small>}
+    </div>
+   }
+  </div>
+
+  @* ===== История чата и ходов (на всю ширину окна) ===== *@
+  <div class="bw-history">
+    <div class="bw-history-head">@Lang.T("История чата и ходов", "Chat and turn history")</div>
+    <div class="bw-history-body" @ref="_historyRef">
+     @* Обёртка с margin-top:auto прижимает короткую историю к низу, но не ломает прокрутку вверх. *@
+     <div class="bw-history-inner">
+     @{
+      var hist = History.ToList();
+      // Пока идёт поток, последняя реплика мастера печатается отдельным блоком — в списке её не дублируем.
+      if (_stream.Length > 0 && hist.Count > 0 && hist[^1].Role == "assistant") hist.RemoveAt(hist.Count - 1);
+      // Держим последние 60 реплик, но в хронологическом порядке — новые снизу, старые уходят вверх.
+      var shown = hist.Count > 60 ? hist.Skip(hist.Count - 60).ToList() : hist;
+     }
+     @if (shown.Count == 0 && _stream.Length == 0 && _status.Length == 0)
+     {
+      <div class="bw-history-empty">@Lang.T("В этом чате ещё нет реплик.", "There are no lines in this chat yet.")</div>
+     }
+     @foreach(var m in shown){
+      <div class="bw-history-entry role-@m.Role">
+       <span class="bw-history-role">@(m.Role=="user"?Lang.T("Вы", "You"):Lang.T("Мастер", "Master"))</span>
+       <p>@Short(m.Content)</p>
+      </div>
+     }
+     @if (_stream.Length > 0)
+     {
+      <div class="bw-history-entry role-assistant is-streaming">
+       <span class="bw-history-role">@Lang.T("Мастер", "Master")</span>
+       <p>@Short(_stream)<span class="bw-caret" aria-hidden="true"></span></p>
+      </div>
+     }
+     else if (_status.Length > 0)
+     {
+      <div class="bw-think" role="status">
+       <span class="bw-ink" aria-hidden="true"></span>
+       <span class="bw-think-text">@_status</span>
+      </div>
+     }
+     </div>
+    </div>
+   </div>
+
+  @if (!Victory)
+  {
+   @if (HeroBlocked || AwaitingHeroTurn)
+   {
+    <div class="bw-down">@(HeroBlocked?Lang.T("☠ Герой не может действовать — ход пропускается, бой идёт сам.", "☠ The hero cannot act — the turn is skipped, the fight runs on its own."):Lang.T($"⏱ Сейчас ходит {_state.CombatCurrentActor} — очередь должна дойти до героя.", $"⏱ {_state.CombatCurrentActor} is acting now — the queue has to reach the hero.")) @Lang.T("Нажмите", "Press") «@(Busy?Lang.T("Ход идёт…", "Turn in progress…"):Lang.T("Продолжить бой", "Continue the fight"))».</div>
+   }
+   <div class="bw-controls"><label>@Lang.T("Цель", "Target")<select @bind="_target">@foreach(var e in _state.Adversaries.Where(x=>x.InFight)){<option>@e.Name</option>}</select></label><label>@Lang.T("Действие", "Action")<select @bind="_action"><option value="@BasicAttack">@BasicAttack</option>@foreach(var s in _state.Character.Skills){<option value="@s.Name">@s.Name (@s.Category)@(s.ManaCost>0?$" · {s.ManaCost} {Genre.ManaShort}":"")</option>}</select></label></div>
+   <div class="bw-chat"><textarea @bind="_custom" placeholder="@Lang.T("Опциональная дополнительная информация по ходу или совсем нестандартное действие", "Optional extra details about the turn or a completely non-standard action")"></textarea><button class="bw-turn" @onclick="Turn" disabled="@(Busy||(!(HeroBlocked||AwaitingHeroTurn)&&_target.Length==0&&string.IsNullOrWhiteSpace(_custom)))">@(Busy?Lang.T("Ход идёт…", "Turn in progress…"):HeroBlocked||AwaitingHeroTurn?Lang.T("Продолжить бой", "Continue the fight"):Lang.T("Сделать ход", "Take turn"))</button></div>
+  }
+  else
+  {
+   <div class="bw-loot">
+    <div class="bw-loot-head"><h3>@Lang.T("Добыча", "Loot")</h3><span class="bw-loot-picked">@Lang.T("Выбрано", "Selected") @_picked @Lang.T("из", "of") @_state.BattleLoot.Count</span></div>
+    <div class="bw-loot-grid">
+     @foreach(var item in _state.BattleLoot)
+     {
+      var picked=!_skipped.Contains(item.Id);
+      <button class="bw-loot-item rar-@(ItemEconomy.RarityKey(item.Rarity)) @(picked?"taken":"")" @onclick="()=>Toggle(item)"
+              title="@((picked ? Lang.T("Забрано в сумку", "Taken to the bag") : Lang.T("Не забирать", "Leave it")) + Lang.T(" — нажмите, чтобы переключить", " — click to toggle"))">
+       <span class="bw-loot-check" aria-hidden="true">@(picked?"✓":"")</span>
+       <span class="pix pix-@item.Icon"></span>
+       <span class="bw-loot-main">
+        <b>@item.Name@(item.Quantity>1?$" ×{item.Quantity}":"")</b>
+        <small class="bw-loot-rarity">@LootMeta(item)</small>
+        @if(LootDescription(item) is { Length: > 0 } desc)
+        {
+         <span class="bw-loot-desc">@desc</span>
+        }
+        @if(LootAdvisor.For(Economy,_state,item) is { Kind: not LootAdvisor.AdviceKind.None } adv)
+        {
+         <span class="bw-loot-advice @(adv.Kind==LootAdvisor.AdviceKind.Upgrade?"up":"sell")">@adv.Text</span>
+        }
+       </span>
+       <span class="bw-loot-mark">@(picked?Lang.T("забрать", "take"):Lang.T("пропустить", "skip"))</span>
+      </button>
+     }
+     @if(_state.BattleLoot.Count==0)
+     {
+      <span class="bw-loot-empty">@Lang.T("Ничего ценного.", "Nothing of value.")</span>
+     }
+    </div>
+    <button class="bw-turn" @onclick="FinalizeLoot">@Lang.T("Забрать выбранное и завершить бой", "Take the selected and end the fight")</button>
+   </div>
+  }
+ </section>
+ <aside class="bw-blog">
+  <div class="bw-blog-head">
+   <span>@Lang.T("Лог боя", "Battle log")</span>
+   <button class="bw-blog-clear" title="@Lang.T("Очистить лог боя", "Clear the battle log")" @onclick="ClearBattleLog">🧹</button>
+  </div>
+  <div class="bw-blog-body" @ref="_blogRef">
+   @foreach (var e in BattleEntries)
+   {
+    <div class="bw-blog-row kind-@e.Kind @(_fresh.Contains(e.Id) ? "fresh" : "")" @key="e.Id">
+     <span class="bw-blog-icon">@e.Icon</span>
+     <span class="bw-blog-main">
+      @if (e.Actor is { Length: > 0 } actor)
+      {
+       <b class="bw-blog-actor">@actor</b>
+       <span class="bw-blog-arrow" aria-hidden="true">→</span>
+      }
+      @if (e.Subject is { Length: > 0 } subject)
+      {
+       <span class="bw-blog-subject">@subject</span>
+      }
+      else if (e.Text.Length > 0)
+      {
+       <span class="bw-blog-text">@e.Text</span>
+      }
+      @if (e.Value is { Length: > 0 } value)
+      {
+       <span class="bw-blog-value">@value</span>
+      }
+      @if (e.Verdict is { Length: > 0 } verdict)
+      {
+       <span class="bw-blog-tag @(e.VerdictBad ? "bad" : "good")">@verdict</span>
+      }
+      else if (e.Crit)
+      {
+       <span class="bw-blog-tag crit">@Lang.T("КРИТ", "CRIT")</span>
+      }
+      else if (e.Fail)
+      {
+       <span class="bw-blog-tag fail">@Lang.T("ПРОВАЛ", "FAIL")</span>
+      }
+      @* Урон стоит сразу за проверкой класса брони — видно, сколько сняли, не ища строку ниже. *@
+      @if (e.Damage is int damage)
+      {
+       <span class="bw-blog-dmg">@Lang.T("урон", "damage") @damage</span>
+      }
+      @if (e.Detail is { Length: > 0 } detail)
+      {
+       <span class="bw-blog-detail">@detail</span>
+      }
+     </span>
+    </div>
+   }
+   @if (BattleEntries.Count == 0) { <div class="bw-history-empty">@Lang.T("Журнал боя пуст — броски, урон и эффекты появятся здесь.", "The battle log is empty — rolls, damage and effects will appear here.")</div> }
+  </div>
+ </aside>
+ </div></div>
+}
+
+@code{
+ bool _open; string? _chatId; RpgState _state=new(); string _target="",_action=BasicAttack,_custom="";
+ /// <summary>Подпись базовой атаки в списке действий (она же уходит мастеру в описании хода).</summary>
+ static string BasicAttack=>Lang.T("Базовая атака", "Basic attack");
+ // Отметки «пропустить» в окне добычи: пустое множество значит, что забираем всё — так весь лут
+ // выбран по умолчанию, даже если предметы лягут в окно уже после открытия.
+ HashSet<string> _skipped=new();
+ string _status=""; string _stream=""; string? _invOpenFor; string? _skillOpenFor; string _invMsg=""; bool _invMsgOk;
+ // Победа: все противники выбыли — либо бой кончился, а добыча ещё не забрана (окно должно остаться открытым).
+ bool Victory=>(_state.Adversaries.Count>0&&_state.Adversaries.All(e=>!e.InFight))
+  ||(_state.BattleLoot.Count>0&&!_state.Adversaries.Any(e=>e.InFight));
+ /// <summary>Подпись выбывшего по морали: бежал или сдался.</summary>
+ static string MoraleText(Adversary e)=>e.Morale switch{"fled"=>Lang.T(" · бежал", " · fled"),"surrendered"=>Lang.T(" · сдался", " · surrendered"),_=>""};
+
+ // ===== Боевой журнал и анимации =====
+ const string HeroTarget = BattleLogFeed.HeroTarget;
+ ElementReference _blogRef;
+ ElementReference _historyRef;
+ long _logSeen;                         // последняя обработанная запись журнала (старые не проигрываем)
+ bool _scrollLog;                       // прокрутить журнал после отрисовки
+ bool _scrollHistory;                   // прокрутить историю чата после отрисовки (поток текста)
+ bool _forceScrollLog;                  // прокрутить безусловно (открытие окна, свой ход игрока)
+ bool _forceScrollHistory;
+ bool _pinsBound;                       // слушатели «прилипания к низу» навешаны на текущие элементы
+ bool _disposed;                        // компонент снят — отложенные анимации больше не трогаем
+ readonly HashSet<long> _fresh=new();   // только что появившиеся записи (анимация входа)
+ readonly List<Fx> _fx=new();           // всплывающие числа над карточками
+ DiceFx? _dice;                         // оверлей броска
+ long _fxSeq;
+ Dictionary<string,int>? _initOrder;    // кэш очереди хода: имя → номер
+ long _initStamp=-1;                    // номер последней записи журнала, для которой посчитан кэш
+
+ IReadOnlyList<BattleLogEntry> BattleEntries => _chatId is null ? Array.Empty<BattleLogEntry>() : BattleLogSvc.Get(_chatId);
+
+ // ===== Очередь хода =====
+ static readonly Dictionary<string,int> EmptyOrder=new(StringComparer.OrdinalIgnoreCase);
+
+ /// <summary>
+ /// Очередь хода. Источник — состояние кампании (RpgState.Initiative): те же числа, что видит модель
+ /// в сводке состояния, и они переживают перезапуск приложения. Если в состоянии очереди ещё нет
+ /// (старый бой или бросок до этой правки) — берём порядок из записей боевого журнала, как раньше.
+ /// Кэш журнала — по номеру последней записи, чтобы не пересчитывать на каждый рендер карточки.
+ /// </summary>
+ Dictionary<string,int> InitiativeOrder()
+ {
+  if(_chatId is null)return EmptyOrder;
+  if(_state.Initiative.Count>0)return Initiative.Order(_state.Initiative);
+  var stamp=BattleLogSvc.LastId(_chatId);
+  if(_initOrder is not null&&_initStamp==stamp)return _initOrder;
+  _initOrder=BattleLogFeed.InitiativeOrder(BattleLogSvc.Get(_chatId));
+  _initStamp=stamp;
+  return _initOrder;
+ }
+
+ /// <summary>Номер карточки в очереди хода; null — инициатива ещё не бросалась.</summary>
+ int? TurnSeat(string name,bool isHero)
+ {
+  var order=InitiativeOrder();
+  if(order.Count==0)return null;
+  var key=(name??"").Trim();
+  if(key.Length>0&&order.TryGetValue(key,out var seat))return seat;
+  // Мастер мог записать героя как «Герой», а не по имени.
+  return isHero&&(order.TryGetValue("Герой",out var heroSeat)||order.TryGetValue("Hero",out heroSeat))?heroSeat:null;
+ }
+
+ /// <summary>Бейдж «Очередь хода: X» рядом с именем — появляется только после бросков инициативы.</summary>
+ RenderFragment SeatBadge(string name,bool isHero)=>b=>{
+  if(TurnSeat(name,isHero) is not int seat)return;
+  var current=_state.CombatRound>0&&CombatRules.SameActor(_state,name,_state.CombatCurrentActor);
+  b.OpenElement(0,"em");
+  b.AddAttribute(1,"class",current?"bw-init is-current":"bw-init");
+  b.AddAttribute(2,"title",current?Lang.T("Сейчас действует этот участник", "This participant is acting now"):Lang.T("Очередь хода по инициативе", "Turn order by initiative"));
+  b.AddContent(3,current?Lang.T($"Ход: {seat}", $"Turn: {seat}"):Lang.T($"Очередь хода: {seat}", $"Turn order: {seat}"));
+  b.CloseElement();
+ };
+
+ protected override void OnInitialized(){Battle.OpenRequested+=Open;Battle.StatusChanged+=OnStatus;Battle.StreamChanged+=OnStream;RpgStore.StateChanged+=Changed;Store.Changed+=OnChatChanged;BattleLogSvc.Changed+=OnLogChanged;}
+ public void Dispose(){_disposed=true;Battle.OpenRequested-=Open;Battle.StatusChanged-=OnStatus;Battle.StreamChanged-=OnStream;RpgStore.StateChanged-=Changed;Store.Changed-=OnChatChanged;BattleLogSvc.Changed-=OnLogChanged;}
+
+ void Open(string id)=>_ = InvokeAsync(()=>{
+  _chatId=id;_state=RpgStore.GetOrCreate(id);
+  _target=_state.Adversaries.FirstOrDefault(e=>e.InFight)?.Name??"";
+  // Окно могло открыться прямо посреди хода мастера — подхватываем текущий статус и поток текста.
+  _status=Battle.StatusOf(id);_stream=Battle.StreamOf(id);
+  _invOpenFor=null;_skillOpenFor=null;_invMsg="";_initOrder=null;_initStamp=-1;
+  // Открываем окно без «проигрывания» уже накопленных событий боя.
+  _logSeen=BattleLogSvc.LastId(id);_fresh.Clear();_fx.Clear();_dice=null;
+  _open=true;_scrollLog=true;_scrollHistory=true;_forceScrollLog=true;_forceScrollHistory=true;_pinsBound=false;StateHasChanged();
+ });
+ void Changed(string id){if(_open&&id==_chatId)_ = InvokeAsync(StateHasChanged);}
+ void OnStatus(string id,string status)=>_ = InvokeAsync(()=>{if(_open&&id==_chatId){_status=status;_scrollHistory=true;StateHasChanged();}});
+ void OnStream(string id,string text)=>_ = InvokeAsync(()=>{if(_open&&id==_chatId){_stream=text;_scrollHistory=true;StateHasChanged();}});
+ void OnChatChanged()=>_ = InvokeAsync(()=>{if(_open){_scrollHistory=true;StateHasChanged();}});
+
+ void OnLogChanged(string id)=>_ = InvokeAsync(()=>{
+  if(!_open||id!=_chatId)return;
+  SyncAnimations();
+  _scrollLog=true;
+  StateHasChanged();
+ });
+
+ protected override async Task OnAfterRenderAsync(bool firstRender)
+ {
+  // Элементы пересоздаются при каждом открытии окна — слушатели «прилипания» навешиваем заново.
+  if(_open&&!_pinsBound&&_chatId is not null)
+  {
+   _pinsBound=true;
+   try{await JS.InvokeVoidAsync("harness.trackPin",_historyRef);await JS.InvokeVoidAsync("harness.trackPin",_blogRef);}catch{}
+  }
+  if(_scrollLog){var force=_forceScrollLog;_forceScrollLog=false;_scrollLog=false;try{await JS.InvokeVoidAsync("harness.scrollBottom",_blogRef,force);}catch{}}
+  if(_scrollHistory){var force=_forceScrollHistory;_forceScrollHistory=false;_scrollHistory=false;try{await JS.InvokeVoidAsync("harness.scrollBottom",_historyRef,force);}catch{}}
+ }
+
+ /// <summary>Разбирает новые записи журнала и запускает анимации: кубик и всплывающие числа.</summary>
+ void SyncAnimations()
+ {
+  var chatId=_chatId;
+  if(chatId is null)return;
+  foreach(var e in BattleLogSvc.Get(chatId).Where(x=>x.Id>_logSeen))
+  {
+   _fresh.Add(e.Id);
+   Expire(e.Id);
+   if(e.Kind is "roll" or "attack" or "save"){if(e.Amount is int value)ShowDice(value,e.Label,e.Crit,e.Fail);}
+   else if(e.Target is {Length:>0} t&&e.Amount is int amount)PushFx(t,e.Kind,amount);
+  }
+  _logSeen=BattleLogSvc.LastId(chatId);
+ }
+
+ /// <summary>Отложенное действие в UI-потоке: убирает всплывающее число и оверлей кубика.</summary>
+ void Later(int ms,Action action)=>_=Task.Delay(ms).ContinueWith(t=>
+ {
+  try{_=InvokeAsync(()=>{if(!_disposed)action();});}
+  catch{/* circuit уже закрыт */}
+ },TaskScheduler.Default);
+
+ void Expire(long id)=>Later(1700,()=>{if(_fresh.Remove(id))StateHasChanged();});
+
+ void ShowDice(int value,string? label,bool crit,bool fail)
+ {
+  var key=++_fxSeq;
+  _dice=new DiceFx(key,value,label,crit,fail);
+  Later(1600,()=>{if(_dice?.Key==key){_dice=null;StateHasChanged();}});
+ }
+
+ void PushFx(string target,string kind,int amount)
+ {
+  var key=++_fxSeq;
+  _fx.Add(new Fx(key,target,kind,AmountText(kind,amount)));
+  Later(1200,()=>{_fx.RemoveAll(f=>f.Key==key);StateHasChanged();});
+ }
+
+ static string AmountText(string kind,int amount)=>kind switch{
+  "damage"=>$"−{Math.Abs(amount)}",
+  "shield"=>$"◈{amount}",
+  _=>$"+{amount}",
+ };
+
+ IEnumerable<Fx> FxFor(string target)=>_fx.Where(f=>f.Target.Equals(target,StringComparison.OrdinalIgnoreCase));
+ string ShakeClass(string target)=>_fx.Any(f=>f.Kind=="damage"&&f.Target.Equals(target,StringComparison.OrdinalIgnoreCase))?"is-hit":"";
+ RenderFragment FxLayer(string target)=>b=>{foreach(var fx in FxFor(target)){b.OpenElement(0,"span");b.SetKey(fx.Key);b.AddAttribute(1,"class",$"bw-fx kind-{fx.Kind}");b.AddContent(2,fx.Text);b.CloseElement();}};
+
+ void ClearBattleLog()
+ {
+  if(_chatId is null)return;
+  BattleLogSvc.Clear(_chatId);
+  _fresh.Clear();
+  _logSeen=BattleLogSvc.LastId(_chatId);
+ }
+
+ sealed record Fx(long Key,string Target,string Kind,string Text);
+ sealed record DiceFx(long Key,int Value,string? Label,bool Crit,bool Fail);
+
+ // ===== Шапка и портреты =====
+
+ string ChatStatusText=>_status.Length>0?_status:Lang.T("Рассказчик готов", "The narrator is ready");
+ static string HeroTitle(string name)=>string.IsNullOrWhiteSpace(name)?Lang.T("Безымянный герой", "Nameless hero"):name.Trim();
+
+ string HeroPortrait => HeroAvatars.Style(_state.Character.Avatar,_state.Character.CharClass,_state.Character.Gender);
+
+ // Портреты — из каталога (wwwroot/sprites/portraits.json): тот же выбор, что в книге героя.
+ static string PartyPortrait(PartyMember p) => PortraitCatalog.MemberStyle(p);
+
+ static string EnemyPortrait(Adversary e) => PortraitCatalog.EnemyStyle(e);
+
+ /// <summary>Боевые числа противника одной строкой: «КБ 15 · атака +6 ×2 · 2d8+3».</summary>
+ static string EnemyStats(Adversary e)
+ {
+  var parts=new List<string>();
+  if(e.Ac>0)parts.Add($"{Lang.T("КБ", "AC")} {e.Ac}");
+  if(e.AttackBonus!=0||e.Damage.Length>0)parts.Add($"{Lang.T("атака", "attack")} {e.AttackBonus:+#;-#;+0}{(e.Attacks>1?$" ×{e.Attacks}":"")}{(e.Damage.Length>0?$" · {e.Damage}":"")}");
+  if(e.StaggerMax>0)parts.Add($"{Lang.T("стойкость", "poise")} {e.Stagger}/{e.StaggerMax}");
+  if(e.Legendary>0)parts.Add($"{Lang.T("легенд. действий", "legendary actions")} {e.Legendary}");
+  return string.Join(" · ",parts);
+ }
+ /// <summary>«ур. 3»; уровни 0 и ниже — ослабленные существа для начинающего героя.</summary>
+ static string LevelText(string? level)=>string.IsNullOrWhiteSpace(level)?"":int.TryParse(level.Trim(),out var l)&&l<1?Lang.T("слабый", "weak"):$"{Lang.T("ур.", "lvl")} {level.Trim()}";
+ static string ThreatTitle(string? tier)=>Progression.RoleTitle(tier);
+ static string DeathText(string? state,int successes,int failures)=>state switch{
+  "stable"=>Lang.T($"Стабилизирован · спасброски {successes}/3 ✓ · {failures}/3 ✕", $"Stabilized · death saves {successes}/3 ✓ · {failures}/3 ✕"),
+  "dead"=>Lang.T("Мёртв", "Dead"),
+  _=>Lang.T($"При смерти · спасброски {successes}/3 ✓ · {failures}/3 ✕", $"Dying · death saves {successes}/3 ✓ · {failures}/3 ✕"),
+ };
+
+ // ===== История боя =====
+
+/// <summary>Реплики чата в хронологическом порядке (старые сверху, новые снизу — как в обычном чате).</summary>
+IEnumerable<ChatMessage> History
+{
+ get
+ {
+  if(_chatId is null)return Array.Empty<ChatMessage>();
+  return Store.Get(_chatId)?.Messages
+   .Where(m=>!m.Hidden&&m.Content.Trim().Length>0) ?? Array.Empty<ChatMessage>();
+ }
+}
+
+ static string Short(string text)
+ {
+  var t=text.Trim();
+  return t.Length<=600?t:t[..600]+"…";
+ }
+
+// ===== Ходы =====
+
+/// <summary>Мастер сейчас ведёт ход (кнопка заблокирована, статус виден в шапке).</summary>
+bool Busy=>_status.Length>0;
+
+/// <summary>Герой не может действовать: 0 ХП («при смерти») или эффект, запрещающий ход.</summary>
+bool HeroBlocked=>_state.Character.HpCurrent<=0||_state.Character.Status.Any(CombatEffects.SkipsTurn);
+
+/// <summary>Очередь ещё не дошла до героя: вместо его действия просим мастера продолжить автоходы.</summary>
+bool AwaitingHeroTurn=>_state.CombatRound>0&&!CombatRules.SameActor(_state,_state.CombatCurrentActor,_state.Character.Name);
+
+
+
+void Turn()
+{
+ if(_chatId is null)return;
+ // Свой ход — всегда показываем низ истории, даже если игрок до этого листал вверх.
+ _scrollHistory=true;_forceScrollHistory=true;
+ // Герой не может ходить: не выбираем действие, а просим мастера пропустить его ход и вести бой дальше.
+ if(HeroBlocked||AwaitingHeroTurn)
+ {
+  var note = string.IsNullOrWhiteSpace(_custom) ? "" : Lang.T($" Замечание игрока: {_custom.Trim()}.", $" The player's note: {_custom.Trim()}.");
+  Battle.Act(_chatId,Lang.T($"[ПРОДОЛЖЕНИЕ БОЯ] {(HeroBlocked?"Герой не может действовать (0 ХП, «при смерти» или эффект, запрещающий ход). Пропусти его ход.":$"Сейчас по combat_turn действует {_state.CombatCurrentActor}, а не герой.")} Веди бой дальше строго по combat_turn: после полного действия каждого участника вызывай advance. Когда текущим участником станет способный действовать герой — остановись перед его действием и передай слово игроку.{note}",
+    $"[CONTINUE COMBAT] {(HeroBlocked?"The hero cannot act (0 HP, \"dying\" or an effect that forbids acting). Skip their turn.":$"By combat_turn, {_state.CombatCurrentActor} is acting now, not the hero.")} Keep running the fight strictly by combat_turn: after each participant's full action call advance. When the hero, able to act, becomes the current participant — stop before their action and give the floor to the player.{note}"));
+  _custom="";
+  return;
+ }
+ var target = _target.Length>0 ? _target : Lang.T("не выбрана (игрок не указал цель)", "not chosen (the player did not specify a target)");
+ var action = _action.Length>0 ? _action : Lang.T("не выбрано (игрок не указал действие)", "not chosen (the player did not specify an action)");
+ var custom = string.IsNullOrWhiteSpace(_custom) ? "—" : _custom.Trim();
+ Battle.Act(_chatId,Lang.T($"[БОЕВОЙ ХОД] Цель: {target}. Действие: {action}. Дополнительная информация от игрока: {custom}. Оцени возможность хода, назначь и сделай честные броски, затем обнови состояние боя, учитывая и выбранные цель/действие, и любые уточнения игрока (нестандартное действие имеет приоритет над базовым). После полного действия каждого участника переводи очередь через combat_turn advance. Затем разыграй самостоятельные ходы спутников и противников строго до момента, когда текущим участником снова станет герой; остановись перед его следующим действием.",
+    $"[COMBAT TURN] Target: {target}. Action: {action}. Extra details from the player: {custom}. Evaluate whether the move is possible, make fair rolls, then update the combat state, taking into account both the chosen target/action and any clarifications from the player (a non-standard action takes priority over the basic one). After each participant's full action advance the queue via combat_turn advance. Then play out the independent turns of companions and adversaries strictly until the hero becomes the current participant again; stop before their next action."));
+ _custom="";
+}
+
+ void Toggle(GridItem i){if(!_skipped.Add(i.Id))_skipped.Remove(i.Id);}
+ /// <summary>Сколько предметов добычи отмечено к забору (по умолчанию — все, пока игрок не снимет отметку).</summary>
+ int _picked=>_state.BattleLoot.Count(i=>!_skipped.Contains(i.Id));
+ /// <summary>Строка под названием: редкость, слот и уровень предмета.</summary>
+ string LootMeta(GridItem item)
+ {
+  var parts=new List<string>();
+  var rarity=ItemEconomy.RarityTitle(item.Rarity);
+  if(rarity.Length>0)parts.Add(char.ToUpperInvariant(rarity[0])+rarity[1..]);
+  if(item.Slot is {} slot)parts.Add(InventoryOps.SlotTitle(slot)+(item.TwoHanded?Lang.T(", двуручное", ", two-handed"):""));
+  if(item.Level>0)parts.Add($"{Lang.T("ур.", "lvl")} {item.Level}");
+  if(item.Quantity>1)parts.Add($"{item.Quantity} {Lang.T("шт.", "pcs")}");
+  return string.Join(" · ",parts);
+ }
+ /// <summary>Описание предмета: характеристики (урон, КБ, бонусы, умения) и заметка мастера.</summary>
+ string LootDescription(GridItem item)
+ {
+  var stats=ItemStats.HasStats(item)?ItemStats.Describe(item):"";
+  var note=(item.Note??"").Trim();
+  return stats.Length>0&&note.Length>0?$"{stats} · {note}":stats.Length>0?stats:note;
+ }
+ void FinalizeLoot()
+ {
+  if(_chatId is null)return;
+  var got=new List<string>();var left=new List<string>();
+  foreach(var item in _state.BattleLoot.Where(i=>!_skipped.Contains(i.Id)).ToList())
+  {
+   var spot=InventoryOps.FindFree(_state.Grid,item.W,item.H);
+   if(spot is null){left.Add(item.Name);continue;}
+   item.Col=spot.Value.Col;item.Row=spot.Value.Row;_state.Grid.Add(item);_state.BattleLoot.Remove(item);got.Add(item.Name+(item.Quantity>1?$" ×{item.Quantity}":""));
+  }
+  // Пропущенное игроком остаётся лежать на месте боя; не поместившееся ждёт в окне добычи, пока герой не освободит место.
+  _state.BattleLoot.RemoveAll(i=>_skipped.Contains(i.Id));_skipped.Clear();
+  // Сдавшиеся остаются в истории — мастер решает их судьбу; поверженные и бежавшие уходят со сцены.
+  var captives=_state.Adversaries.Where(a=>a.Morale=="surrendered"&&a.HpCurrent>0).Select(a=>a.Name).ToList();
+  _state.Adversaries.Clear();
+  var cleanup=CombatRules.EndCombat(_state);
+  RpgStore.Save(_chatId,_state);_open=false;
+  Battle.Act(_chatId,Lang.T($"[ФИНАЛ БОЯ] Обыск завершён. Забрано: {(got.Count>0?string.Join(", ",got):"ничего")}.", $"[END OF COMBAT] The search is done. Taken: {(got.Count>0?string.Join(", ",got):"nothing")}.")+
+   (left.Count>0?Lang.T($" Не поместилось в сумку (ждёт в окне добычи, пока герой освободит место): {string.Join(", ",left)}.", $" Did not fit in the bag (waits in the loot window until the hero frees up space): {string.Join(", ",left)}."):"")+
+   (captives.Count>0?Lang.T($" Сдались и ждут решения героя: {string.Join(", ",captives)}.", $" Surrendered and await the hero's decision: {string.Join(", ",captives)}."):"")+
+   Lang.T($" {cleanup}Примени итог добычи, опиши, чем закончился бой, и заверши ход через offer_choices (2–4 варианта, что делать дальше).", $" {cleanup}Apply the loot outcome, describe how the fight ended and finish the turn with offer_choices (2–4 options for what to do next)."));
+ }
+ void Close(){_open=false;_invOpenFor=null;_skillOpenFor=null;_pinsBound=false;}
+
+ // ===== Инвентарь во всплывающем окне =====
+
+ void ToggleInv(string who)
+ {
+  _skillOpenFor=null;                       // одновременно открыто только одно окно
+  _invMsg="";
+  _invOpenFor=_invOpenFor==who?null:who;
+ }
+
+ void ToggleSkills(string who)
+ {
+  _invOpenFor=null;_invMsg="";
+  _skillOpenFor=_skillOpenFor==who?null:who;
+ }
+
+ /// <summary>Сообщение из компонента инвентаря боя (экипировка, передача, выброс…).</summary>
+ void OnInvMsg(string message)=>(_invMsg,_invMsgOk)=(message,true);
+}

@@ -1,0 +1,213 @@
+/* ===== Панель выбора директории ===== */
+.dp {
+    font-family: var(--rh-font);
+    background: var(--rh-card);
+    -webkit-
+    border: 1px solid var(--rh-border);
+    border-radius: var(--rh-radius-card);
+    box-shadow: var(--rh-shadow-card);
+    padding: 12px;
+    color: var(--rh-text);
+}
+
+/* Строка ввода пути */
+.dp-input {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.dp-field {
+    flex: 1;
+    min-width: 0;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--rh-text);
+    background: var(--rh-input-bg);
+    border: 1px solid var(--rh-input-border);
+    border-radius: var(--rh-radius-btn);
+    padding: .5rem .75rem;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.dp-field::placeholder {
+    color: var(--rh-text-3);
+}
+
+.dp-field:focus {
+    border-color: var(--rh-accent);
+    box-shadow: 0 0 0 3px var(--rh-accent-ring-soft);
+}
+
+/* Базовая кнопка */
+.dp-btn {
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.4;
+    padding: .45rem .8rem;
+    border: 1px solid var(--rh-border-strong);
+    border-radius: var(--rh-radius-btn);
+    background: var(--rh-glass-soft);
+    color: var(--rh-text-2);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.dp-btn:hover:not(:disabled) {
+    background: rgba(var(--rh-accent-rgb), 0.14);
+    border-color: rgba(var(--rh-accent-rgb), 0.45);
+    color: var(--rh-text);
+}
+
+.dp-btn:focus-visible {
+    outline: 2px solid var(--rh-accent);
+    outline-offset: 2px;
+}
+
+.dp-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.dp-primary {
+    background: var(--rh-gradient);
+    border: none;
+    color: #1b1509;
+    font-weight: 700;
+    box-shadow: 0 2px 10px rgba(var(--rh-accent-rgb), .28);
+}
+
+.dp-primary:hover:not(:disabled) {
+    background: var(--rh-gradient);
+    filter: brightness(1.08);
+    color: #1b1509;
+    border-color: transparent;
+}
+
+/* Строка-шапка: кнопка «вверх» + путь */
+.dp-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.dp-up {
+    padding: .3rem .55rem;
+    font-size: 13px;
+    flex: none;
+}
+
+.dp-path {
+    flex: 1;
+    min-width: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--rh-text-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Список — «проводник» */
+.dp-list {
+    max-height: 240px;
+    overflow-y: auto;
+    border: 1px solid var(--rh-border);
+    border-radius: var(--rh-radius-btn);
+    background: rgba(14, 12, 10, 0.40);
+    padding: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--rh-accent-rgb), .35) transparent;
+}
+
+.dp-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dp-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dp-list::-webkit-scrollbar-thumb {
+    background: rgba(var(--rh-accent-rgb), .35);
+    border-radius: 4px;
+}
+
+.dp-entry {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    border: none;
+    background: none;
+    padding: .4rem .6rem;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--rh-text);
+    border-radius: 6px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background-color .1s ease;
+}
+
+.dp-entry:hover {
+    background: rgba(var(--rh-accent-rgb), 0.14);
+}
+
+.dp-entry:focus-visible {
+    outline: none;
+    background: rgba(var(--rh-accent-rgb), 0.14);
+    box-shadow: inset 0 0 0 2px rgba(var(--rh-accent-rgb), .40);
+}
+
+.dp-icon {
+    flex: none;
+    font-size: 13px;
+}
+
+.dp-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dp-empty,
+.dp-error {
+    font-size: 12px;
+    padding: 6px 8px;
+}
+
+.dp-empty {
+    color: var(--rh-text-3);
+}
+
+.dp-error {
+    color: #e7a391;
+    word-break: break-word;
+}
+
+/* Строка действий */
+.dp-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.dp-selected {
+    margin-left: auto;
+    min-width: 0;
+    max-width: 65%;
+    font-size: 12px;
+    color: var(--rh-text-3);
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

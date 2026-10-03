@@ -426,3 +426,13 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+# RPG Harness: локальные настройки, ключи API и рабочие профили инструментов.
+# Паттерн без ведущего слэша закрывает как корневую .harness, так и tools/.harness.
+.harness/
+
+# Кэш исходных тайлов, скачиваемых генераторами спрайтов.
+tools/sprites/.cache/
+
+# Локальный диагностический вывод `dotnet msbuild /pp:nul.xml`.
+nul.xml

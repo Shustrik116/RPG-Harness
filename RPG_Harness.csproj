@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <!--
+    Scoped CSS bundle по умолчанию живёт только в obj\ и отдаётся через static web assets manifest,
+    который грузится лишь в Development. При запуске в Production его физического файла нет в wwwroot —
+    MapStaticAssets падает с FileNotFoundException (страница рендерится вообще без стилей).
+    Копируем бандл в wwwroot после каждой сборки, чтобы он был доступен в ЛЮБОМ окружении.
+  -->
+  <Target Name="CopyScopedCssBundleToWwwroot" AfterTargets="BundleScopedCssFiles">
+    <PropertyGroup>
+      <_ScopedCssBundleFile>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)scopedcss\bundle\$(PackageId).styles.css</_ScopedCssBundleFile>
+    </PropertyGroup>
+    <Copy SourceFiles="$(_ScopedCssBundleFile)" DestinationFolder="$(MSBuildProjectDirectory)\wwwroot" SkipUnchangedFiles="true" Condition="Exists('$(_ScopedCssBundleFile)')" />
+  </Target>
+
+  <!-- Не регистрируем копию бандла как отдельный static web asset (иначе дублирование маршрута
+       с computed-бандлом из obj). Файл нужен только как физический fallback для продакшена. -->
+  <ItemGroup>
+    <Content Remove="wwwroot\RPG_Harness.styles.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="1.4.0" />
+  </ItemGroup>
+</Project>

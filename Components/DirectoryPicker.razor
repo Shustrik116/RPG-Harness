@@ -1,0 +1,101 @@
+<div class="dp">
+    <div class="dp-head">
+        <button class="dp-btn dp-primary" disabled="@(!FolderPicker.Supported || _busy)" @onclick="PickAsync"
+                title="@Lang.T("Открыть системный диалог выбора папки", "Open the system folder picker")">
+            @Lang.T("Выбрать папку", "Choose a folder")
+        </button>
+        <span class="dp-path" title="@SelectedPath">@(string.IsNullOrWhiteSpace(SelectedPath) ? Lang.T("Папка не выбрана", "No folder chosen") : SelectedPath)</span>
+    </div>
+
+    <div class="dp-input">
+        <input class="dp-field" placeholder="@Lang.T(@"Или введите путь вручную, например D:\RPG_Campaigns", @"Or type a path manually, for example D:\RPG_Campaigns")" @bind="_manual"
+               @bind:event="oninput" @onkeydown="OnManualKeyDown" />
+        <button class="dp-btn" @onclick="OpenManual">@Lang.T("Открыть", "Open")</button>
+    </div>
+
+    @if (_error is not null)
+    {
+        <div class="dp-error">@_error</div>
+    }
+    @if (!FolderPicker.Supported)
+    {
+        <div class="dp-empty">@Lang.T("Системный диалог папок недоступен с этого компьютера — введите путь вручную.", "The system folder dialog is unavailable on this computer — type the path manually.")</div>
+    }
+</div>
+
+@code {
+    [Parameter] public string SelectedPath { get; set; } = "";
+    [Parameter] public EventCallback<string> SelectedPathChanged { get; set; }
+
+    private string _manual = "";
+    private string _lastSeen = "";
+    private bool _busy;
+
+    private string? _error;
+
+    protected override void OnParametersSet()
+    {
+        // Путь мог измениться снаружи (загрузка настроек, сброс) — держим поле в согласии с ним.
+        var selected = SelectedPath ?? "";
+        if (selected != _lastSeen)
+        {
+            _lastSeen = selected;
+            _manual = selected;
+        }
+    }
+
+    private async Task PickAsync()
+    {
+        if (_busy)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        try
+        {
+            var path = await FolderPicker.PickAsync(string.IsNullOrWhiteSpace(SelectedPath) ? null : SelectedPath);
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                _manual = path;
+                _lastSeen = path;
+                await SelectedPathChanged.InvokeAsync(path);
+            }
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private Task OpenManual()
+    {
+        var path = (_manual ?? "").Trim().Trim('"');
+
+        if (path.Length == 0)
+        {
+            _error = Lang.T("Введите путь к папке.", "Enter the folder path.");
+            return Task.CompletedTask;
+        }
+
+        if (!Directory.Exists(path))
+        {
+            _error = Lang.T("Не найдено: ", "Not found: ") + path;
+            return Task.CompletedTask;
+        }
+
+        _error = null;
+        _manual = path;
+        _lastSeen = path;
+        return SelectedPathChanged.InvokeAsync(path);
+    }
+
+    private void OnManualKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            _ = OpenManual();
+        }
+    }
+}

@@ -1,0 +1,56 @@
+@implements IDisposable
+@inject GuildFlow Guild
+@inject RpgStateStore RpgStore
+
+@if (_open && City?.AdventureGuild is { } guild)
+{
+    var hero = _state.Character;
+    <div class="gw-backdrop" @onclick="Close">
+        <section class="gw-modal" @onclick:stopPropagation="true">
+            <header><div><h2>@Genre.Pick("⚜", "◈", "☎") @guild.Name</h2><span>@City!.Name · @Lang.T("ранг", "rank") @GuildRanks.TitleFor(hero.GuildReputation) · @Lang.T("репутация", "reputation") @hero.GuildReputation</span></div><button @onclick="Close">✕</button></header>
+            @if (!string.IsNullOrWhiteSpace(guild.Description)) { <p class="gw-description">@guild.Description</p> }
+            <div class="gw-board">
+                @foreach (var job in guild.Jobs.Where(j => j.State == "available"))
+                {
+                    var allowed = GuildRanks.CanTake(hero.GuildReputation, job.MinRank);
+                    <article class="gw-job @(allowed ? "" : "locked")">
+                        <div class="gw-rank">@job.MinRank</div>
+                        <div><h3>@job.Name</h3><p>@job.Description</p><small>@job.Difficulty · @job.GoldReward @Genre.MoneyGen · +@job.ReputationReward @Lang.T("репутации", "reputation")<span>@(string.IsNullOrWhiteSpace(job.ItemReward) ? "" : " · " + job.ItemReward)</span></small></div>
+                        <button disabled="@(!allowed)" @onclick="() => Accept(job)">@(allowed ? Lang.T("Принять", "Accept") : Lang.T("Нужен ранг ", "Rank needed: ") + job.MinRank)</button>
+                    </article>
+                }
+                @if (!guild.Jobs.Any(j => j.State == "available")) { <p class="gw-empty">@Genre.PickT("На доске пока нет новых поручений.", "У фиксера пока нет новых контрактов.", "У посредника пока нет новой работы.", "There are no new postings on the board yet.", "The fixer has no new contracts yet.", "The middleman has no new work yet.")</p> }
+            </div>
+        </section>
+    </div>
+}
+
+@code {
+    private bool _open; private string? _chatId; private string _city = ""; private RpgState _state = new();
+    private CityRecord? City => _state.Cities.FirstOrDefault(c => c.Name.Equals(_city, StringComparison.OrdinalIgnoreCase));
+    protected override void OnInitialized() { Guild.OpenRequested += Open; RpgStore.StateChanged += Changed; }
+    public void Dispose() { Guild.OpenRequested -= Open; RpgStore.StateChanged -= Changed; }
+    private void Open(string chatId, string city) => _ = InvokeAsync(() => { _chatId = chatId; _city = city; _state = RpgStore.GetOrCreate(chatId); _open = City?.AdventureGuild is not null; StateHasChanged(); });
+    private void Changed(string id) { if (_open && id == _chatId) Open(id, _city); }
+    private void Close() { _open = false; StateHasChanged(); }
+    private void Accept(GuildJob job)
+    {
+        if (_chatId is null || !GuildRanks.CanTake(_state.Character.GuildReputation, job.MinRank)) return;
+        job.State = "accepted";
+        if (!_state.Quests.Any(q => q.Name.Equals(job.Name, StringComparison.OrdinalIgnoreCase)))
+            _state.Quests.Add(new QuestRecord { Name = job.Name, Description = job.Description, Giver = City!.AdventureGuild!.Name, Reward = $"{job.GoldReward} {Genre.MoneyGen}, +{job.ReputationReward} {Lang.T("репутации", "reputation")}" + (job.ItemReward.Length > 0 ? $", {job.ItemReward}" : "") });
+        RpgStore.Save(_chatId, _state);
+        _open = false;
+        var item = job.ItemReward.Length > 0 ? $", {job.ItemReward}" : "";
+        Guild.Complete(_chatId, Lang.IsEn
+            ? Genre.Pick(
+                $"[GUILD] I accepted the job \"{job.Name}\" in the town of {City!.Name}. Known reward: {job.GoldReward} gold, +{job.ReputationReward} reputation{item}. Continue the scene as the guild steward.",
+                $"[FIXER] I took the contract \"{job.Name}\" in the {City!.Name} district. Promised reward: {job.GoldReward} eddies, +{job.ReputationReward} reputation{item}. Continue the scene as the fixer.",
+                $"[MIDDLEMAN] I took on the job \"{job.Name}\" in {City!.Name}. Promised pay: {job.GoldReward} $, +{job.ReputationReward} reputation{item}. Continue the scene as the middleman.")
+            : Genre.IsModern
+            ? $"[ПОСРЕДНИК] Я взялся за работу «{job.Name}» в городе {City!.Name}. Обещанная оплата: {job.GoldReward} $, +{job.ReputationReward} репутации{item}. Продолжи сцену от лица посредника."
+            : Genre.IsCyber
+            ? $"[ФИКСЕР] Я взял контракт «{job.Name}» в районе {City!.Name}. Обещанная награда: {job.GoldReward} эдди, +{job.ReputationReward} репутации{item}. Продолжи сцену от лица фиксера."
+            : $"[ГИЛЬДИЯ] Я принял задание «{job.Name}» в городе {City!.Name}. Известная награда: {job.GoldReward} золота, +{job.ReputationReward} репутации{item}. Продолжи сцену от лица распорядителя гильдии.");
+    }
+}

@@ -1,0 +1,506 @@
+/* ============================================================
+   RPG Harness — дизайн-система «Гримуар мастера».
+   Тёплые чернила и пергамент, один латунный акцент, без стекла и градиентов.
+   Шрифты: Spectral — повествование и заголовки, IBM Plex Sans — интерфейс,
+   IBM Plex Mono — числа (кубики, статы, цены).
+   Имена токенов --rh-* сохранены: компоненты берут цвета отсюда.
+   Это базовая тема «Фэнтези» (настройка Оформление → тема); остальные темы
+   переопределяют те же токены в css/themes.css по data-theme на <html>.
+   ============================================================ */
+
+:root {
+    /* Шрифты */
+    --rh-font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --rh-serif: "Spectral", Georgia, "Times New Roman", serif;
+    --rh-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+
+    /* Текст — пергамент */
+    --rh-text: #ebe2d3;
+    --rh-text-2: #b5a893;
+    --rh-text-3: #7f7463;
+
+    /* Поверхности — тёплые чернила */
+    --rh-bg: #13110e;
+    --rh-surface: #1a1714;
+    --rh-surface-2: #211d19;
+    --rh-surface-3: #2a2520;
+    --rh-inset: #0e0c0a;
+
+    /* Акцент — латунь.
+       --rh-accent-rgb — те же три числа без # : из него собираются rgba(...) в кнопках,
+       рамках и свечениях, где нужна полупрозрачность. Темы меняют и то, и другое. */
+    --rh-accent: #c9a55c;
+    --rh-accent-hover: #dcb970;
+    --rh-accent-rgb: 201, 165, 92;
+    --rh-accent-ink: #1b1509;
+    --rh-accent-soft: rgba(var(--rh-accent-rgb), .12);
+    --rh-accent-ring: rgba(var(--rh-accent-rgb), .38);
+    --rh-accent-ring-soft: rgba(var(--rh-accent-rgb), .18);
+    --rh-accent-2: #7fa0c8;
+    --rh-accent-3: #8fae6a;
+
+    /* Совместимость: «градиент» и «стекло» теперь плоские */
+    --rh-gradient: var(--rh-accent);
+    --rh-gradient-soft: var(--rh-accent-soft);
+    --rh-glass: var(--rh-surface);
+    --rh-glass-strong: var(--rh-surface);
+    --rh-glass-soft: var(--rh-surface-2);
+    --rh-card: var(--rh-surface-2);
+    --rh-backdrop-blur: none;
+
+    /* Линии */
+    --rh-border: rgba(235, 226, 211, .085);
+    --rh-border-strong: rgba(235, 226, 211, .17);
+    --rh-input-bg: var(--rh-inset);
+    --rh-input-border: rgba(235, 226, 211, .14);
+    --rh-shadow-card: 0 1px 0 rgba(0, 0, 0, .35);
+    --rh-shadow-pop: 0 18px 50px rgba(0, 0, 0, .55), 0 0 0 1px rgba(235, 226, 211, .06);
+
+    /* Смысловые цвета */
+    --rh-success: #8fae6a;
+    --rh-danger: #c9614a;
+    --rh-warning: #d49a4a;
+    --rh-ooc: #8fa6c9;
+    --rh-hp: #b5493a;
+    --rh-mana: #5f8bc0;
+
+    /* Геометрия */
+    --rh-radius-btn: 6px;
+    --rh-radius-card: 8px;
+    --rh-radius-panel: 10px;
+
+    /* Регистр и разрядка заголовков-карточек (темы с «техно»-характером включают капитель) */
+    --rh-title-transform: none;
+    --rh-title-spacing: normal;
+
+    /* Движение */
+    --rh-ease: cubic-bezier(.2, .7, .2, 1);
+    --rh-dur: .18s;
+}
+
+html {
+    height: 100%;
+    scrollbar-color: rgba(235, 226, 211, .16) transparent;
+    scrollbar-width: thin;
+}
+
+html,
+body {
+    font-family: var(--rh-font);
+    color: var(--rh-text);
+}
+
+body {
+    min-height: 100%;
+    background-color: var(--rh-bg);
+    /* Едва заметное зерно бумаги и виньетка — без фотографий и свечения */
+    background-image:
+        radial-gradient(ellipse at 50% -20%, rgba(var(--rh-accent-rgb), .05), transparent 60%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.92 0 0 0 0 0.88 0 0 0 0 0.8 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "kern", "liga";
+}
+
+h1:focus {
+    outline: none;
+}
+
+::selection {
+    background: rgba(var(--rh-accent-rgb), .32);
+    color: #fff8ea;
+}
+
+:focus-visible {
+    outline: 2px solid var(--rh-accent);
+    outline-offset: 2px;
+}
+
+/* ---------- Ссылки ---------- */
+a,
+.btn-link {
+    color: var(--rh-accent);
+    text-underline-offset: 3px;
+}
+
+a:hover,
+.btn-link:hover {
+    color: var(--rh-accent-hover);
+}
+
+/* ---------- Скроллбары ---------- */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(235, 226, 211, .12);
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(235, 226, 211, .24);
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* ---------- Кнопки ---------- */
+.btn {
+    --bs-btn-font-family: var(--rh-font);
+    border-radius: var(--rh-radius-btn);
+    font-weight: 500;
+    font-size: .92rem;
+    padding: .45rem .95rem;
+    transition: background-color var(--rh-dur) ease, border-color var(--rh-dur) ease,
+        color var(--rh-dur) ease, transform .08s ease;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-primary,
+.btn-primary:focus {
+    color: var(--rh-accent-ink);
+    background: var(--rh-accent);
+    border: 1px solid var(--rh-accent);
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus-visible {
+    background: var(--rh-accent-hover);
+    border-color: var(--rh-accent-hover);
+    color: var(--rh-accent-ink);
+}
+
+.btn-primary:disabled {
+    background: var(--rh-surface-3);
+    border-color: var(--rh-surface-3);
+    color: var(--rh-text-3);
+}
+
+.btn-outline-secondary,
+.btn-outline {
+    border: 1px solid var(--rh-border-strong);
+    background: transparent;
+    color: var(--rh-text-2);
+}
+
+.btn-outline-secondary:hover,
+.btn-outline:hover {
+    background: var(--rh-surface-3);
+    border-color: rgba(235, 226, 211, .26);
+    color: var(--rh-text);
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 3px var(--rh-accent-ring-soft);
+}
+
+/* ---------- Формы ---------- */
+.form-control,
+.form-select {
+    border-radius: var(--rh-radius-btn);
+    border-color: var(--rh-input-border);
+    background-color: var(--rh-input-bg);
+    color: var(--rh-text);
+    transition: border-color var(--rh-dur) ease, box-shadow var(--rh-dur) ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: rgba(var(--rh-accent-rgb), .6);
+    box-shadow: 0 0 0 3px var(--rh-accent-ring-soft);
+    color: var(--rh-text);
+    background-color: var(--rh-input-bg);
+}
+
+.form-control::placeholder {
+    color: var(--rh-text-3);
+}
+
+.form-label {
+    color: var(--rh-text);
+    font-weight: 500;
+}
+
+.form-text {
+    color: var(--rh-text-2);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--rh-accent);
+}
+
+/* ---------- Карточки ---------- */
+.card {
+    background: var(--rh-surface);
+    border: 1px solid var(--rh-border);
+    border-radius: var(--rh-radius-card);
+    box-shadow: none;
+    color: var(--rh-text);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--rh-border);
+    color: var(--rh-text);
+    font-family: var(--rh-serif);
+    font-size: 1.08rem;
+    font-weight: 500;
+    text-transform: var(--rh-title-transform);
+    letter-spacing: var(--rh-title-spacing);
+}
+
+/* ---------- Бейджи ---------- */
+.badge {
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: .72em;
+    letter-spacing: .02em;
+    padding: .28em .55em;
+}
+
+/* ---------- Сообщения ---------- */
+.alert {
+    border: 1px solid transparent;
+    border-left-width: 3px;
+    border-radius: var(--rh-radius-btn);
+    font-size: .88rem;
+    padding: .6rem .85rem;
+}
+
+.alert-success {
+    background-color: rgba(143, 174, 106, .08);
+    border-color: rgba(143, 174, 106, .45);
+    color: #bcd29d;
+}
+
+.alert-danger {
+    background-color: rgba(201, 97, 74, .08);
+    border-color: rgba(201, 97, 74, .5);
+    color: #e7a391;
+}
+
+.alert-warning {
+    background-color: rgba(212, 154, 74, .08);
+    border-color: rgba(212, 154, 74, .5);
+    color: #e8bf85;
+}
+
+.alert-info,
+.alert-primary {
+    background-color: rgba(143, 166, 201, .08);
+    border-color: rgba(143, 166, 201, .5);
+    color: #b9c9e0;
+}
+
+/* ---------- Общие анимации ---------- */
+@keyframes rh-rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes rh-fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes rh-pop {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes rh-float-up {
+    0% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    15% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-26px);
+    }
+}
+
+@keyframes rh-blink {
+    0%, 45% {
+        opacity: 1;
+    }
+
+    55%, 100% {
+        opacity: 0;
+    }
+}
+
+@keyframes rh-shimmer {
+    from {
+        background-position: -200% 0;
+    }
+
+    to {
+        background-position: 200% 0;
+    }
+}
+
+/* ---------- Прочее (Blazor) ---------- */
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid var(--rh-success);
+}
+
+.invalid {
+    outline: 1px solid var(--rh-danger);
+}
+
+.validation-message {
+    color: var(--rh-danger);
+}
+
+.darker-border-checkbox.form-check-input {
+    border-color: var(--rh-input-border);
+}
+
+.blazor-error-boundary {
+    background: #5a1f16;
+    border-left: 3px solid var(--rh-danger);
+    padding: 1rem 1rem 1rem 1.2rem;
+    color: #f5d6cc;
+}
+
+.blazor-error-boundary::after {
+    content: "Произошла ошибка.";
+}
+
+#blazor-error-ui {
+    background: var(--rh-surface-2) !important;
+    color: #e7a391;
+    border-top: 1px solid rgba(201, 97, 74, .5);
+}
+
+/* ---------- Уважение к настройке «меньше движения» ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* ---------- Окно боя: всплывающий инвентарь (кукла снаряжения + сумка-сетка), глобальные стили ---------- */
+/* Окно всплывает под карточкой бойца. Ширина — по содержимому: выбор предмета или навыка
+   добавляет столбец справа, а не строку снизу, поэтому полоса прокрутки не появляется.
+   Высоту ограничивает только вьюпорт — жёсткого потолка в 420px больше нет. */
+.bw-inv-pop,.bw-skill-pop{position:absolute;left:8px;top:calc(100% + 4px);z-index:30;width:max-content;max-width:min(94vw,720px);max-height:calc(100vh - 40px);overflow:auto;overscroll-behavior:contain;background:#171c24;border:1px solid #697487;border-radius:4px;box-shadow:0 14px 40px rgba(0,0,0,.7);padding:8px;display:grid;gap:8px}
+.bw-inv-body,.bw-skill-body{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.bw-inv-main{display:grid;gap:8px;width:342px;max-width:100%}
+.bw-inv-head{font-weight:700;font-size:13px;color:#e7c45c;border-bottom:1px solid #3a4250;padding-bottom:5px}
+.bw-inv-empty{color:#8f98a5;font-size:12px;padding:4px}
+.bw-inv-grid{position:relative;display:grid;grid-template-columns:repeat(11,30px);grid-auto-rows:30px;gap:0;width:max-content;max-width:100%;margin-inline:auto;border:1px solid #4a5568;background:#10151c;padding:2px}
+.bw-inv-cell{width:30px;height:30px;box-sizing:border-box;border:1px solid rgba(160,170,190,.07);background:rgba(160,170,190,.03)}
+.bw-inv-item{position:absolute;z-index:2;box-sizing:border-box;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(var(--rh-accent-rgb),.32);border-radius:3px;background:radial-gradient(circle at 50% 45%,rgba(var(--rh-accent-rgb),.14),rgba(20,22,28,.8) 80%);cursor:pointer;padding:0!important;margin:0}
+.bw-inv-item.sel{border-color:#e4b84c;box-shadow:0 0 8px rgba(228,184,76,.5)}
+.bw-inv-item .pix{width:min(86%,86%);height:min(86%,86%);flex:none;pointer-events:none}
+.bw-inv-item small{position:absolute;right:2px;bottom:0;font-size:10px;color:#fff;text-shadow:0 1px 2px #000;font-weight:700}
+.bw-inv-item:hover{border-color:#e4b84c}
+.bw-inv-card{border:1px solid #4a5568;background:#0f141b;padding:8px;display:grid;gap:6px;flex:1 1 220px;min-width:220px;max-width:280px;align-content:start}
+.bw-inv-card b{font-size:13px}
+.bw-inv-card p{margin:0;font-size:12px;color:#b9bfc8}
+.bw-inv-meta{font-size:11px;color:#7f8794}
+.bw-inv-stats{font-size:11px;color:#9fb08a}
+.bw-inv-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+/* Кнопки окна инвентаря — тот же вид, что у кнопок книги героя (.rp-btn).
+   BattleInventory рендерится дочерним компонентом, поэтому scoped-правило .bw-modal button
+   до этих кнопок не доходит и без явного стиля они оставались системными «серыми». */
+.bw-inv-actions button{padding:4px 10px;border-radius:8px;border:1px solid var(--rh-border-strong);background:rgba(var(--rh-accent-rgb),.1);color:var(--rh-text,#e9e4d8);font-family:inherit;font-size:.75rem;line-height:1.4;cursor:pointer;transition:background-color .13s ease,border-color .13s ease}
+.bw-inv-actions button:hover{background:rgba(var(--rh-accent-rgb),.2);border-color:rgba(var(--rh-accent-rgb),.5)}
+.bw-inv-actions button.danger{background:rgba(201,97,74,.08);border-color:rgba(201,97,74,.3);color:#f0c4b8}
+.bw-inv-actions button.danger:hover{background:rgba(201,97,74,.18)}
+.bw-inv-give-label{color:#aeb6c2;font-size:12px}
+.bw-inv-hint{color:#8f98a5;font-size:11px;flex-basis:100%}
+.bw-inv-msg{font-size:12px;color:#d8939b}
+.bw-inv-msg.ok{color:#9fb08a}
+
+/* Кукла снаряжения */
+.bw-equip{display:grid;grid-template-columns:1.35fr 1fr 1.35fr 1fr 1.35fr;grid-template-rows:repeat(4,52px);grid-template-areas:"hand1 cloak helmet amulet hand2" "hand1 cloak body ring1 hand2" "hand1 gloves body ring2 hand2" "hand1 gloves belt boots hand2";gap:5px;padding:8px;border:1px solid #4a5568;border-radius:8px;background:radial-gradient(ellipse at 50% 45%,rgba(var(--rh-accent-rgb),.08),transparent 65%),#0f141b}
+.bw-equip .a-hand1{grid-area:hand1}.bw-equip .a-cloak{grid-area:cloak}.bw-equip .a-helmet{grid-area:helmet}.bw-equip .a-amulet{grid-area:amulet}.bw-equip .a-hand2{grid-area:hand2}.bw-equip .a-gloves{grid-area:gloves}.bw-equip .a-body{grid-area:body}.bw-equip .a-ring1{grid-area:ring1}.bw-equip .a-ring2{grid-area:ring2}.bw-equip .a-boots{grid-area:boots}.bw-equip .a-belt{grid-area:belt}
+.bw-slot{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;container-type:size;border:1px solid rgba(160,170,190,.25);border-radius:6px;background:linear-gradient(rgba(16,20,28,.55),rgba(16,20,28,.55)) padding-box,repeating-linear-gradient(45deg,rgba(160,170,190,.05) 0 4px,transparent 4px 8px) padding-box;cursor:pointer;transition:border-color .13s ease,box-shadow .13s ease}
+.bw-slot:hover{border-color:rgba(var(--rh-accent-rgb),.45)}
+.bw-slot.filled{border-color:rgba(var(--rh-accent-rgb),.38);background:radial-gradient(circle at 50% 45%,rgba(var(--rh-accent-rgb),.16),rgba(16,20,28,.6) 75%);cursor:grab}
+.bw-slot.sel{border-color:#d9b25e;box-shadow:0 0 0 1px #d9b25e,0 0 14px rgba(212,154,74,.35)}
+.bw-slot.mirror .pix{opacity:.28;filter:grayscale(.6)}
+.bw-slot.mirror{cursor:pointer}
+.bw-slot.can-drop{border-color:#8fae6a;box-shadow:0 0 0 1px #8fae6a,0 0 14px rgba(143,174,106,.35)}
+.bw-slot-ghost{opacity:.16;filter:grayscale(1)}
+.bw-slot-label{position:absolute;left:0;right:0;bottom:1px;font-size:8px;line-height:1.1;color:#7f8794;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+.bw-slot.filled .bw-slot-label{display:none}
+.bw-equip .pix,.bw-inv-item .pix,.bw-slot-ghost.pix{flex:none;width:min(86cqw,86cqh);height:min(86cqw,86cqh);pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
+.bw-equip .pix.diag,.bw-inv-item .pix.diag{width:min(60cqh,180cqw);height:min(60cqh,180cqw);transform:rotate(-45deg)}
+.bw-slot-ghost.pix.diag{width:min(56cqh,160cqw);height:min(56cqh,160cqw)}
+.bw-inv-item.dragging,.bw-inv-grid.dragging .bw-inv-item{pointer-events:none}
+.bw-inv-item.lifted{opacity:.35}
+
+/* ---------- Окно боя: очередь хода по инициативе ---------- */
+/* Бейдж «Очередь хода: X» строится в BattleWindow вручную через RenderFragment, поэтому
+   scoped-CSS компонента к нему не применяется — стиль задаём здесь. Имя и бейдж лежат
+   в одной flex-строке .bw-name (.bw-ally-main b): бейдж всегда рядом с именем, при нехватке
+   места ужимается имя (многоточие), а переноса на вторую строку не бывает. */
+.bw-init{display:inline-block;white-space:nowrap;flex:none;font:10px sans-serif;font-weight:700;color:#e7c45c;background:rgba(231,196,92,.12);border:1px solid rgba(231,196,92,.45);border-radius:3px;padding:1px 5px;margin-left:0}
+
+/* ---------- Окно боя: всплывающее окно навыков (по образцу инвентаря) ---------- */
+.bw-skill-list{display:grid;gap:4px;width:286px;max-width:100%;align-content:start}
+.bw-skill{display:grid;grid-template-columns:30px 1fr;column-gap:8px;align-items:center;text-align:left;padding:5px 7px;border:1px solid #4a5568;border-radius:6px;background:#0f141b;color:#d8dde5;font-family:inherit;cursor:pointer;transition:border-color .13s ease,background-color .13s ease}
+.bw-skill:hover{border-color:rgba(var(--rh-accent-rgb),.5)}
+.bw-skill.sel{border-color:#e4b84c;background:#171c24;box-shadow:0 0 8px rgba(228,184,76,.35)}
+.bw-skill-icon{grid-row:1/3;width:28px;height:28px;background-repeat:no-repeat;background-size:800% 800%}
+.bw-skill b{font-size:12.5px}
+.bw-skill small{font-size:11px;color:#aeb6c2}
+.bw-skill-desc{flex:1 1 250px;min-width:230px;max-width:330px;border:1px solid #4a5568;background:#0f141b;padding:9px;display:grid;gap:6px;align-content:start}
+.bw-skill-desc h4{margin:0;font-size:13px;color:#e7c45c}
+.bw-skill-desc p{margin:0;font-size:12px;line-height:1.5;color:#c8cfda}
+.bw-skill-meta{font-size:11px;color:#7f8794}
+.bw-skill-evo{font-size:11px;font-style:italic;color:#9fb08a}

@@ -1,0 +1,55 @@
+@inject SettingsService SettingsSvc
+@inject NavigationManager Nav
+
+@* Первый запуск: язык ещё не выбран — спрашиваем его раньше всего остального (окно поверх интерфейса). *@
+@if (!Lang.IsKnown(SettingsSvc.Current.Language))
+{
+    <div class="lp-backdrop">
+        <div class="lp-modal" role="dialog" aria-modal="true" aria-labelledby="lp-title">
+            <div class="lp-title" id="lp-title">Выберите язык · Choose your language</div>
+            <div class="lp-sub">
+                Язык интерфейса и мастера игры. Его можно сменить позже в настройках.<br />
+                The language of the interface and the game master. You can change it later in the settings.
+            </div>
+            <div class="lp-options">
+                @foreach (var (id, native, hint) in Lang.All)
+                {
+                    var lid = id;
+                    <button type="button" class="lp-option" disabled="@_saving" @onclick="() => Pick(lid)">
+                        <span class="lp-native">@native</span>
+                        <span class="lp-hint">@hint</span>
+                    </button>
+                }
+            </div>
+            @if (_error is not null)
+            {
+                <div class="lp-error">@_error</div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private bool _saving;
+    private string? _error;
+
+    /// <summary>
+    /// Запоминает выбор и перезагружает страницу целиком: подписи, каталоги и промпт должны собраться уже на
+    /// выбранном языке. Если файл настроек записать не удалось, язык всё равно применён до перезапуска.
+    /// </summary>
+    private void Pick(string id)
+    {
+        _saving = true;
+        var settings = SettingsSvc.Clone();
+        settings.Language = Lang.Normalize(id);
+        var writeError = SettingsSvc.Save(settings);
+        if (writeError is not null)
+        {
+            _saving = false;
+            _error = Lang.T("Язык выбран, но файл настроек не записан: ", "The language is selected, but the settings file was not written: ") + writeError;
+            return;
+        }
+
+        Nav.NavigateTo(Nav.Uri, forceLoad: true);
+    }
+}

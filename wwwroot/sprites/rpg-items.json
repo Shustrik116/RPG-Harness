@@ -1,0 +1,166 @@
+{
+ "helmet": {
+  "col": 0,
+  "row": 0
+ },
+ "body": {
+  "col": 1,
+  "row": 0
+ },
+ "gloves": {
+  "col": 2,
+  "row": 0
+ },
+ "boots": {
+  "col": 3,
+  "row": 0
+ },
+ "amulet": {
+  "col": 4,
+  "row": 0
+ },
+ "ring": {
+  "col": 5,
+  "row": 0
+ },
+ "ring2": {
+  "col": 6,
+  "row": 0
+ },
+ "belt": {
+  "col": 7,
+  "row": 0
+ },
+ "shield": {
+  "col": 8,
+  "row": 0
+ },
+ "sword": {
+  "col": 9,
+  "row": 0
+ },
+ "axe": {
+  "col": 0,
+  "row": 1
+ },
+ "dagger": {
+  "col": 1,
+  "row": 1
+ },
+ "mace": {
+  "col": 2,
+  "row": 1
+ },
+ "bow": {
+  "col": 3,
+  "row": 1
+ },
+ "staff": {
+  "col": 4,
+  "row": 1
+ },
+ "potion_red": {
+  "col": 5,
+  "row": 1
+ },
+ "potion_amber": {
+  "col": 6,
+  "row": 1
+ },
+ "potion_cyan": {
+  "col": 7,
+  "row": 1
+ },
+ "potion_emerald": {
+  "col": 8,
+  "row": 1
+ },
+ "potion_smoky": {
+  "col": 9,
+  "row": 1
+ },
+ "scroll": {
+  "col": 0,
+  "row": 2
+ },
+ "map": {
+  "col": 1,
+  "row": 2
+ },
+ "book": {
+  "col": 2,
+  "row": 2
+ },
+ "key": {
+  "col": 3,
+  "row": 2
+ },
+ "coins": {
+  "col": 4,
+  "row": 2
+ },
+ "gem": {
+  "col": 5,
+  "row": 2
+ },
+ "orb": {
+  "col": 6,
+  "row": 2
+ },
+ "bottle": {
+  "col": 7,
+  "row": 2
+ },
+ "bread": {
+  "col": 8,
+  "row": 2
+ },
+ "meat": {
+  "col": 9,
+  "row": 2
+ },
+ "apple": {
+  "col": 0,
+  "row": 3
+ },
+ "bone": {
+  "col": 1,
+  "row": 3
+ },
+ "horn": {
+  "col": 2,
+  "row": 3
+ },
+ "lamp": {
+  "col": 3,
+  "row": 3
+ },
+ "lantern": {
+  "col": 4,
+  "row": 3
+ },
+ "sack": {
+  "col": 5,
+  "row": 3
+ },
+ "phial": {
+  "col": 6,
+  "row": 3
+ },
+ "mirror": {
+  "col": 7,
+  "row": 3
+ },
+ "stone": {
+  "col": 8,
+  "row": 3
+ },
+ "cloak": {
+  "col": 9,
+  "row": 3
+ },
+ "avatar": {
+  "col": 0,
+  "row": 4
+ }
+}

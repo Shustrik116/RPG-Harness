@@ -1,0 +1,21 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet restore RPG_Harness.csproj
+      - run: dotnet build RPG_Harness.csproj --configuration Release --no-restore
+      - run: dotnet publish RPG_Harness.csproj --configuration Release --no-build --output artifacts/publish
+      - run: dotnet list RPG_Harness.csproj package --vulnerable --include-transitive

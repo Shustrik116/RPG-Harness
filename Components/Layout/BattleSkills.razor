@@ -1,0 +1,104 @@
+@* Всплывающее окно навыков бойца в бою: список слева, подробное описание выбранного справа.
+   Устроено по образцу окна инвентаря — выбор навыка расширяет окно, а не удлиняет его. *@
+<div class="bw-skill-pop">
+ <div class="bw-inv-head">@Title</div>
+
+ @if (Skills.Count == 0)
+ {
+  <div class="bw-inv-empty">@(IsHero ? Lang.T("Навыки ещё не изучены.", "No skills learned yet.") : Lang.T("У спутника пока нет навыков.", "The companion has no skills yet."))</div>
+ }
+ else
+ {
+  <div class="bw-skill-body">
+   <div class="bw-skill-list">
+    @foreach (var item in Skills)
+    {
+     var skill = item;
+     <button class="bw-skill @(skill.Name == Selected?.Name ? "sel" : "")" @onclick="() => Select(skill)">
+      <span class="bw-skill-icon" style="@SkillIconStyle(skill)"></span>
+      <b>@skill.Name</b>
+      <small>@CategoryTitle(skill.Category) · @Lang.T("ур.", "t.") @skill.Rank@(skill.ManaCost > 0 ? $" · {skill.ManaCost} {Genre.ManaGen}" : "")</small>
+     </button>
+    }
+   </div>
+
+   @if (Selected is { } sel)
+   {
+    <div class="bw-skill-desc">
+     <h4>@sel.Name</h4>
+     <small class="bw-skill-meta">@Meta(sel)</small>
+     @if (sel.Description.Length > 0)
+     {
+      <p>@Progression.ExplainPowerDice(sel.Description, OwnerLevel)</p>
+     }
+     else
+     {
+      <p class="bw-skill-evo">@Lang.T("Подробное описание ещё не написано.", "No detailed description yet.")</p>
+     }
+     @if (sel.Evolution.Length > 0)
+     {
+      <p class="bw-skill-evo">@Lang.T("Развитие:", "Evolution:") @sel.Evolution</p>
+     }
+    </div>
+   }
+  </div>
+ }
+</div>
+
+@code {
+ [Parameter] public RpgState? State { get; set; }
+ [Parameter] public bool IsHero { get; set; }
+ [Parameter] public PartyMember? Member { get; set; }
+
+ private static readonly List<SkillRecord> None = new();
+ private string _selName = "";
+
+ /// <summary>Навыки героя или спутника — источник тот же, что и в книге героя.</summary>
+ private IReadOnlyList<SkillRecord> Skills =>
+  IsHero ? State?.Character.Skills ?? None : Member?.LearnedSkills ?? None;
+
+ private string Title => IsHero ? Lang.T("Навыки героя", "The hero's skills") : Lang.T("Навыки · ", "Skills · ") + Member?.Name;
+
+ /// <summary>Уровень владельца — от него зависит кость мощи К в описаниях навыков.</summary>
+ private int OwnerLevel => Progression.ParseLevel(IsHero ? State?.Character.Level : Member?.Level);
+
+ /// <summary>Выбранный навык; по умолчанию — первый в списке, чтобы описание было видно сразу.</summary>
+ private SkillRecord? Selected =>
+  Skills.FirstOrDefault(s => s.Name == _selName && s.Name.Length > 0) ?? Skills.FirstOrDefault();
+
+ private void Select(SkillRecord skill) => _selName = skill.Name;
+
+ private static string CategoryTitle(string? category) => (category ?? "").Trim().ToLowerInvariant() switch
+ {
+  "attack" => Lang.T("атака", "attack"),
+  "support" => Lang.T("поддержка", "support"),
+  "heal" => Lang.T("лечение", "healing"),
+  "cleanse" => Lang.T("очищение", "cleanse"),
+  "shield" => Lang.T("защита", "protection"),
+  "revive" => Lang.T("возрождение", "revival"),
+  "debuff" => Lang.T("ослабление", "debuff"),
+  "utility" => Lang.T("утилита", "utility"),
+  _ => Lang.T("навык", "skill"),
+ };
+
+ private static string TargetTitle(string? target) => (target ?? "").Trim().ToLowerInvariant() switch
+ {
+  "enemy" => Lang.T("цель: противник", "target: an enemy"),
+  "ally" => Lang.T("цель: союзник", "target: an ally"),
+  "self" => Lang.T("цель: сам боец", "target: self"),
+  "all_enemies" or "all-enemies" => Lang.T("цель: все противники", "target: all enemies"),
+  "all_allies" or "all-allies" => Lang.T("цель: вся группа", "target: the whole party"),
+  _ => Lang.T("цель: по ситуации", "target: by situation"),
+ };
+
+ private static string Meta(SkillRecord s)
+ {
+  var parts = new List<string> { CategoryTitle(s.Category), $"{Lang.T("ранг", "tier")} {s.Rank}" };
+  if (s.ManaCost > 0) parts.Add($"{s.ManaCost} {Genre.ManaGen}");
+  parts.Add(TargetTitle(s.Target));
+  return string.Join(" · ", parts);
+ }
+
+ /// <summary>Иконка навыка — та же логика, что в книге героя (SkillIcons).</summary>
+ private static string SkillIconStyle(SkillRecord s) => SkillIcons.Style(s);
+}

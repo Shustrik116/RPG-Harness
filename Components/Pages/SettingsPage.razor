@@ -1,0 +1,649 @@
+@page "/settings"
+@inject SettingsService SettingsSvc
+@inject LlmClient Llm
+@inject IJSRuntime Js
+@inject NavigationManager Nav
+
+<PageTitle>@Lang.T("Настройки", "Settings") — RPG Harness</PageTitle>
+
+<div class="settings-page">
+    <h1>@Lang.T("Настройки", "Settings")</h1>
+
+    @if (_saved is not null)
+    {
+        <div class="alert alert-success">@_saved</div>
+    }
+    @if (_error is not null)
+    {
+        <div class="alert alert-danger">@_error</div>
+    }
+
+    <section class="card">
+        <div class="card-header">@Lang.T("Подключение к модели", "Model connection")</div>
+        <div class="card-body">
+            <div class="field">
+                <label class="field-label">@Lang.T("Базовый URL API (OpenAI-совместимый)", "API base URL (OpenAI-compatible)")</label>
+                <input class="ctl" @bind="_form.ApiBaseUrl" placeholder="https://api.openai.com/v1" />
+                <div class="ctl-help">
+                    @Lang.T("Примеры:", "Examples:") https://api.openai.com/v1 · https://api.deepseek.com/v1 · http://localhost:11434/v1 (Ollama)
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">@Lang.T("API-ключ", "API key")</label>
+                <input class="ctl" type="password" autocomplete="off" @bind="_form.ApiKey" placeholder="sk-…" />
+                <div class="ctl-help">@Lang.T("Хранится локально в .harness/settings.json. Для локальных серверов можно оставить пустым.", "Stored locally in .harness/settings.json. Can be left empty for local servers.")</div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">@Lang.T("Модель", "Model")</label>
+                <input class="ctl" list="model-options" @bind="_form.Model" @bind:after="ModelChanged" placeholder="gpt-4o-mini" />
+                <datalist id="model-options">
+                    @foreach (var model in _models)
+                    {
+                        <option value="@model"></option>
+                    }
+                </datalist>
+            </div>
+
+            <div class="probe-area">
+                <button class="btn btn-outline" disabled="@_probing" @onclick="ProbeAsync">
+                    @(_probing ? Lang.T("Проверяем…", "Checking…") : Lang.T("Проверить подключение", "Test connection"))
+                </button>
+                @if (_probeResult is not null)
+                {
+                    <div class="probe @(_probeOk ? "probe-ok" : "probe-fail")">
+                        <span class="probe-icon">@(_probeOk ? "✓" : "✗")</span>
+                        <span class="probe-text">@_probeResult</span>
+                    </div>
+                }
+            </div>
+
+            @if (_models.Count > 0)
+            {
+                <div class="model-picker">
+                    <div class="model-picker-label">@Lang.T("Доступные модели — нажмите на название, чтобы подставить его в поле «Модель»:", "Available models — click a name to put it into the \"Model\" field:")</div>
+                    <div class="model-links">
+                        @foreach (var model in VisibleModels)
+                        {
+                            <a class="model-link @(IsActive(model) ? "is-active" : "")" href="#"
+                               title="@(ContextOf(model) is { } t ? Lang.T($"Выбрать модель, контекст {t:N0} токенов", $"Pick the model, context {t:N0} tokens") : Lang.T("Выбрать модель", "Pick the model"))"
+                               @onclick="() => PickModel(model)" @onclick:preventDefault>@model<span class="model-ctx">@ContextBadge(model)</span></a>
+                        }
+                    </div>
+                    @if (_models.Count > ModelLimit)
+                    {
+                        <button type="button" class="btn btn-outline model-more" @onclick="() => _showAllModels = !_showAllModels">
+                            @(_showAllModels ? Lang.T("▴ Свернуть список", "▴ Collapse the list") : Lang.T($"▾ Показать все ({_models.Count})", $"▾ Show all ({_models.Count})"))
+                        </button>
+                    }
+                    <div class="ctl-help">
+                        @if (Lang.IsEn)
+                        {
+                            <text>The context is shown in green next to the name if the server reported it: the field is not part of the
+                            <code>/models</code> standard, so the window size cannot be detected automatically for every model
+                            and on every server. If the context is not shown, fill in the field manually.</text>
+                        }
+                        else
+                        {
+                            <text>Контекст показан зелёным рядом с названием, если его сообщил сервер: поле не входит в стандарт
+                            <code>/models</code>, поэтому автоматически определить размер окна выходит не у каждой модели
+                            и не на каждом сервере. Если контекст не указан — заполните поле вручную.</text>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="subhead">@Lang.T("Контекст запроса", "Request context")</div>
+
+            <div class="field">
+                <label class="field-label">@Lang.T("Сообщений истории в запросе", "History messages per request")</label>
+                <input class="ctl ctl-narrow" type="number" min="10" max="400" @bind="_form.HistoryLimit" />
+                <div class="ctl-help">
+                    @Lang.T("Старые реплики отбрасываются, чтобы не переполнять контекст модели. Долговременную память хранит",
+                            "Older lines are dropped so as not to overflow the model context. Long-term memory is kept in")
+                    <code>Journal.md</code> — @Lang.T("его хвост подмешивается к сводке, когда история обрезана.", "its tail is added to the summary when the history is trimmed.")
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">@Lang.T("Максимальный контекст модели, токенов", "Maximum model context, tokens")</label>
+                <input class="ctl ctl-narrow" type="number" min="4096" max="4000000" step="1024" @bind="_form.MaxContextTokens" />
+                <div class="ctl-help">@Lang.T("Укажите реальный размер окна выбранной модели. Харнес оценивает токены с безопасным запасом.", "Enter the real window size of the chosen model. The harness estimates tokens with a safety margin.")</div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">@Lang.T("Автосжатие при заполнении, %", "Auto-compress when filled, %")</label>
+                <input class="ctl ctl-narrow" type="number" min="0" max="100" @bind="_form.AutoCompressPercent" />
+                <div class="ctl-help">
+                    @Lang.T("По умолчанию 85%. Старые полные ходы исключаются из запроса, а долговременная память берётся из",
+                            "Default 85%. Old complete turns are excluded from the request, and long-term memory comes from")
+                    <code>Journal.md</code> @Lang.T("и файлов кампании. 0 — выключить.", "and the campaign files. 0 — off.")
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">@Lang.T("Язык", "Language")</div>
+        <div class="card-body">
+            <div class="theme-grid">
+                @foreach (var (id, native, hint) in Lang.All)
+                {
+                    var lid = id;
+                    <button type="button" class="theme-card @(Lang.Current == lid ? "is-active" : "")"
+                            aria-pressed="@(Lang.Current == lid ? "true" : "false")" @onclick="() => PickLanguage(lid)">
+                        <span class="theme-name">@native</span>
+                        <span class="theme-hint">@hint</span>
+                    </button>
+                }
+            </div>
+            <div class="ctl-help">
+                @Lang.T("Язык интерфейса и мастера: на нём написаны подписи, промпт, описания инструментов, предметы и шаблоны файлов кампании, и на нём же мастер ведёт игру. Язык применяется сразу и сохраняется отдельно — нажимать «Сохранить» не нужно. Уже начатая кампания продолжится на новом языке, но записанные ранее имена и заметки останутся как были.",
+                        "The language of the interface and the game master: labels, the prompt, tool descriptions, items and campaign file templates use it, and the master runs the game in it. The language applies immediately and is saved separately — no need to press \"Save\". A campaign already in progress continues in the new language, but names and notes recorded earlier stay as they were.")
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <button type="button" class="card-header card-toggle @(_promptOpen ? "is-open" : "")"
+                aria-expanded="@(_promptOpen ? "true" : "false")" @onclick="TogglePrompt">
+            <span class="toggle-arrow">@(_promptOpen ? "▾" : "▸")</span>
+            <span>@Lang.T("Системный промпт", "System prompt") · @UiThemes.TitleOf(_form.Theme) · @Lang.Current.ToUpperInvariant()</span>
+            <span class="toggle-hint">@(_promptOpen ? Lang.T("свернуть", "collapse") : Lang.T("раскрыть", "expand"))</span>
+        </button>
+        @if (_promptOpen)
+        {
+            <div class="card-body">
+                <div class="field">
+                    <textarea class="ctl ctl-prompt" rows="14" @bind="CurrentPrompt"></textarea>
+                    <div class="ctl-help">
+                        @Lang.T($"Отправляется перед историей при каждом запросе. У каждого сеттинга и языка свой промпт — здесь открыт промпт темы «{UiThemes.TitleOf(_form.Theme)}» на текущем языке; другой виден после смены темы или языка. Базовый промпт описывает роль мастера и этапы: сессия ноль (мир и правила) → выбор сюжетной арки → приключение. Сводка состояния кампании добавляется автоматически.",
+                                $"Sent before the history with every request. Each setting and language has its own prompt — this is the prompt of the \"{UiThemes.TitleOf(_form.Theme)}\" theme in the current language; another one is shown after changing the theme or the language. The base prompt describes the master's role and the stages: session zero (world and rules) → choosing a story arc → adventure. The campaign state summary is added automatically.")
+                    </div>
+                    <div class="prompt-state @(PromptIsDefault ? "is-default" : "is-custom")">
+                        @if (PromptIsDefault)
+                        {
+                            <span>@Lang.T("Базовый промпт: при обновлении приложения подставляется автоматически.", "Base prompt: updated automatically when the application is updated.")</span>
+                        }
+                        else
+                        {
+                            <span>@Lang.T("Ваша правка: базовый промпт больше не подставляется автоматически.", "Your edit: the base prompt is no longer updated automatically.")</span>
+                        }
+                    </div>
+                    <button class="btn btn-outline" style="margin-top:8px" @onclick="RestorePrompt">↺ @Lang.T("Восстановить базовый промпт", "Restore the base prompt")</button>
+                </div>
+            </div>
+        }
+    </section>
+
+    <section class="card">
+        <div class="card-header">@Lang.T("Возможности модели", "Model capabilities")</div>
+        <div class="card-body">
+            <div class="ctl-help">
+                @if (Lang.IsEn)
+                {
+                    <text>The master's tools are always on: campaign files (<code>create_file</code>, <code>edit_file</code>, <code>read_file</code>, <code>list_files</code>),
+                    fair rolls (<code>roll_dice</code>), choice buttons (<code>offer_choices</code>, <code>propose_arcs</code>),
+                    the hero sheet, equipment and the tetris bag, NPCs, adversaries, places, quests, arcs, world events,
+                    a verifiable round order (<code>combat_turn</code>) and death saves (<code>resolve_death_save</code>),
+                    as well as balance calculations: encounter planning (<code>plan_encounter</code>), XP and levels (<code>award_xp</code>, <code>level_up</code>),
+                    loot (<code>roll_loot</code>) and a companion's path from meeting to choosing a role (<code>update_companion_candidate</code>, <code>ask_companion_role</code>, <code>recruit_companion</code>).
+                    The tactical layer computes attacks, skills and healing in code (<code>resolve_attack</code>), checks with degrees of success (<code>skill_check</code>),
+                    effect durations, damage over time and enemy morale, and the world lives in time: rest (<code>rest</code>), threat clocks (<code>update_clock</code>)
+                    and faction attitude (<code>update_faction</code>).
+                    Saving files requires a working directory; access is limited to the campaign folder.</text>
+                }
+                else
+                {
+                    <text>Инструменты мастера включены всегда: файлы кампании (<code>create_file</code>, <code>edit_file</code>, <code>read_file</code>, <code>list_files</code>),
+                    честные броски (<code>roll_dice</code>), кнопки выбора (<code>offer_choices</code>, <code>propose_arcs</code>),
+                    лист героя, экипировку и сумку-тетрис, NPC, противников, места, задания, арки, события мира,
+                    проверяемый порядок раунда (<code>combat_turn</code>) и спасброски от смерти (<code>resolve_death_save</code>),
+                    а также расчёт баланса: план боя (<code>plan_encounter</code>), опыт и уровни (<code>award_xp</code>, <code>level_up</code>),
+                    добычу (<code>roll_loot</code>) и путь спутника от знакомства до выбора роли (<code>update_companion_candidate</code>, <code>ask_companion_role</code>, <code>recruit_companion</code>).
+                    Тактический слой считает кодом атаки, навыки и лечение (<code>resolve_attack</code>), проверки со степенями успеха (<code>skill_check</code>),
+                    длительности эффектов, урон во времени и мораль врагов, а мир живёт во времени: отдых (<code>rest</code>), часы угрозы (<code>update_clock</code>)
+                    и отношение фракций (<code>update_faction</code>).
+                    Для сохранения файлов требуется рабочая директория; доступ ограничен папкой кампании.</text>
+                }
+            </div>
+            <label class="check" style="margin-top:14px">
+                <input type="checkbox" @bind="_form.VisionEnabled" />
+                <span>@Lang.T("Модель понимает изображения (мультимодальная)", "The model understands images (multimodal)")</span>
+            </label>
+            <div class="ctl-help">
+                @Lang.T("Если включено, в чате появляется кнопка прикрепления изображения (JPEG/PNG до ~4 МБ). Изображения отправляются модели в формате image_url (data URI).",
+                        "When on, the chat gets a button to attach an image (JPEG/PNG up to ~4 MB). Images are sent to the model as image_url (data URI).")
+            </div>
+            <label class="check" style="margin-top:14px">
+                <input type="checkbox" @bind="_form.SeparateInstanceSessions" />
+                <span>@Lang.T("Раздельные сессии для некоторых игровых элементов", "Separate sessions for some game elements")</span>
+            </label>
+            <div class="ctl-help">
+                @Lang.T("Данжи, затяжные бои, погони и другие замкнутые сцены могут передаваться суб-мастеру с отдельным контекстом. Для игрока это остаётся одним непрерывным чатом. После сцены основной мастер получает краткую сводку, изменения отношений, добычу, потраченные ресурсы, последствия и незакрытые нити. Суб-мастер имеет доступ к тем же файлам кампании.",
+                        "Dungeons, long fights, chases and other self-contained scenes can be handed to a sub-master with a separate context. For the player it remains one continuous chat. After the scene the main master gets a brief summary, relationship changes, loot, spent resources, consequences and loose threads. The sub-master has access to the same campaign files.")
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">@Lang.T("Рассуждения и температура", "Reasoning and temperature")</div>
+        <div class="card-body">
+            <label class="check">
+                <input type="checkbox" @bind="_form.ReasoningEnabled" />
+                <span>@Lang.T("Управлять рассуждениями модели (reasoning effort)", "Control the model's reasoning (reasoning effort)")</span>
+            </label>
+            <div class="ctl-help">
+                @Lang.T("Выключено — параметры рассуждений не отправляются, модель думает как настроено на сервере. Включено — для каждого вида запроса отправляется выбранный уровень.",
+                        "Off — no reasoning parameters are sent, the model thinks as configured on the server. On — the chosen level is sent for each kind of request.")
+            </div>
+
+            <div class="reason-box @(_form.ReasoningEnabled ? "" : "is-off")">
+                <div class="field">
+                    <label class="field-label">@Lang.T("Формат параметров", "Parameter format")</label>
+                    <div class="radio-row">
+                        <label class="check">
+                            <input type="radio" name="rfmt" checked="@(_form.ReasoningFormat != "deepseek")" disabled="@(!_form.ReasoningEnabled)"
+                                   @onchange="SetOpenAiFormat" />
+                            <span>@Lang.T("OpenAI-совместимый", "OpenAI-compatible") — <code>reasoning_effort</code></span>
+                        </label>
+                        <label class="check">
+                            <input type="radio" name="rfmt" checked="@(_form.ReasoningFormat == "deepseek")" disabled="@(!_form.ReasoningEnabled)"
+                                   @onchange="SetDeepSeekFormat" />
+                            <span>DeepSeek — <code>thinking</code> + <code>reasoning_effort</code></span>
+                        </label>
+                    </div>
+                    <div class="ctl-help">
+                        @if (Lang.IsEn)
+                        {
+                            <text>OpenAI (and vLLM, LM Studio, OpenRouter…): the level is sent as is; <code>none</code> turns reasoning off.
+                            DeepSeek: <code>thinking: enabled/disabled</code>, levels low / high / max (minimal → low, medium and xhigh → high);
+                            in reasoning mode DeepSeek ignores temperature, and the reasoning of turns with tools is returned to the model.</text>
+                        }
+                        else
+                        {
+                            <text>OpenAI (и vLLM, LM Studio, OpenRouter…): уровень уходит как есть; <code>none</code> отключает рассуждения.
+                            DeepSeek: <code>thinking: enabled/disabled</code>, уровни low / high / max (minimal → low, medium и xhigh → high);
+                            в режиме рассуждений DeepSeek игнорирует температуру, а рассуждения ходов с инструментами возвращаются модели.</text>
+                        }
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">@Lang.T("Уровни, которые поддерживает модель", "Levels the model supports")</label>
+                    <div class="level-row">
+                        @foreach (var (key, title) in RequestKinds.Levels)
+                        {
+                            var level = key;
+                            <label class="check level-chip">
+                                <input type="checkbox" checked="@_form.ReasoningLevels.Contains(level)" disabled="@(!_form.ReasoningEnabled)"
+                                       @onchange="e => ToggleLevel(level, e.Value is true)" />
+                                <span>@title</span>
+                            </label>
+                        }
+                    </div>
+                    <div class="ctl-help">@Lang.T("Отмеченные уровни предлагаются в таблице ниже.", "The checked levels are offered in the table below.")</div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">@Lang.T("Профили запросов", "Request profiles")</label>
+                <table class="prof-table">
+                    <thead>
+                        <tr>
+                            <th>@Lang.T("Вид запроса", "Request kind")</th>
+                            <th title="@Lang.T("Пусто — температура модели по умолчанию", "Empty — the model's default temperature")">@Lang.T("Температура", "Temperature")</th>
+                            <th>@Lang.T("Рассуждения", "Reasoning")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var (key, title, hint) in RequestKinds.All)
+                        {
+                            var prof = Profile(key);
+                            <tr>
+                                <td>
+                                    <div class="prof-name">@title</div>
+                                    <div class="prof-hint">@hint</div>
+                                </td>
+                                <td>
+                                    <input class="ctl ctl-temp" type="number" min="0" max="2" step="0.05" placeholder="@Lang.T("модель", "model")"
+                                           @bind="prof.Temperature" />
+                                </td>
+                                <td>
+                                    <select class="ctl ctl-effort" disabled="@(!_form.ReasoningEnabled)"
+                                            @onchange="e => prof.Effort = e.Value?.ToString() ?? string.Empty">
+                                        <option value="" selected="@(prof.Effort.Length == 0)">@Lang.T("по умолчанию", "default")</option>
+                                        @foreach (var level in EffortOptions(prof.Effort))
+                                        {
+                                            <option value="@level" selected="@(prof.Effort == level)">@level</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="ctl-help">
+                    @Lang.T("Вид запроса определяется автоматически: сессия ноль и выбор арки — «Создание мира», есть живые противники — «Бой», итог сделки из окна лавки — «Торговля», режим «Игрок» — «Вне игры». Точным задачам — пониже температура.",
+                            "The request kind is detected automatically: session zero and choosing an arc — \"World building\", living adversaries — \"Combat\", a deal outcome from the shop window — \"Trading\", \"Player\" mode — \"Out of game\". Precise tasks want a lower temperature.")
+                </div>
+                <button class="btn btn-outline" style="margin-top:8px" @onclick="ResetProfiles">↺ @Lang.T("Значения по умолчанию", "Defaults")</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">@Lang.T("Рабочая директория", "Working directory")</div>
+        <div class="card-body">
+            <DirectoryPicker @bind-SelectedPath="_form.WorkDirectory" />
+            <div class="ctl-help">
+                @if (Lang.IsEn)
+                {
+                    <text>Chats are saved to <code>&lt;directory&gt;\chats\*.json</code>, and each campaign gets its own folder
+                    <code>&lt;directory&gt;\campaigns\&lt;hero&gt;-&lt;id&gt;\</code> with Hero.md, World.md, Rules.md, Journal.md, Inventory.md, etc.
+                    If no directory is chosen, chats live only in memory.</text>
+                }
+                else
+                {
+                    <text>Диалоги сохраняются в <code>&lt;директория&gt;\chats\*.json</code>, а каждая кампания получает свою папку
+                    <code>&lt;директория&gt;\campaigns\&lt;герой&gt;-&lt;id&gt;\</code> с Hero.md, World.md, Rules.md, Journal.md, Inventory.md и т.д.
+                    Если директория не выбрана — чаты живут только в памяти.</text>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">@Lang.T("Оформление", "Appearance")</div>
+        <div class="card-body">
+            <div class="theme-grid">
+                @foreach (var (id, title, hint) in UiThemes.All)
+                {
+                    var tid = id;
+                    <button type="button" class="theme-card @(_form.Theme == tid ? "is-active" : "")"
+                            aria-pressed="@(_form.Theme == tid ? "true" : "false")"
+                            title="@Lang.T($"Применить тему «{title}»", $"Apply the \"{title}\" theme")" @onclick="() => PickTheme(tid)">
+                        <!-- Плашки палитры надеты на data-theme чужой темы: токены -->
+                        <!-- берутся из css/themes.css, т.е. показывают настоящие цвета. -->
+                        <span class="theme-swatches" data-theme="@tid">
+                            <i class="sw-bg"></i>
+                            <i class="sw-surface"></i>
+                            <i class="sw-accent"></i>
+                            <i class="sw-text"></i>
+                        </span>
+                        <span class="theme-name">@title</span>
+                        <span class="theme-hint">@hint</span>
+                    </button>
+                }
+            </div>
+            <div class="ctl-help">
+                @Lang.T("Тема — это сеттинг игры: вместе с оформлением меняются промпт мастера, предметы, портреты, враги, торговцы и события. Тема применяется сразу и сохраняется отдельно — нажимать «Сохранить» не нужно. Кампания открывается только в своём сеттинге: при открытии чужой приложение предложит сменить тему.",
+                        "The theme is the game's setting: together with the look, the master's prompt, items, portraits, enemies, merchants and events change. The theme applies immediately and is saved separately — no need to press \"Save\". A campaign opens only in its own setting: when opening another one the application will offer to switch the theme.")
+            </div>
+        </div>
+    </section>
+
+    <div class="actions">
+        <button class="btn btn-primary" @onclick="Save">@Lang.T("Сохранить", "Save")</button>
+        <a class="btn btn-outline" href="/">← @Lang.T("К чатам", "To chats")</a>
+    </div>
+</div>
+
+@code {
+    private HarnessSettings _form = new();
+    private string? _saved;
+    private string? _error;
+
+    /// <summary>Промпт в поле совпадает с базовым из кода — значит его можно обновлять автоматически.</summary>
+    private bool PromptIsDefault => (_form.ActiveGenre, Lang.IsEn) switch
+    {
+        (Genre.Cyberpunk, true) => GmPrompt.IsCurrentCyberDefaultEn(_form.SystemPromptCyberEn),
+        (Genre.Cyberpunk, false) => GmPrompt.IsCurrentCyberDefault(_form.SystemPromptCyber),
+        (Genre.Modern, true) => GmPrompt.IsCurrentModernDefaultEn(_form.SystemPromptModernEn),
+        (Genre.Modern, false) => GmPrompt.IsCurrentModernDefault(_form.SystemPromptModern),
+        (_, true) => GmPrompt.IsCurrentDefaultEn(_form.SystemPromptEn),
+        _ => GmPrompt.IsCurrentDefault(_form.SystemPrompt),
+    };
+
+    /// <summary>Промпт сеттинга выбранной темы на текущем языке — поле редактирует именно его.</summary>
+    private string CurrentPrompt
+    {
+        get => _form.PromptFor(_form.ActiveGenre, Lang.Current);
+        set => _form.SetPrompt(_form.ActiveGenre, Lang.Current, value);
+    }
+
+    private bool _probing;
+    private bool _probeOk;
+    private string? _probeResult;
+    private List<string> _models = new();
+
+    /// <summary>Сколько моделей рисовать до кнопки «показать все» — на некоторых серверах их сотни.</summary>
+    private const int ModelLimit = 40;
+
+    private bool _showAllModels;
+
+    /// <summary>Контекст, озвученный сервером при проверке (id модели → токены); пусто, если не публикуется.</summary>
+    private Dictionary<string, int> _modelContexts = new(StringComparer.OrdinalIgnoreCase);
+
+    private IEnumerable<string> VisibleModels => _showAllModels ? _models : _models.Take(ModelLimit);
+
+    private bool IsActive(string model) =>
+        string.Equals((_form.Model ?? "").Trim(), model, StringComparison.OrdinalIgnoreCase);
+
+    private int? ContextOf(string model) => _modelContexts.TryGetValue(model, out var tokens) ? tokens : null;
+
+    /// <summary>Подпись контекста рядом с названием («· 128k»); пусто, если сервер контекст не сообщил.</summary>
+    private string ContextBadge(string model)
+    {
+        var tokens = ContextOf(model);
+        if (tokens is null)
+        {
+            return "";
+        }
+
+        // Тысячи — как принято называть окна (8k, 32k, 131k); меньше тысячи — точное число.
+        return tokens >= 1000 ? $" · {tokens / 1000}k" : $" · {tokens}";
+    }
+
+    /// <summary>Клик по модели в списке: подставить её в поле и, если известен, её контекст.</summary>
+    private void PickModel(string model)
+    {
+        _form.Model = model;
+        ApplyKnownContext(model);
+    }
+
+    /// <summary>Правка поля «Модель» руками — та же подстановка известного контекста.</summary>
+    private void ModelChanged() => ApplyKnownContext(_form.Model);
+
+    private void ApplyKnownContext(string? model)
+    {
+        if (string.IsNullOrWhiteSpace(model))
+        {
+            return;
+        }
+
+        if (_modelContexts.TryGetValue(model.Trim(), out var tokens) && tokens > 0)
+        {
+            _form.MaxContextTokens = tokens;
+        }
+    }
+
+    /// <summary>Блок системного промпта раскрыт — по умолчанию закрыт, чтобы не засорять страницу.</summary>
+    private bool _promptOpen;
+
+    private void TogglePrompt() => _promptOpen = !_promptOpen;
+
+    protected override void OnInitialized()
+    {
+        _form = SettingsSvc.Clone();
+        foreach (var (key, _, _) in RequestKinds.All)
+        {
+            Profile(key);
+        }
+    }
+
+    /// <summary>Профиль вида запроса в форме (создаётся со значениями по умолчанию, если его нет).</summary>
+    private RequestProfile Profile(string kind)
+    {
+        if (!_form.Profiles.TryGetValue(kind, out var profile))
+        {
+            profile = RequestKinds.DefaultProfiles()[kind];
+            _form.Profiles[kind] = profile;
+        }
+
+        return profile;
+    }
+
+    private void SetOpenAiFormat() => _form.ReasoningFormat = "openai";
+
+    private void SetDeepSeekFormat() => _form.ReasoningFormat = "deepseek";
+
+    private void ToggleLevel(string level, bool on)
+    {
+        _form.ReasoningLevels.Remove(level);
+        if (on)
+        {
+            _form.ReasoningLevels.Add(level);
+        }
+
+        // Порядок — как в справочнике уровней.
+        _form.ReasoningLevels = RequestKinds.Levels.Select(l => l.Key).Where(_form.ReasoningLevels.Contains).ToList();
+    }
+
+    /// <summary>Отмеченные уровни + текущий уровень профиля (даже если его сняли с отметки).</summary>
+    private IEnumerable<string> EffortOptions(string current)
+    {
+        var levels = _form.ReasoningLevels.ToList();
+        if (!string.IsNullOrEmpty(current) && !levels.Contains(current))
+        {
+            levels.Add(current);
+        }
+
+        return levels;
+    }
+
+    private void ResetProfiles()
+    {
+        _form.Profiles = RequestKinds.DefaultProfiles();
+        _saved = Lang.T("Профили сброшены — нажмите «Сохранить», чтобы применить.", "Profiles reset — press \"Save\" to apply.");
+    }
+
+    private void Save()
+    {
+        _saved = null;
+        _error = null;
+
+        _form.ApiBaseUrl = (_form.ApiBaseUrl ?? "").Trim();
+        _form.Model = (_form.Model ?? "").Trim();
+        _form.WorkDirectory = (_form.WorkDirectory ?? "").Trim();
+        _form.HistoryLimit = Math.Clamp(_form.HistoryLimit, 10, 400);
+        _form.MaxContextTokens = Math.Clamp(_form.MaxContextTokens, 4096, 4_000_000);
+        _form.AutoCompressPercent = _form.AutoCompressPercent == 0 ? 0 : Math.Clamp(_form.AutoCompressPercent, 10, 100);
+        foreach (var profile in _form.Profiles.Values)
+        {
+            if (profile.Temperature is { } t)
+            {
+                profile.Temperature = Math.Round(Math.Clamp(t, 0, 2), 2);
+            }
+
+            profile.Effort = (profile.Effort ?? "").Trim().ToLowerInvariant();
+        }
+
+        if (_form.WorkDirectory.Length > 0 && !Directory.Exists(_form.WorkDirectory))
+        {
+            _error = Lang.T("Директория не существует: ", "The directory does not exist: ") + _form.WorkDirectory;
+            return;
+        }
+
+        var writeError = SettingsSvc.Save(_form);
+
+        if (writeError is not null)
+        {
+            _error = Lang.T("Настройки применены, но файл не удалось записать: ", "Settings applied, but the file could not be written: ") + writeError;
+        }
+        else
+        {
+            _saved = Lang.T("Сохранено ✓", "Saved ✓");
+        }
+    }
+
+    private void RestorePrompt()
+    {
+        CurrentPrompt = (_form.ActiveGenre, Lang.IsEn) switch
+        {
+            (Genre.Cyberpunk, true) => GmPrompt.CyberDefaultEn,
+            (Genre.Cyberpunk, false) => GmPrompt.CyberDefault,
+            (Genre.Modern, true) => GmPrompt.ModernDefaultEn,
+            (Genre.Modern, false) => GmPrompt.ModernDefault,
+            (_, true) => GmPrompt.DefaultEn,
+            _ => GmPrompt.Default,
+        };
+        _saved = Lang.T("Базовый промпт подставлен — нажмите «Сохранить», чтобы применить.", "The base prompt is restored — press \"Save\" to apply.");
+    }
+
+    /// <summary>
+    /// Выбор темы оформления: мгновенно меняет data-theme на &lt;html&gt; и сохраняет
+    /// тему в настройки отдельно от прочих правок страницы, чтобы не жать «Сохранить».
+    /// </summary>
+    private async Task PickTheme(string id)
+    {
+        var theme = UiThemes.Normalize(id);
+        _form.Theme = theme;
+
+        await Js.InvokeVoidAsync("window.harness.setTheme", theme);
+
+        // В файл уходят значения, уже лежащие в настройках, а не незакрытые правки формы.
+        var stored = SettingsSvc.Clone();
+        stored.Theme = theme;
+        var genreChanged = stored.ActiveGenre != SettingsSvc.Current.ActiveGenre;
+        var writeError = SettingsSvc.Save(stored);
+        _error = writeError is null ? null : Lang.T("Тема выбрана, но файл настроек не записан: ", "The theme is selected, but the settings file was not written: ") + writeError;
+
+        // Сеттинг сменился — перезагружаем страницу целиком: каталоги, боковая панель и книга героя
+        // должны перечитаться уже в новом сеттинге.
+        if (genreChanged && writeError is null)
+        {
+            Nav.NavigateTo(Nav.Uri, forceLoad: true);
+        }
+    }
+
+    /// <summary>
+    /// Выбор языка: сохраняется сразу, отдельно от прочих правок страницы (как тема), и перезагружает страницу
+    /// целиком — подписи, каталоги и описания инструментов перечитываются уже на новом языке.
+    /// </summary>
+    private void PickLanguage(string id)
+    {
+        var language = Lang.Normalize(id);
+        var stored = SettingsSvc.Clone();
+        var changed = Lang.Current != language || !Lang.IsKnown(stored.Language);
+        stored.Language = language;
+        var writeError = SettingsSvc.Save(stored);
+        _form.Language = language;
+        _error = writeError is null ? null : Lang.T("Язык выбран, но файл настроек не записан: ", "The language is selected, but the settings file was not written: ") + writeError;
+        if (changed && writeError is null)
+        {
+            Nav.NavigateTo(Nav.Uri, forceLoad: true);
+        }
+    }
+
+    private async Task ProbeAsync()
+    {
+        _probing = true;
+        _probeResult = null;
+        _models = new List<string>();
+        _modelContexts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        _showAllModels = false;
+
+        var result = await Llm.ProbeAsync(_form);
+
+        _probeOk = result.Ok;
+        _probeResult = result.Message;
+        _models = result.Models;
+        _modelContexts = result.Contexts;
+        _probing = false;
+
+        // Уже введённая модель есть в списке с известным контекстом — подтянуть и его.
+        ApplyKnownContext(_form.Model);
+    }
+}

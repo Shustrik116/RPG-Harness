@@ -1,0 +1,1960 @@
+@page "/"
+@page "/chat/{Id?}"
+@implements IDisposable
+@using Markdig
+@inject ChatStore Store
+@inject SettingsService SettingsSvc
+@inject RpgStateStore RpgStore
+@inject FileTools FileToolsSvc
+@inject LlmClient Llm
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+@inject ChatCreationFlow CreationFlow
+@inject TradeFlow Trade
+@inject GuildFlow Guild
+@inject BattleFlow Battle
+@inject BattleLog BattleLogSvc
+@inject PartyFlow PartyFlow
+@inject TalkFlow Talk
+
+<PageTitle>@(_session?.Title ?? Lang.T("Чат", "Chat")) — RPG Harness</PageTitle>
+
+<div class="chat-shell">
+    <header class="chat-header">
+        <div class="ch-left">
+            <div class="ch-title">@(_session?.Title ?? "RPG Harness")</div>
+            @if (_session is not null)
+            {
+                <ol class="ch-steps" title="@Lang.T("Этап кампании", "Campaign stage")">
+                    @for (var p = 0; p < PhaseTitles.Length; p++)
+                    {
+                        var state = p < PhaseIndex ? "done" : p == PhaseIndex ? "now" : "";
+                        <li class="@state">@PhaseTitles[p]</li>
+                    }
+                </ol>
+            }
+        </div>
+        <div class="ch-right">
+            @if (_session is not null && RpgStore.GetOrCreate(_session.Id).ActiveInstance is { Active: true } activeInstance)
+            {
+                <span class="ch-instance" title="@Lang.T("Эта замкнутая сцена ведётся в отдельном контексте, но остаётся частью той же кампании", "This self-contained scene runs in a separate context but remains part of the same campaign")">⚔ @activeInstance.Title</span>
+            }
+            @if (_busy && _kind is not null)
+            {
+                var prof = SettingsSvc.Current.ProfileFor(_kind);
+                <span class="ch-kind kind-@_kind" title="@Lang.T("Профиль запроса: температура и глубина рассуждений (Настройки)", "Request profile: temperature and reasoning depth (Settings)")">
+                    @RequestKinds.TitleOf(_kind)<span class="ch-kind-num">@(prof.Temperature is { } t ? $"t {t:0.##}" : "")@(SettingsSvc.Current.ReasoningEnabled && prof.Effort.Length > 0 ? $" · {prof.Effort}" : "")</span>
+                </span>
+            }
+            @if (string.IsNullOrWhiteSpace(SettingsSvc.Current.WorkDirectory))
+            {
+                <span class="ch-warn" title="@Lang.T("Чаты и кампания не сохраняются на диск, пока не выбрана рабочая директория", "Chats and the campaign are not saved to disk until a working directory is chosen")">@Lang.T("не сохраняется", "not saved")</span>
+            }
+            <span class="ch-model" title="@Lang.T("Используемая модель", "The model in use")">@SettingsSvc.Current.Model</span>
+            <button class="ch-book @(_panelOpen ? "is-open" : "")"
+                    title="@Lang.T("Книга героя: персонаж, снаряжение, NPC, задания", "Hero book: character, gear, NPCs, quests")"
+                    @onclick="TogglePanel">
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M3 4.2c2.3-.9 4.6-.9 7 .6 2.4-1.5 4.7-1.5 7-.6v11.6c-2.3-.9-4.6-.9-7 .6-2.4-1.5-4.7-1.5-7-.6Z M10 4.8v11.6"
+                          fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+                </svg>
+                <span>@Genre.PickT("Книга героя", "Досье", "Личное дело", "Hero book", "Dossier", "Personal file")</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="chat-log" @ref="_logRef">
+        <div class="chat-stream">
+            @if (_session is null)
+            {
+                <div class="welcome">
+                    <svg class="welcome-mark" viewBox="0 0 32 32" aria-hidden="true">
+                        <path d="M16 2.5 28 9.5v13L16 29.5 4 22.5v-13Z" fill="none" stroke="currentColor" stroke-width="1" />
+                        <path d="M16 2.5 10 20h12Z M4 9.5 10 20 M28 9.5 22 20 M10 20 16 29.5 22 20 M4 22.5 10 20 M28 22.5 22 20"
+                              fill="none" stroke="currentColor" stroke-width=".7" opacity=".6" />
+                    </svg>
+                    <h1 class="welcome-title">@Genre.PickT("Каждая история начинается с героя", "Ночной город ждёт героя", "Город не спит. Нужен герой", "Every story begins with a hero", "The night city awaits a hero", "The city never sleeps. It needs a hero")</h1>
+                    <p class="welcome-lead">
+                        @Genre.PickT("Нейросеть-мастер расспросит, какой мир вам по душе, сотворит его, предложит сюжетные арки и поведёт игру — честно бросая кости и записывая всё в книгу героя.",
+                            "Нейросеть-мастер расспросит, какой город вам по душе, соберёт его — корпорации, банды, неон и сеть, — предложит сюжетные арки и поведёт игру, честно бросая кости и записывая всё в досье.", "Нейросеть-мастер расспросит, какая история вам по душе — криминал, боевик, расследование, выживание, — соберёт город и людей, предложит сюжетные арки и поведёт игру, честно бросая кости и записывая всё в личное дело.",
+                            "The AI game master will ask what kind of world you like, create it, offer story arcs and run the game — rolling the dice fairly and recording everything in the hero book.",
+                            "The AI game master will ask what kind of city you like, build it — corporations, gangs, neon and the net — offer story arcs and run the game, rolling the dice fairly and recording everything in the dossier.",
+                            "The AI game master will ask what kind of story you like — crime, action, investigation, survival — build the city and its people, offer story arcs and run the game, rolling the dice fairly and recording everything in the personal file.")
+                    </p>
+                    @if (_welcomeHint is not null)
+                    {
+                        <p class="welcome-hint">@_welcomeHint <a href="/settings">@Lang.T("Настройки", "Settings")</a></p>
+                    }
+                    <div class="welcome-actions">
+                        <button class="btn btn-primary" @onclick="NewChatAsync">@Lang.T("Создать героя", "Create a hero")</button>
+                        <a class="btn btn-outline" href="/settings">@Lang.T("Настройки", "Settings")</a>
+                    </div>
+                    <ol class="welcome-steps">
+                        <li><b>@Lang.T("Герой", "Hero")</b><span>@Genre.PickT("имя, раса, класс, характеристики", "имя, происхождение, класс, характеристики", "имя, прошлое, профессия, характеристики", "name, race, class, ability scores", "name, origin, class, ability scores", "name, background, profession, ability scores")</span></li>
+                        <li><b>@Genre.PickT("Мир", "Город", "Обстановка", "World", "City", "Setting")</b><span>@Genre.PickT("жанр, тон и правила — на ваш вкус", "оттенок, тон и правила — на ваш вкус", "город, жанр и правила — на ваш вкус", "genre, tone and rules — to your taste", "flavor, tone and rules — to your taste", "city, genre and rules — to your taste")</span></li>
+                        <li><b>@Lang.T("Арка", "Arc")</b><span>@Lang.T("выбор сюжета из 3–5 завязок", "pick a plot from 3–5 hooks")</span></li>
+                        <li><b>@Lang.T("Игра", "Play")</b><span>@Genre.PickT("кости, бои, торговля, NPC", "кости, перестрелки, взломы, сделки", "кости, перестрелки, погони, сделки", "dice, fights, trading, NPCs", "dice, shootouts, hacks, deals", "dice, shootouts, chases, deals")</span></li>
+                    </ol>
+                </div>
+            }
+            else if (_genreLock is { } lockedGenre)
+            {
+                <div class="welcome genre-lock">
+                    <h1 class="welcome-title">@Lang.T("Кампания из другого мира", "A campaign from another world")</h1>
+                    <p class="welcome-lead">
+                        @Lang.T($"«{_session.Title}» создана в сеттинге «{Genre.Title(lockedGenre)}», а сейчас выбрана тема «{Genre.Title(Genre.Current)}». У каждого сеттинга свой мастер, предметы и враги, поэтому кампания открывается только в своей теме.",
+                                $"\"{_session.Title}\" was created in the \"{Genre.Title(lockedGenre)}\" setting, but the \"{Genre.Title(Genre.Current)}\" theme is selected now. Each setting has its own master, items and enemies, so a campaign opens only in its own theme.")
+                    </p>
+                    <div class="welcome-actions">
+                        <button class="btn btn-primary" @onclick="() => SwitchGenreAsync(lockedGenre)">@Lang.T($"Переключить на «{Genre.Title(lockedGenre)}»", $"Switch to \"{Genre.Title(lockedGenre)}\"")</button>
+                        <a class="btn btn-outline" href="/">@Lang.T($"Остаться в «{Genre.Title(Genre.Current)}»", $"Stay in \"{Genre.Title(Genre.Current)}\"")</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                var visible = _session.Messages.Where(m => !m.Hidden).ToList();
+                var lastUserIdx = visible.FindLastIndex(m => m.Role == "user");
+                // Вопрос вне роли не должен поглощать последний игровой выбор героя.
+                var lastHeroActionIdx = visible.FindLastIndex(m => m.Role == "user" && !m.Ooc);
+
+                @if (visible.Count == 0 && !_busy)
+                {
+                    <div class="welcome welcome-table">
+                        <h1 class="welcome-title">@Lang.T("Мастер ждёт за столом", "The master is waiting at the table")</h1>
+                        <p class="welcome-lead">
+                            @Genre.PickT("Он поприветствует героя и расспросит, какой мир, жанр и правила вам по душе.", "Он поприветствует героя и расспросит, какой город, оттенок и правила вам по душе.", "Он поприветствует героя и расспросит, где и когда происходит история, какой у неё жанр и правила.",
+                                "They will greet the hero and ask what world, genre and rules you like.", "They will greet the hero and ask what city, flavor and rules you like.", "They will greet the hero and ask where and when the story takes place, its genre and rules.")
+                            @Lang.T("Можно и сразу написать свою идею кампании в поле ниже.", "You can also type your own campaign idea in the field below right away.")
+                        </p>
+                        <div class="welcome-actions">
+                            <button class="btn btn-primary" @onclick="StartCampaignAsync">@Lang.T("Начать кампанию", "Start the campaign")</button>
+                        </div>
+                    </div>
+                }
+
+                @for (var i = 0; i < visible.Count; i++)
+                {
+                    var message = visible[i];
+                    var isActive = i > (message.Ooc ? lastUserIdx : lastHeroActionIdx) && !_busy;
+                    var continues = i > 0 && visible[i - 1].Role == message.Role && visible[i - 1].Ooc == message.Ooc;
+                    var calls = message.ToolCalls ?? new List<ToolCall>();
+                    var bookCalls = calls.Where(c => c.Name is not ("roll_dice" or "offer_choices" or "propose_arcs" or "open_trade" or "travel" or "buy_rumors" or "ask_companion_role")).ToList();
+                    var streaming = _busy && i == visible.Count - 1 && message.Role == "assistant";
+
+                    @if (message.Role == "user" && i > 0 && !continues)
+                    {
+                        <div class="turn-rule" aria-hidden="true"><i></i></div>
+                    }
+
+                    @if (message.Role == "user")
+                    {
+                        var view = UserView(message.Content);
+                        <div class="msg hero @(continues ? "cont" : "") @(message.Ooc ? "ooc" : "")">
+                            @if (!continues)
+                            {
+                                <div class="who">@(message.Ooc ? Lang.T("Игрок · вне игры", "Player · out of game") : HeroName)</div>
+                            }
+                            @switch (view.Kind)
+                            {
+                                case "roll":
+                                    <div class="hero-roll">
+                                        <span class="hero-roll-die">@view.Label</span>
+                                        <span class="hero-roll-val">@view.Value</span>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(view.Text))
+                                    {
+                                        <div class="hero-line">@((MarkupString)Plain(view.Text))</div>
+                                    }
+                                    break;
+                                case "receipt":
+                                    <div class="hero-receipt">
+                                        <span class="hero-receipt-tag">@Lang.T("Сделка", "Deal")</span>
+                                        <span>@view.Text</span>
+                                    </div>
+                                    break;
+                                default:
+                                    <div class="hero-line">@((MarkupString)Plain(message.Content))</div>
+                                    break;
+                            }
+                            @if (message.HasImages)
+                            {
+                                <div class="msg-images">
+                                    @foreach (var img in message.Images!)
+                                    {
+                                        <img class="msg-image" src="@img" alt="@Lang.T("прикреплённое изображение", "attached image")" />
+                                    }
+                                </div>
+                            }
+                        </div>
+                        continue;
+                    }
+
+                    <div class="msg gm @(continues ? "cont" : "") @(message.Ooc ? "ooc" : "") @(streaming ? "is-streaming" : "")">
+                        @if (message.Ooc && !continues)
+                        {
+                            <div class="who">@Lang.T("Мастер · вне игры", "Master · out of game")</div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(message.Content))
+                        {
+                            <div class="prose">@((MarkupString)RenderMd(message.Content))</div>
+                        }
+
+                        @foreach (var trip in calls.Where(c => c.Name == "travel" && c.Ok == true))
+                        {
+                            var meta = TravelEncounters.ParseMeta(trip.Result);
+                            @if (meta is not null && meta.Spins.Count > 0)
+                            {
+                                var animate = i > lastUserIdx;
+                                <div class="wheel @(animate ? "is-fresh" : "")">
+                                    <div class="wheel-head">
+                                        <span class="wheel-kicker">@Genre.PickT("Колесо дороги", "Колесо улиц", "Колесо дороги", "Road wheel", "Street wheel", "Road wheel")</span>
+                                        <span class="wheel-route">@meta.From <i>→</i> @meta.To</span>
+                                        <span class="wheel-dist">@TravelEncounters.DistanceTitle(meta.Distance)</span>
+                                    </div>
+                                    @for (var s = 0; s < meta.Spins.Count; s++)
+                                    {
+                                        var spin = meta.Spins[s];
+                                        <div class="wheel-row @(spin.Event ? $"is-event tier-{spin.Tier}" : "is-quiet")" style="--delay:@(s * 0.7)s; --n:@spin.Reel.Count">
+                                            <div class="wheel-window" aria-hidden="true">
+                                                <div class="wheel-reel">
+                                                    @foreach (var face in spin.Reel)
+                                                    {
+                                                        <span>@face</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="wheel-result">
+                                                <span class="wheel-d100" title="@Lang.T($"Бросок d100: 1–{TravelEncounters.QuietChance} — спокойно, выше — событие", $"d100 roll: 1–{TravelEncounters.QuietChance} — calm, higher — an event")">d100 <b>@spin.D100</b></span>
+                                                <span class="wheel-tier">@(spin.Event ? TravelEncounters.TierTitle(spin.Tier ?? "") : Lang.T("спокойно", "calm"))</span>
+                                                @if (spin.Event && spin.Loot != "none")
+                                                {
+                                                    <span class="wheel-loot rar-@spin.Loot">@Lang.T("добыча:", "loot:") @TravelEncounters.LootTitle(spin.Loot).ToLowerInvariant()</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+
+                        @foreach (var rumorCall in calls.Where(c => c.Name == "buy_rumors" && c.Ok == true))
+                        {
+                            var rumorMeta = RumorWheel.ParseMeta(rumorCall.Result);
+                            @if (rumorMeta is not null && rumorMeta.Spins.Count > 0)
+                            {
+                                var animate = i > lastUserIdx;
+                                <div class="wheel rumor-wheel @(animate ? "is-fresh" : "")">
+                                    <div class="wheel-head"><span class="wheel-kicker">@Genre.PickT("Колесо слухов", "Колесо информации", "Колесо слухов", "Rumor wheel", "Intel wheel", "Rumor wheel")</span><span class="wheel-route">@Lang.T("Источник:", "Source:") @rumorMeta.Source</span><span class="wheel-dist">65 / 27 / 8</span></div>
+                                    @for (var s = 0; s < rumorMeta.Spins.Count; s++)
+                                    {
+                                        var spin = rumorMeta.Spins[s];
+                                        <div class="wheel-row is-event rumor-tier-@spin.Tier" style="--delay:@(s * 0.7)s; --n:@spin.Reel.Count">
+                                            <div class="wheel-window" aria-hidden="true"><div class="wheel-reel">@foreach (var face in spin.Reel) { <span>@face</span> }</div></div>
+                                            <div class="wheel-result"><span class="wheel-d100" title="@Lang.T("1–65: малая зацепка; 66–92: средний квест; 93–100: длинный квест", "1–65: a small lead; 66–92: a medium quest; 93–100: a long quest")">d100 <b>@spin.D100</b></span><span class="wheel-tier">@RumorWheel.Title(spin.Tier)</span></div>
+                                        </div>
+                                    }
+                                    <div class="rumor-linked">@Lang.T("Один дополнительный слух гарантированно связан с текущей аркой или заданием.", "One extra rumor is guaranteed to be linked to the current arc or quest.")</div>
+                                </div>
+                            }
+                        }
+
+                        @foreach (var roll in calls.Where(c => c.Name == "roll_dice"))
+                        {
+                            var view = roll.Ok == false ? null : ParseRoll(roll.Result);
+                            <div class="dice-roll @(roll.Ok == false ? "fail" : "")" title="@Lang.T("Бросок мастера", "The master's roll")">
+                                <span class="dice-roll-tag">@Lang.T("бросок", "roll")</span>
+                                @if (view is null)
+                                {
+                                    <span class="dice-roll-plain">@CleanRoll(roll.Result)</span>
+                                }
+                                else
+                                {
+                                    <span class="dice-roll-body">
+                                        @if (view.Reason.Length > 0)
+                                        {
+                                            <span class="dice-roll-why">@view.Reason</span>
+                                        }
+                                        <span class="dice-roll-math">
+                                            @foreach (var part in view.Parts)
+                                            {
+                                                @if (part.Die is { } die)
+                                                {
+                                                    <span class="dr-term">
+                                                        @if (part.Sign.Length > 0)
+                                                        {
+                                                            <span class="dr-op">@part.Sign</span>
+                                                        }
+                                                        <span class="dr-die">@die</span><span class="dr-face">[@Lang.T("Результат", "Result") <b>@part.Value</b>@(part.Note.Length > 0 ? $" ({part.Note})" : "")]</span>
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="dr-term dr-bonus"><span class="dr-op">@(part.Sign.Length > 0 ? part.Sign : "+")</span> @(part.Sign == "−" ? Lang.T("Штраф", "Penalty") : Lang.T("Бонус", "Bonus")) <b>@part.Value</b></span>
+                                                }
+                                            }
+                                            <span class="dr-term dr-total"><span class="dr-op">=</span> <b>@view.Total</b></span>
+                                        </span>
+                                    </span>
+                                }
+                            </div>
+                        }
+
+                        @if (bookCalls.Count > 0)
+                        {
+                            var failed = bookCalls.Count(c => c.Ok == false);
+                            var running = bookCalls.Any(c => c.Ok is null);
+                            <details class="tc-group @(failed > 0 ? "has-fail" : "") @(running ? "is-running" : "")">
+                                <summary>
+                                    <span class="tc-sum-title">@Lang.T("Записи мастера", "The master's records")</span>
+                                    <span class="tc-sum-count">@bookCalls.Count</span>
+                                    @if (failed > 0)
+                                    {
+                                        <span class="tc-sum-fail">@Lang.T("ошибок:", "errors:") @failed</span>
+                                    }
+                                    <span class="tc-sum-list">@string.Join(" · ", bookCalls.Take(4).Select(c => ToolLabel(c).Text))@(bookCalls.Count > 4 ? " …" : "")</span>
+                                </summary>
+                                <ul class="tc-list">
+                                    @foreach (var call in bookCalls)
+                                    {
+                                        var (ico, text) = ToolLabel(call);
+                                        <li class="@(call.Ok switch { true => "ok", false => "fail", _ => "run" })" title="@call.Name @call.Arguments">
+                                            <span class="tc-ico">@ico</span>
+                                            <span class="tc-text">@text</span>
+                                            <span class="tc-status">@(call.Ok switch { true => "✓", false => "✗", _ => "…" })</span>
+                                            @if (call.Ok == false && !string.IsNullOrWhiteSpace(call.Result))
+                                            {
+                                                <div class="tc-result">@TruncateResult(call.Result!)</div>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </details>
+                        }
+
+                        @foreach (var shopCall in calls.Where(c => c.Name == "open_trade" && c.Ok == true))
+                        {
+                            var ta = Args(shopCall);
+                            var npcName = S(ta, "npc") ?? "";
+                            var greeting = S(ta, "greeting")?.Trim().Trim('«', '»', '"', '“', '”', '„').Trim();
+                            <div class="trade-card">
+                                <div class="trade-card-body">
+                                    <div class="trade-card-kicker">@Genre.PickT("Лавка", "Лавка", "Магазин", "Shop", "Shop", "Store")</div>
+                                    <div class="trade-card-title">@npcName</div>
+                                    @if (!string.IsNullOrWhiteSpace(greeting))
+                                    {
+                                        <div class="trade-card-greet">«@greeting»</div>
+                                    }
+                                </div>
+                                <button class="btn-accent-ghost" @onclick="() => OpenTrade(npcName)">@Lang.T("Открыть лавку", "Open the shop")</button>
+                            </div>
+                        }
+
+                        @foreach (var offer in calls.Where(c => c.Name == "offer_choices" && c.Ok == true))
+                        {
+                            var (question, options) = ParseChoices(offer);
+                            @if (isActive && options.Count > 0)
+                            {
+                                <div class="choices is-active">
+                                    @if (!string.IsNullOrWhiteSpace(question))
+                                    {
+                                        <div class="choices-q">@question</div>
+                                    }
+                                    <ol class="choice-list">
+                                        @for (var n = 0; n < options.Count; n++)
+                                        {
+                                            var picked = options[n];
+                                            <li style="--i:@n">
+                                                <button class="choice" @onclick="() => SendTextAsync(picked, clearDraft: false, ooc: false)">
+                                                    <span class="choice-n">@(n + 1)</span>
+                                                    <span class="choice-text">@picked</span>
+                                                </button>
+                                            </li>
+                                        }
+                                    </ol>
+                                    <div class="choices-hint">@Lang.T($"клавиши 1–{options.Count} · или опишите своё действие ниже", $"keys 1–{options.Count} · or describe your own action below")</div>
+                                </div>
+                            }
+                        }
+
+                        @foreach (var roleCall in calls.Where(c => c.Name == "ask_companion_role" && c.Ok == true))
+                        {
+                            var ra = Args(roleCall);
+                            var recruit = (S(ra, "name") ?? Lang.T("спутник", "the companion")).Trim();
+                            var concept = S(ra, "concept");
+                            <div class="arcs roles @(isActive ? "" : "arcs-past")">
+                                <div class="arcs-title">@Lang.T($"Какую роль займёт {recruit}?", $"What role will {recruit} take?")</div>
+                                @if (!string.IsNullOrWhiteSpace(concept))
+                                {
+                                    <div class="roles-concept">@concept</div>
+                                }
+                                <div class="arcs-grid roles-grid">
+                                    @for (var n = 0; n < Progression.Archetypes.Length; n++)
+                                    {
+                                        var role = Progression.Archetypes[n];
+                                        <div class="arc-card role-card" style="--i:@n">
+                                            <div class="role-emoji" aria-hidden="true">@role.Emoji</div>
+                                            <div class="arc-name">@role.Ask</div>
+                                            <div class="arc-tone">@role.Title</div>
+                                            <div class="arc-premise">@Lang.T("Например:", "For example:") @string.Join(", ", role.ClassIdeas.Take(3)).</div>
+                                            @if (isActive)
+                                            {
+                                                <button class="arc-pick" @onclick='() => SendTextAsync(Lang.T($"Роль для «{recruit}»: {role.Emoji} {role.Ask} [{role.Key}]", $"Role for \"{recruit}\": {role.Emoji} {role.Ask} [{role.Key}]"), clearDraft: false, ooc: false)'>@Lang.T("Выбрать", "Choose")</button>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        @foreach (var proposal in calls.Where(c => c.Name == "propose_arcs" && c.Ok == true))
+                        {
+                            var arcs = ParseArcs(proposal);
+                            @if (arcs.Count > 0)
+                            {
+                                <div class="arcs @(isActive ? "" : "arcs-past")">
+                                    <div class="arcs-title">@Lang.T("Сюжетные арки", "Story arcs")</div>
+                                    <div class="arcs-grid">
+                                        @for (var n = 0; n < arcs.Count; n++)
+                                        {
+                                            var chosen = arcs[n];
+                                            <div class="arc-card" style="--i:@n">
+                                                <div class="arc-num">@Roman(n + 1)</div>
+                                                <div class="arc-name">@chosen.Name</div>
+                                                <div class="arc-premise">@chosen.Premise</div>
+                                                @if (isActive)
+                                                {
+                                                    <button class="arc-pick" @onclick="() => SendTextAsync(chosen.PickMessage, clearDraft: false, ooc: false)">@Lang.T("Выбрать эту историю", "Choose this story")</button>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (isActive)
+                                    {
+                                        <div class="arc-own">
+                                            <input class="arc-own-in" placeholder="@Lang.T("Свой вариант: о чём должна быть история…", "Your own idea: what should the story be about…")"
+                                                   @bind="_ownArc" @bind:event="oninput" @onkeydown="OwnArcKeyDown" />
+                                            <button class="arc-pick" disabled="@string.IsNullOrWhiteSpace(_ownArc)" @onclick="SendOwnArcAsync">@Lang.T("Предложить", "Propose")</button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+
+                @if (_busy)
+                {
+                    var tail = visible.Count > 0 ? visible[^1] : null;
+                    var waiting = tail is null || tail.Role != "assistant" || (string.IsNullOrEmpty(tail.Content) && tail.ToolCalls is not { Count: > 0 });
+                    var progress = ProgressText;
+                    @if (waiting || progress is not null)
+                    {
+                        <div class="gm-thinking" role="status">
+                            <span class="gm-ink" aria-hidden="true"></span>
+                            <span class="gm-thinking-text">@(progress ?? Lang.T("Мастер обдумывает ход", "The master is thinking"))</span>
+                        </div>
+                    }
+                }
+                else if (CanRewind)
+                {
+                    <div class="turn-tools">
+                        <button class="turn-tool" title="@Lang.T("Откатить книгу героя к началу хода и заново сгенерировать ответ мастера", "Roll the hero book back to the start of the turn and regenerate the master's reply")" @onclick="RegenerateAsync">
+                            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                            @Lang.T("Переиграть ход", "Replay the turn")
+                        </button>
+                        @if (CanEditLast)
+                        {
+                            <button class="turn-tool" title="@Lang.T("Вернуть последнее сообщение в поле ввода и откатить ход", "Put the last message back into the input field and roll back the turn")" @onclick="EditLastAsync">
+                                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2.5l3 3L6 13H3v-3Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" /></svg>
+                                @Lang.T("Изменить ход", "Edit the turn")
+                            </button>
+                        }
+                    </div>
+                }
+            }
+
+            @if (!string.IsNullOrEmpty(_note))
+            {
+                <div class="chat-note">@_note</div>
+            }
+        </div>
+    </div>
+
+    @* ===== Плавающая кнопка боя: видна, пока есть живые противники ===== *@
+    @if (BattleActive && _genreLock is null)
+    {
+        <button class="battle-open-tab @(_panelOpen ? "beside-panel" : "")" title="@Lang.T("Открыть окно битвы: цели, ходы, инвентарь и история боя", "Open the battle window: targets, turns, inventory and the battle log")" @onclick="OpenBattle">
+            ⚔ @Lang.T("Открыть окно битвы", "Open the battle window")
+        </button>
+    }
+
+    <div class="composer" hidden="@(_genreLock is not null)">
+        <div class="composer-inner">
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <div class="alert alert-danger composer-alert">@_error</div>
+            }
+            @if (_pendingImages.Count > 0)
+            {
+                <div class="img-preview-row">
+                    @foreach (var img in _pendingImages.ToList())
+                    {
+                        var uri = img;
+                        <div class="img-preview">
+                            <img src="@uri" alt="" />
+                            <button class="img-remove" title="@Lang.T("Убрать изображение", "Remove the image")" @onclick="() => RemoveImage(uri)">✕</button>
+                        </div>
+                    }
+                </div>
+            }
+            @if (_pendingDice.Count > 0)
+            {
+                <div class="dice-chips" role="group" aria-label="@Lang.T("Готовые броски", "Ready rolls")">
+                    @for (var i = 0; i < _pendingDice.Count; i++)
+                    {
+                        var idx = i;
+                        var roll = _pendingDice[i];
+                        <span class="dice-chip" title="@Lang.T("Бросок уйдёт вместе с сообщением — крестик убирает его из черновика", "The roll is sent with the message — the cross removes it from the draft")">
+                            <span class="dice-chip-ico" aria-hidden="true">@(roll.Kind == DiceKind.Coin ? "🪙" : "🎲")</span>
+                            <b>@RollTitle(roll.Kind)</b>
+                            <span class="dice-chip-val">@roll.Face</span>
+                            <button type="button" class="dice-chip-x" title="@Lang.T("Убрать бросок", "Remove the roll")" @onclick="() => RemoveRoll(idx)">✕</button>
+                        </span>
+                    }
+                </div>
+            }
+            <div class="composer-box @(_asPlayer ? "is-ooc" : "")">
+                <textarea class="composer-input" rows="2" @ref="_inputRef" @bind="_draft" @bind:event="oninput"
+                          placeholder="@(_asPlayer ? Lang.T("Вопрос мастеру вне игры: правила, спорный момент, уточнение…", "A question to the master out of game: rules, a dispute, a clarification…") : Lang.T("Что делает ваш герой?", "What does your hero do?"))"></textarea>
+                <div class="composer-bar">
+                    <div class="dice-bar" role="toolbar" aria-label="@Lang.T("Броски кубиков", "Dice rolls")">
+                        <button class="dice-btn" title="@Lang.T("Бросить монетку", "Flip a coin")" disabled="@IsRollLocked" @onclick="() => RollAsync(DiceKind.Coin)">
+                            <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.6" fill="none" stroke="currentColor" stroke-width="1.3" /><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width=".9" opacity=".6" /></svg>
+                        </button>
+                        @foreach (var kind in new[] { DiceKind.D4, DiceKind.D6, DiceKind.D8, DiceKind.D10, DiceKind.D12, DiceKind.D20, DiceKind.D100 })
+                        {
+                            var k = kind;
+                            <button class="dice-btn @(k == DiceKind.D20 ? "dice-main" : "")" title="@(Lang.T("Бросить ", "Roll ") + DiceName(k))" disabled="@IsRollLocked" @onclick="() => RollAsync(k)">@DiceName(k)</button>
+                        }
+                        @if (VisionAvailable)
+                        {
+                            <input type="file" accept="image/png,image/jpeg,image/webp" style="display:none" @ref="_fileInputRef" @onchange="OnImagesChosen" multiple />
+                            <button class="dice-btn" title="@Lang.T("Прикрепить изображение", "Attach an image")" disabled="@IsRollLocked" @onclick="() => PickImages()">
+                                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 4.5 5.8 9.2a1.4 1.4 0 0 0 2 2l5-5a2.8 2.8 0 0 0-4-4l-5.2 5.2a4.2 4.2 0 0 0 6 6L13 9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" /></svg>
+                            </button>
+                        }
+                    </div>
+                    <div class="composer-right">
+                        <label class="mode-wrap" title="@Lang.T("Персонаж — действия и слова героя в игре. Игрок — разговор с мастером вне игры: обсудить, оспорить, уточнить.", "Character — the hero's actions and words in the game. Player — a talk with the master out of game: discuss, dispute, clarify.")">
+                            <select class="mode-select" @bind="_mode">
+                                <option value="hero">@Lang.T("Персонаж", "Character")</option>
+                                <option value="player">@Lang.T("Игрок", "Player")</option>
+                            </select>
+                        </label>
+                        @if (_busy)
+                        {
+                            <button class="btn-stop" disabled="@_executingTool" @onclick="Stop"
+                                    title="@(_executingTool ? Lang.T("Текущее действие мастера атомарно и будет завершено", "The master's current action is atomic and will finish") : Lang.T("Остановить генерацию", "Stop generation"))">
+                                <span class="btn-stop-sq" aria-hidden="true"></span> @(_executingTool ? Lang.T("Действие…", "Acting…") : Lang.T("Стоп", "Stop"))
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn-send" disabled="@(string.IsNullOrWhiteSpace(_draft) && _pendingDice.Count == 0)" @onclick="SendAsync" title="@Lang.T("Enter — отправить, Shift+Enter — новая строка", "Enter — send, Shift+Enter — new line")">
+                                @Lang.T("Отправить", "Send") <kbd>↵</kbd>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* ===== Оверлей броска ===== *@
+    @if (_rolling)
+    {
+        <div class="dice-overlay" role="status">
+            <div class="dice-card">
+                <div class="dice-caption">@DiceLabel</div>
+
+                @if (_diceKind == DiceKind.Coin)
+                {
+                    <div class="dice-anim coin @(_diceSettled ? "settled" : "tumbling")">
+                        <div class="coin-face">@_diceDisplay</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="dice-anim poly @DiceShapeClass @(_diceSettled ? "settled" : "tumbling")">
+                        <span class="poly-num">@_diceDisplay</span>
+                    </div>
+                }
+
+                <div class="dice-result @(_diceSettled ? "is-settled" : "")">@( _diceSettled ? Lang.T("Выпало: ", "Rolled: ") + _diceFace : Lang.T("Бросок…", "Rolling…") )</div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>Лимит раундов «генерация → инструменты» за один ход (создание мира требует многих вызовов).</summary>
+    private const int MaxToolRounds = 24;
+
+    private static readonly Markdig.MarkdownPipeline MdPipeline = new Markdig.MarkdownPipelineBuilder()
+        .UseEmphasisExtras()
+        .UsePipeTables()
+        .UseSoftlineBreakAsHardlineBreak()
+        .DisableHtml()
+        .Build();
+
+    [Parameter] public string? Id { get; set; }
+
+    private ChatSession? _session;
+    private string _draft = "";
+    private string? _error;
+    private string? _note;
+    private bool _busy;
+    private bool _executingTool;
+    private CancellationTokenSource? _cts;
+    private string _ownArc = "";
+    private FileTools.CampaignPhase _phase;
+    private StreamProgress? _progress;
+
+    /// <summary>
+    /// Плашка «Открыть окно битвы»: видна, пока бой идёт, пока победа не оформлена кнопкой
+    /// «Забрать выбранное и завершить бой» (игрок должен успеть вернуться в окно и забрать добычу)
+    /// и пока в окне добычи остались предметы.
+    /// </summary>
+    private bool BattleActive
+    {
+        get
+        {
+            if (_session is null) return false;
+            var st = RpgStore.GetOrCreate(_session.Id);
+            var alive = st.Adversaries.Any(a => !string.IsNullOrWhiteSpace(a.Name) && (a.HpMax <= 0 || a.InFight));
+            var victory = st.Adversaries.Count > 0 && st.Adversaries.All(a => !a.InFight);
+            return alive || victory || st.BattleLoot.Count > 0;
+        }
+    }
+
+    private void OpenBattle()
+    {
+        if (_session is not null)
+        {
+            Battle.Open(_session.Id);
+        }
+    }
+
+    /// <summary>Режим поля ввода: hero — персонаж в игре, player — игрок вне игры.</summary>
+    private string _mode = "hero";
+    private bool _asPlayer => _mode == "player";
+
+    /// <summary>Вид текущего запроса (RequestKinds) — определяет температуру и рассуждения.</summary>
+    private string? _kind;
+    private bool _tradeSubscribed;
+
+    private ElementReference _logRef;
+    private ElementReference _inputRef;
+    private ElementReference _fileInputRef;
+    private DotNetObjectReference<Chat>? _self;
+    private bool _watched;
+
+    private readonly List<string> _pendingImages = new();
+
+    private bool _panelOpen => RpgStore.PanelOpen;
+
+    /// <summary>Модель мультимодальная — доступно прикрепление изображений.</summary>
+    private bool VisionAvailable => SettingsSvc.Current.VisionEnabled;
+
+    private void TogglePanel() => RpgStore.TogglePanel();
+
+    private string HeroName
+    {
+        get
+        {
+            var name = RpgStore.GetOrCreate(_session?.Id).Character.Name;
+            return string.IsNullOrWhiteSpace(name) ? Lang.T("Вы", "You") : name.Trim();
+        }
+    }
+
+    private static string[] PhaseTitles => Lang.IsEn
+        ? new[] { "Session zero", "Choosing an arc", "Adventure" }
+        : new[] { "Сессия ноль", "Выбор арки", "Приключение" };
+
+    private int PhaseIndex => _phase switch
+    {
+        FileTools.CampaignPhase.SessionZero => 0,
+        FileTools.CampaignPhase.ArcChoice => 1,
+        _ => 2,
+    };
+
+    /// <summary>Как показать реплику игрока: обычный текст, бросок кубика или итог сделки.</summary>
+    private readonly record struct UserMsgView(string Kind, string? Label = null, string? Value = null, string? Text = null);
+
+    private static UserMsgView UserView(string content)
+    {
+        var text = content ?? "";
+        if (text.StartsWith("🎲 ", StringComparison.Ordinal))
+        {
+            var nl = text.IndexOf('\n');
+            var head = nl < 0 ? text[3..] : text[3..nl];
+            var colon = head.LastIndexOf(':');
+            if (colon > 0)
+            {
+                return new UserMsgView("roll", head[..colon].Trim(), head[(colon + 1)..].Trim(),
+                    nl < 0 ? null : text[(nl + 1)..]);
+            }
+        }
+
+        if (IsTradeReceipt(text))
+        {
+            var nl = text.IndexOf('\n');
+            var first = nl < 0 ? text : text[..nl];
+            var prefix = first.StartsWith("🛒 Сделка", StringComparison.Ordinal) ? "🛒 Сделка".Length : "🛒 Deal".Length;
+            var head = first[prefix..].Trim(' ', ':', '—', '-', '.');
+            return new UserMsgView("receipt", Text: head.Length > 0 ? head : Lang.T("итог торговли", "trade outcome"));
+        }
+
+        return new UserMsgView("text");
+    }
+
+    /// <summary>Итог сделки из окна лавки — на любом языке интерфейса (сообщение пишет TradeWindow).</summary>
+    private static bool IsTradeReceipt(string? text) =>
+        (text ?? "").StartsWith("🛒 Сделка", StringComparison.Ordinal) || (text ?? "").StartsWith("🛒 Deal", StringComparison.Ordinal);
+
+    /// <summary>Результат roll_dice без служебного эмодзи в начале.</summary>
+    private static string CleanRoll(string? result) =>
+        (result ?? "").Replace("🎲", "").Replace("️", "").Trim();
+
+    /// <summary>Часть формулы броска: кубик («1d20», выпало «6») или плоская поправка (Die = null).</summary>
+    private sealed record RollPart(string Sign, string? Die, string Value, string Note);
+
+    private sealed record RollView(string Reason, List<RollPart> Parts, string Total);
+
+    /// <summary>«d20+0 (причина): 1d20[6] + 0 = 6» — причина может содержать двоеточия и скобки, формула — нет.</summary>
+    private static readonly System.Text.RegularExpressions.Regex RollLineRe = new(
+        @"^(?<expr>[^(:]*?)(?:\s*\((?<why>.*)\))?:\s*(?<parts>.+?)\s*=\s*(?<total>-?\d+)\s*$",
+        System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Singleline);
+
+    private static readonly System.Text.RegularExpressions.Regex RollTermRe = new(
+        @"(?<sign>[+−-])?\s*(?:(?<die>\d*d(?:\d+|%))\[(?<inner>[^\]]*)\]|(?<flat>\d+))",
+        System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+    /// <summary>
+    /// Разбор результата roll_dice для плашки в чате: «1d20[Результат 6] + Бонус 0 = 6».
+    /// Не разобралось — null, тогда плашка показывает строку как есть.
+    /// </summary>
+    private static RollView? ParseRoll(string? result)
+    {
+        var m = RollLineRe.Match(CleanRoll(result));
+        if (!m.Success)
+        {
+            return null;
+        }
+
+        var parts = new List<RollPart>();
+        foreach (System.Text.RegularExpressions.Match t in RollTermRe.Matches(m.Groups["parts"].Value))
+        {
+            var sign = t.Groups["sign"].Value is "-" or "−" ? "−" : t.Groups["sign"].Value == "+" ? "+" : "";
+            if (t.Groups["flat"].Success)
+            {
+                parts.Add(new RollPart(sign, null, t.Groups["flat"].Value, ""));
+                continue;
+            }
+
+            var inner = t.Groups["inner"].Value.Trim();
+            string value, note = "";
+            var keep = inner.IndexOf('⇒');
+            var slash = inner.IndexOf('/');
+            var arrow = inner.IndexOf('→');
+            if (keep >= 0)
+            {
+                // 4d6kh3[6, 3, 5, 2 ⇒ 6+5+3] — оставлены лучшие кубики.
+                value = inner[(keep + 1)..].Trim().Replace("+", " + ");
+                note = Lang.T("брошено ", "rolled ") + inner[..keep].Trim();
+            }
+            else if (slash >= 0 && arrow > slash)
+            {
+                // 1d20[7/16→16] — преимущество или помеха.
+                value = inner[(arrow + 1)..].Trim();
+                note = Lang.T($"из {inner[..slash].Trim()} и {inner[(slash + 1)..arrow].Trim()}", $"of {inner[..slash].Trim()} and {inner[(slash + 1)..arrow].Trim()}");
+            }
+            else
+            {
+                value = string.Join(" + ", inner.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+            }
+
+            parts.Add(new RollPart(sign, t.Groups["die"].Value, value, note));
+        }
+
+        return parts.Count == 0 ? null : new RollView(m.Groups["why"].Value.Trim(), parts, m.Groups["total"].Value);
+    }
+
+    private static string Roman(int n) => n switch
+    {
+        1 => "I", 2 => "II", 3 => "III", 4 => "IV", 5 => "V", 6 => "VI", 7 => "VII", 8 => "VIII", _ => n.ToString(),
+    };
+
+    private string? _welcomeHint
+    {
+        get
+        {
+            var settings = SettingsSvc.Current;
+            if (string.IsNullOrWhiteSpace(settings.ApiBaseUrl))
+            {
+                return Lang.T("Не задан адрес API —", "The API address is not set —");
+            }
+
+            if (settings.ApiBaseUrl.Contains("api.openai.com", StringComparison.OrdinalIgnoreCase)
+                && string.IsNullOrWhiteSpace(settings.ApiKey))
+            {
+                return Lang.T("Не задан API-ключ —", "The API key is not set —");
+            }
+
+            if (string.IsNullOrWhiteSpace(settings.WorkDirectory))
+            {
+                return Lang.T("Рабочая директория не выбрана: кампания не сохранится, а мастер не сможет вести файлы —", "No working directory is chosen: the campaign will not be saved and the master will not be able to keep files —");
+            }
+
+            return null;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        Trade.Completed += OnTradeCompleted;
+        Guild.Completed += OnGuildCompleted;
+        Battle.ActionRequested += OnBattleAction;
+        RpgStore.StateChanged += OnRpgStateChanged;
+        PartyFlow.LeaveRequested += OnPartyLeaveRequested;
+        PartyFlow.ItemActionRequested += OnPartyItemActionRequested;
+        Talk.TalkRequested += OnTalkRequested;
+        _tradeSubscribed = true;
+    }
+
+    private void OnGuildCompleted(string chatId, string summary)
+    {
+        if (_session?.Id != chatId || string.IsNullOrWhiteSpace(summary)) return;
+        _ = InvokeAsync(async () => await SendTextAsync(summary, clearDraft: false, ooc: false, kind: RequestKinds.Story));
+    }
+    private void OnBattleAction(string chatId, string summary)
+    {
+        if (_session?.Id != chatId || string.IsNullOrWhiteSpace(summary)) return;
+        BattleLogSvc.Add(chatId, "turn", "▸", BattleLogFeed.TurnLine(summary));
+        _ = InvokeAsync(async () => await SendTextAsync(summary, clearDraft: false, ooc: false, kind: RequestKinds.Combat));
+    }
+
+    /// <summary>Мастер обновил книгу героя — перерисовываем плавающую кнопку боя.</summary>
+    private void OnRpgStateChanged(string sessionId)
+    {
+        if (_session?.Id == sessionId)
+        {
+            _ = InvokeAsync(StateHasChanged);
+        }
+    }
+    private void OnPartyLeaveRequested(string chatId, string member, string reason)
+    {
+        if (_session?.Id != chatId) return;
+        var message = Lang.T($"[РАЗГОВОР СО СПУТНИКОМ] Я прошу {member} покинуть группу. Моя причина: {reason}. Отыграй личный разговор и реакцию спутника. Не удаляй его автоматически до исхода разговора; если расстаёмся нормально — update_party_member remove=true, departure=normal.",
+            $"[TALK WITH A COMPANION] I ask {member} to leave the party. My reason: {reason}. Play out a personal conversation and the companion's reaction. Do not remove them automatically before the outcome of the conversation; if we part on good terms — update_party_member remove=true, departure=normal.");
+        _ = InvokeAsync(async () => await SendTextAsync(message, clearDraft: false, ooc: false, kind: RequestKinds.Story));
+    }
+
+    /// <summary>Кнопка «Начать разговор» в панели: встреча целиком достаётся мастеру — он сам решит, чем она будет.</summary>
+    private void OnTalkRequested(string chatId, string npc)
+    {
+        if (_session?.Id != chatId || string.IsNullOrWhiteSpace(npc)) return;
+        var message = Lang.T($"[ВСТРЕЧА] Я зову к разговору: «{npc}». Возьми инициативу в свои руки и предложи то, с чего начнётся эта встреча: покупку слухов (buy_rumors), небольшой квест или завязку активной арки (update_quest), либо разовую уличную сделку через street_offer — вещь и цену подберёт харнес, продавец остаётся разовым событием и в списки персонажей не идёт (без update_npc). Закрой реплику через offer_choices (2–4 варианта).",
+            $"[ENCOUNTER] I call \"{npc}\" over to talk. Take the initiative and offer how this encounter begins: buying rumors (buy_rumors), a small quest or a hook of the active arc (update_quest), or a one-off street deal via street_offer — the harness picks the item and the price, the seller remains a one-off event and does not go into the character lists (no update_npc). Close the line with offer_choices (2–4 options).");
+        _ = InvokeAsync(async () => await SendTextAsync(message, clearDraft: false, ooc: false, kind: RequestKinds.Story));
+    }
+
+    private void OnPartyItemActionRequested(PartyItemRequest request)
+    {
+        if (_session?.Id != request.ChatId) return;
+        var qty = request.Quantity > 1 ? $" ×{request.Quantity}" : "";
+        var message = request.Action switch
+        {
+            "give" => Lang.T($"[ПЕРЕДАЧА ПРЕДМЕТА] Я предлагаю {request.Member} предмет «{request.ItemName}»{qty} (item_id={request.ItemId}). Отыграй реакцию спутника. Если он согласен и принимает вещь, вызови transfer_party_item с direction=hero_to_party, member={request.Member}, item_id={request.ItemId}, quantity={request.Quantity}, consent=true. Если откажется — ничего не перемещай.",
+                $"[GIVING AN ITEM] I offer {request.Member} the item \"{request.ItemName}\"{qty} (item_id={request.ItemId}). Play out the companion's reaction. If they agree and accept it, call transfer_party_item with direction=hero_to_party, member={request.Member}, item_id={request.ItemId}, quantity={request.Quantity}, consent=true. If they refuse, move nothing."),
+            "request" => Lang.T($"[ПРОСЬБА О ПРЕДМЕТЕ] Я прошу {request.Member} отдать мне «{request.ItemName}»{qty} (item_id={request.ItemId}). Отыграй решение спутника. Если он согласен, вызови transfer_party_item с direction=party_to_hero, member={request.Member}, item_id={request.ItemId}, quantity={request.Quantity}, consent=true. Если откажется — ничего не перемещай.",
+                $"[ASKING FOR AN ITEM] I ask {request.Member} to give me \"{request.ItemName}\"{qty} (item_id={request.ItemId}). Play out the companion's decision. If they agree, call transfer_party_item with direction=party_to_hero, member={request.Member}, item_id={request.ItemId}, quantity={request.Quantity}, consent=true. If they refuse, move nothing."),
+            _ => Lang.T($"[ИСПОЛЬЗОВАНИЕ РАСХОДНИКА] Я использую «{request.ItemName}» (item_id={request.ItemId}) из инвентаря героя на цели «{request.Target}». Определи и отыграй эффект по описанию предмета, сразу обнови HP/ману/щит/состояния цели соответствующим инструментом, затем вызови consume_item owner=hero, item_id={request.ItemId}, quantity=1. Не списывай предмет, если применить его невозможно.",
+                $"[USING A CONSUMABLE] I use \"{request.ItemName}\" (item_id={request.ItemId}) from the hero's inventory on the target \"{request.Target}\". Determine and play out the effect from the item's description, immediately update the target's HP/mana/shield/conditions with the matching tool, then call consume_item owner=hero, item_id={request.ItemId}, quantity=1. Do not consume the item if it cannot be used."),
+        };
+        _ = InvokeAsync(async () => await SendTextAsync(message, clearDraft: false, ooc: false, kind: RequestKinds.Story));
+    }
+
+    private void OpenTrade(string npcName)
+    {
+        if (_session is not null && npcName.Length > 0)
+        {
+            Trade.Open(_session.Id, npcName);
+        }
+    }
+
+    /// <summary>Итог сделки из окна торговли — отправляется мастеру, чтобы он отыграл реакцию торговца.</summary>
+    private void OnTradeCompleted(string chatId, string summary)
+    {
+        if (_session?.Id != chatId || string.IsNullOrWhiteSpace(summary))
+        {
+            return;
+        }
+
+        _ = InvokeAsync(async () =>
+        {
+            if (_busy || _rolling)
+            {
+                _draft = summary;
+                StateHasChanged();
+                return;
+            }
+
+            await SendTextAsync(summary, clearDraft: false, ooc: false, kind: RequestKinds.Trade);
+        });
+    }
+
+    /// <summary>Вид запроса: вне игры, создание мира, торговля, бой или обычная сцена.</summary>
+    private string DetectKind(string sessionId, bool ooc, string? forced)
+    {
+        if (ooc)
+        {
+            return RequestKinds.Ooc;
+        }
+
+        if (forced is not null)
+        {
+            return forced;
+        }
+
+        if (FileToolsSvc.GetPhase(sessionId) != FileTools.CampaignPhase.Adventure)
+        {
+            return RequestKinds.World;
+        }
+
+        var state = RpgStore.GetOrCreate(sessionId);
+        return state.Adversaries.Any(a => !string.IsNullOrWhiteSpace(a.Name) && (a.HpMax <= 0 || a.InFight))
+            ? RequestKinds.Combat
+            : RequestKinds.Story;
+    }
+
+    protected override void OnParametersSet()
+    {
+        _note = null;
+        _ownArc = "";
+
+        if (_diceChatId != Id)
+        {
+            // Чипы бросков живут в черновике конкретного чата — в другом чате их быть не должно.
+            _diceChatId = Id;
+            _pendingDice.Clear();
+        }
+
+        if (string.IsNullOrWhiteSpace(Id))
+        {
+            _session = null;
+            return;
+        }
+
+        var session = Store.Get(Id);
+        if (session is null)
+        {
+            _session = null;
+            _note = Lang.T("Чат не найден (возможно, был удалён): ", "Chat not found (it may have been deleted): ") + Id;
+            return;
+        }
+
+        _session = session;
+
+        // Кампания другого сеттинга открывается только после смены темы: иначе мастер получит чужой промпт,
+        // а книга героя — чужие каталоги предметов и портретов.
+        var campaignGenre = Genre.Of(RpgStore.GetOrCreate(session.Id));
+        _genreLock = campaignGenre != Genre.Current ? campaignGenre : null;
+        if (_genreLock is not null)
+        {
+            return;
+        }
+
+        // Файлы кампании (Hero.md, World.md, Journal.md…) создаются, только если их ещё нет.
+        RpgStore.EnsureCampaignFiles(session.Id);
+        RefreshPhase();
+    }
+
+    private void RefreshPhase()
+    {
+        if (_session is not null)
+        {
+            _phase = FileToolsSvc.GetPhase(_session.Id);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_watched)
+        {
+            try
+            {
+                _self ??= DotNetObjectReference.Create(this);
+                await JS.InvokeVoidAsync("harness.watchEnter", _self, _inputRef);
+                await JS.InvokeVoidAsync("harness.watchChoiceKeys");
+                _watched = true;
+            }
+            catch
+            {
+                // JS ещё недоступен (prerender / circuit переподключается) — попробуем в следующем рендере
+            }
+        }
+
+        if (firstRender)
+        {
+            await ScrollToBottomAsync();
+        }
+
+        // Только что созданный герой: мастер сам открывает сессию ноль.
+        if (_session is { } s && !_busy && s.Messages.Count == 0 && CreationFlow.TakeKickoff(s.Id))
+        {
+            _ = InvokeAsync(StartCampaignAsync);
+        }
+    }
+
+    [JSInvokable]
+    public Task HandleEnter() => SendAsync();
+
+    /// <summary>Сеттинг открытой кампании, если он не совпадает с темой (тогда чат заблокирован).</summary>
+    private string? _genreLock;
+
+    /// <summary>Смена темы под сеттинг кампании и полная перезагрузка: каталоги и панели перечитываются заново.</summary>
+    private async Task SwitchGenreAsync(string genre)
+    {
+        var stored = SettingsSvc.Clone();
+        stored.Theme = UiThemes.Normalize(genre);
+        SettingsSvc.Save(stored);
+        try { await JS.InvokeVoidAsync("window.harness.setTheme", stored.Theme); } catch { }
+        Nav.NavigateTo(Nav.Uri, forceLoad: true);
+    }
+
+    private Task NewChatAsync()
+    {
+        // Персонаж задаётся только при создании — открываем редактор героя.
+        CreationFlow.Request();
+        return Task.CompletedTask;
+    }
+
+    private Task StartCampaignAsync() => SendTextAsync(GmPrompt.Kickoff, clearDraft: false, hidden: true);
+
+    // ===== Отправка сообщений =====
+
+    private async Task SendAsync()
+    {
+        var draft = (_draft ?? "").Trim();
+        if (draft.Length == 0 && _pendingDice.Count == 0 && _pendingImages.Count == 0)
+        {
+            return;
+        }
+
+        // Накопленные броски уезжают одной строкой перед текстом и убираются из черновика.
+        var rolls = _pendingDice.ToList();
+        _pendingDice.Clear();
+        var line = rolls.Count == 0
+            ? ""
+            : "🎲 " + string.Join(", ", rolls.Select(r => $"{RollTitle(r.Kind)}: {r.Face}"));
+        var text = line.Length == 0 ? draft : draft.Length == 0 ? line : $"{line}\n{draft}";
+        await SendTextAsync(text, clearDraft: true, ooc: _asPlayer);
+    }
+
+    private void OwnArcKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            _ = SendOwnArcAsync();
+        }
+    }
+
+    private Task SendOwnArcAsync()
+    {
+        var text = _ownArc.Trim();
+        if (text.Length == 0)
+        {
+            return Task.CompletedTask;
+        }
+
+        _ownArc = "";
+        return SendTextAsync(Lang.T("Хочу свою арку: ", "I want my own arc: ") + text, clearDraft: false, ooc: false);
+    }
+
+    // ===== Прикрепление изображений (мультимодальность) =====
+
+    private const int MaxImages = 4;
+    private const long MaxImageBytes = 4 * 1024 * 1024;
+
+    private async Task PickImages()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("harness.clickFileInput", _fileInputRef);
+        }
+        catch
+        {
+            // circuit разорван
+        }
+    }
+
+    private async Task OnImagesChosen(ChangeEventArgs args)
+    {
+        if (args.Value is not System.Collections.IEnumerable files)
+        {
+            return;
+        }
+
+        foreach (var file in files)
+        {
+            if (_pendingImages.Count >= MaxImages)
+            {
+                break;
+            }
+
+            try
+            {
+                var dataUri = await JS.InvokeAsync<string>("harness.readFileAsDataUri", file, MaxImageBytes);
+                if (!string.IsNullOrEmpty(dataUri))
+                {
+                    _pendingImages.Add(dataUri);
+                }
+            }
+            catch (Exception ex)
+            {
+                _error = ex.Message;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private void RemoveImage(string dataUri)
+    {
+        _pendingImages.Remove(dataUri);
+        StateHasChanged();
+    }
+
+    private async Task SendTextAsync(string text, bool clearDraft, bool hidden = false, bool ooc = false, string? kind = null)
+    {
+        if (_busy || _rolling || (string.IsNullOrEmpty(text) && _pendingImages.Count == 0) || _genreLock is not null)
+        {
+            return;
+        }
+
+        if (clearDraft)
+        {
+            _draft = "";
+        }
+
+        _error = null;
+
+        if (_session is null)
+        {
+            _session = Store.Create();
+            Nav.NavigateTo($"/chat/{_session.Id}");
+        }
+
+        var session = _session;
+
+        var userMessage = new ChatMessage("user", text) { Hidden = hidden, Ooc = ooc };
+        if (!hidden && _pendingImages.Count > 0)
+        {
+            userMessage.Images = _pendingImages.ToList();
+            _pendingImages.Clear();
+        }
+
+        // Снимок книги героя до хода — для «Переиграть ход» / «Изменить ход».
+        RpgStore.SaveSnapshot(session.Id, session.Messages.Count);
+
+        var activeInstance = RpgStore.GetOrCreate(session.Id).ActiveInstance;
+        if (!ooc && activeInstance is { Active: true })
+        {
+            userMessage.InstanceId = activeInstance.Id;
+            activeInstance.Messages.Add(CopyMessage(userMessage));
+            RpgStore.Save(session.Id, RpgStore.GetOrCreate(session.Id));
+        }
+
+        session.Messages.Add(userMessage);
+        if (!hidden && session.Title is "Новый чат" or "New chat")
+        {
+            session.Title = string.IsNullOrWhiteSpace(text)
+                ? Lang.T("Изображение", "Image")
+                : text.Length <= 48 ? text : text[..48] + "…";
+        }
+
+        Store.Persist(session);
+        Store.NotifyChanged();
+
+        await RunTurnAsync(session, ooc, kind);
+    }
+
+    /// <summary>Ход мастера: агентный цикл «генерация → инструменты» по текущей истории.</summary>
+    private async Task RunTurnAsync(ChatSession session, bool ooc, string? kind)
+    {
+        _error = null;
+        var settings = SettingsSvc.Current;
+        const bool toolsEnabled = true;
+        var campaignDir = RpgStore.CampaignDirectory(session.Id) ?? settings.WorkDirectory;
+
+        _busy = true;
+        session.Busy = true;
+        _cts = new CancellationTokenSource();
+        // Сообщаем окну боя, что мастер занят («Рассказчик думает…»).
+        Battle.SetStatus(session.Id, kind == RequestKinds.Combat
+            ? Lang.T("Рассказчик обдумывает ход…", "The narrator is planning the turn…")
+            : Lang.T("Рассказчик думает…", "The narrator is thinking…"));
+        Battle.SetStream(session.Id, "");
+        StateHasChanged();
+        await ScrollToBottomAsync();
+
+        ChatMessage NewReply()
+        {
+            var instance = !ooc ? RpgStore.GetOrCreate(session.Id).ActiveInstance : null;
+            return new ChatMessage("assistant", "") { Ooc = ooc, InstanceId = instance is { Active: true } ? instance.Id : null };
+        }
+
+        var reply = NewReply();
+        session.Messages.Add(reply);
+        Battle.SetStream(session.Id, "");
+        Store.Persist(session);
+        var keepReasoning = settings.ReasoningEnabled && settings.ReasoningFormat == "deepseek";
+
+        void OnProgress(StreamProgress progress)
+        {
+            _progress = progress;
+            _ = InvokeAsync(StateHasChanged);
+        }
+
+        void OnDelta(string delta)
+        {
+            _progress = null;
+            reply.Content += delta;
+            // Тот же текст, что печатается в чате, уходит в окно боя — оно показывает его потоком с той же кареткой.
+            Battle.SetStream(session.Id, reply.Content);
+            _ = InvokeAsync(async () =>
+            {
+                StateHasChanged();
+                await ScrollToBottomAsync();
+            });
+        }
+
+        try
+        {
+            // Агентный цикл: генерация → вызовы инструментов → результаты → генерация…
+            var round = 0;
+            while (true)
+            {
+                round++;
+                var state = RpgStore.GetOrCreate(session.Id);
+                var activeBefore = !ooc && state.ActiveInstance is { Active: true }
+                    ? state.ActiveInstance
+                    : null;
+                var sourceHistory = activeBefore is not null
+                    ? activeBefore.Messages.ToList()
+                    : session.Messages.Where(m => string.IsNullOrEmpty(m.InstanceId)).ToList();
+                var history = LlmClient.TrimHistory(sourceHistory, settings.HistoryLimit, out var limited);
+                var stateNote = toolsEnabled
+                    ? FileToolsSvc.BuildStateNote(session.Id, limited ? RpgStore.ReadJournalTail(session.Id, 2500) : null)
+                    : null;
+                if (ooc && state.ActiveInstance is { Active: true } pausedInstance && stateNote is not null)
+                {
+                    stateNote += Lang.T($"\n\nВНЕИГРОВОЙ ВОПРОС: отвечай как основной Мастер. Инстанс «{pausedInstance.Title}» временно приостановлен; не добавляй этот разговор в его историю и не завершай его без просьбы игрока.",
+                        $"\n\nOUT-OF-GAME QUESTION: answer as the main Master. The instance \"{pausedInstance.Title}\" is paused for now; do not add this conversation to its history and do not finish it unless the player asks.");
+                }
+                var reservedChars = LlmClient.ReservedChars(
+                    settings, stateNote, toolsEnabled ? FileToolsSvc.DefinitionsChars : 0);
+                history = LlmClient.FitHistoryToContext(history, settings, reservedChars, out var compressed);
+                if (compressed && toolsEnabled && !limited)
+                {
+                    stateNote = FileToolsSvc.BuildStateNote(session.Id, RpgStore.ReadJournalTail(session.Id, 2500));
+                }
+
+                _progress = null;
+                // Вид запроса пересчитывается каждый раунд: бой может начаться посреди хода мастера.
+                _kind = DetectKind(session.Id, ooc, kind);
+                var profile = settings.ProfileFor(_kind);
+                var turn = await Llm.StreamChatAsync(settings, history, OnDelta, toolsEnabled, _cts.Token, stateNote, OnProgress, profile);
+                _progress = null;
+
+                if (turn.ToolCalls.Count == 0)
+                {
+                    if (activeBefore is not null)
+                    {
+                        activeBefore.Messages.Add(new ChatMessage("assistant", turn.Content)
+                        {
+                            Ooc = ooc,
+                            InstanceId = activeBefore.Id,
+                            Reasoning = keepReasoning ? turn.Reasoning : null,
+                        });
+                        RpgStore.Save(session.Id, state);
+                    }
+                    break; // финальный текстовый ответ
+                }
+
+                reply.ToolCalls = turn.ToolCalls.ToList();
+                if (keepReasoning && turn.Reasoning.Length > 0)
+                {
+                    reply.Reasoning = turn.Reasoning;
+                }
+
+                foreach (var call in reply.ToolCalls)
+                {
+                    // Инструмент изменяет состояние атомарно: во время его короткого синхронного
+                    // выполнения кнопка остановки отключена, чтобы не обещать ложную отмену.
+                    _cts.Token.ThrowIfCancellationRequested();
+                    _executingTool = true;
+                    await InvokeAsync(StateHasChanged);
+                    (bool ok, string result) toolResult;
+                    try
+                    {
+                        toolResult = await Task.Run(
+                            () => FileToolsSvc.Execute(campaignDir, call.Name, call.Arguments, session.Id));
+                    }
+                    finally
+                    {
+                        _executingTool = false;
+                        await InvokeAsync(StateHasChanged);
+                    }
+                    var (ok, result) = toolResult;
+                    call.Ok = ok;
+                    call.Result = result;
+                    // Боевой журнал: кто кого ударил, вылечил, наложил или снял эффект.
+                    BattleLogFeed.Feed(BattleLogSvc, session.Id, call,
+                        RpgStore.GetOrCreate(session.Id).InCombat());
+                    if (ok && call.Name == "open_trade" && S(Args(call), "npc") is { Length: > 0 } merchant)
+                    {
+                        Trade.Open(session.Id, merchant);
+                    }
+                    if (ok && call.Name == "open_adventure_guild" && S(Args(call), "city") is { Length: > 0 } guildCity)
+                    {
+                        Guild.Open(session.Id, guildCity);
+                    }
+                    if (ok && call.Name == "update_adversary" && Args(call)["remove"]?.GetValue<bool>() != true) Battle.Open(session.Id);
+                    if (ok && call.Name == "plan_encounter" && Args(call)["spawn"]?.ToString() != "false") Battle.Open(session.Id);
+                    _ = InvokeAsync(async () =>
+                    {
+                        StateHasChanged();
+                        await ScrollToBottomAsync();
+                    });
+                }
+
+                if (activeBefore is not null)
+                {
+                    activeBefore.Messages.Add(new ChatMessage("assistant", turn.Content)
+                    {
+                        Ooc = ooc,
+                        InstanceId = activeBefore.Id,
+                        Reasoning = keepReasoning ? turn.Reasoning : null,
+                        ToolCalls = reply.ToolCalls,
+                    });
+                    RpgStore.Save(session.Id, state);
+                }
+
+                // После start_instance последующие реплики принадлежат суб-мастеру; после finish_instance — снова основному.
+                if (reply.ToolCalls.Any(c => c.Ok == true && c.Name == "start_instance") && state.ActiveInstance is { Active: true } started)
+                {
+                    reply.InstanceId = null; // служебная передача остаётся в основной истории
+                }
+
+                Store.Persist(session);
+                Store.NotifyChanged();
+
+                // Кнопки выбора показаны — ход мастера окончен, ждём игрока.
+                if (reply.ToolCalls.Any(c => c.Ok == true && FileTools.WaitForPlayerTools.Contains(c.Name)))
+                {
+                    break;
+                }
+
+                if (round >= MaxToolRounds)
+                {
+                    reply.Content += Lang.T("\n\n_(достигнут лимит последовательных вызовов инструментов — остановлено)_", "\n\n_(the limit of consecutive tool calls was reached — stopped)_");
+                    break;
+                }
+
+                // Следующий раунд: новая пустая реплика мастера.
+                reply = NewReply();
+                session.Messages.Add(reply);
+                Battle.SetStream(session.Id, "");
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            if (reply.Content.Length == 0 && reply.ToolCalls is not { Count: > 0 })
+            {
+                session.Messages.Remove(reply);
+            }
+            else
+            {
+                reply.Content += Lang.T("\n\n_(остановлено)_", "\n\n_(stopped)_");
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+            if (reply.Content.Length == 0 && reply.ToolCalls is not { Count: > 0 })
+            {
+                session.Messages.Remove(reply);
+            }
+            else
+            {
+                reply.Content += Lang.T($"\n\n_(ошибка: {ex.Message})_", $"\n\n_(error: {ex.Message})_");
+            }
+        }
+        finally
+        {
+            // Пустая последняя реплика (модель закончила ход вызовом инструмента) не нужна.
+            if (reply.Content.Length == 0 && reply.ToolCalls is not { Count: > 0 })
+            {
+                session.Messages.Remove(reply);
+            }
+
+            _busy = false;
+            _executingTool = false;
+            _kind = null;
+            _progress = null;
+            session.Busy = false;
+            Battle.SetStatus(session.Id, "");
+            Battle.SetStream(session.Id, "");
+            Store.Persist(session);
+            Store.NotifyChanged();
+            _cts?.Dispose();
+            _cts = null;
+            RefreshPhase();
+
+            await InvokeAsync(async () =>
+            {
+                StateHasChanged();
+                await ScrollToBottomAsync();
+                try
+                {
+                    await JS.InvokeVoidAsync("harness.focusEl", _inputRef);
+                }
+                catch
+                {
+                    // circuit уже закрыт
+                }
+            });
+        }
+    }
+
+    private static ChatMessage CopyMessage(ChatMessage source) => new(source.Role, source.Content)
+    {
+        Ooc = source.Ooc,
+        Hidden = source.Hidden,
+        InstanceId = source.InstanceId,
+        Images = source.Images?.ToList(),
+    };
+
+    private void Stop() => _cts?.Cancel();
+
+    // ===== Откат хода =====
+
+    /// <summary>Индекс последнего сообщения игрока в полной истории (включая скрытые).</summary>
+    private int LastUserIndex => _session?.Messages.FindLastIndex(m => m.Role == "user") ?? -1;
+
+    /// <summary>Есть что переиграть: после последней реплики игрока уже есть ответ мастера и снимок книги героя.</summary>
+    private bool CanRewind
+    {
+        get
+        {
+            var idx = LastUserIndex;
+            return _session is { } s && idx >= 0 && idx < s.Messages.Count - 1 && RpgStore.HasSnapshot(s.Id, idx);
+        }
+    }
+
+    /// <summary>Последнюю реплику можно вернуть в поле ввода (скрытые служебные — нельзя).</summary>
+    private bool CanEditLast => _session is { } s && LastUserIndex is var i && i >= 0 && !s.Messages[i].Hidden;
+
+    /// <summary>Откатывает книгу героя и историю к моменту перед ответом мастера на последнюю реплику.</summary>
+    private ChatMessage? RewindLastTurn(bool dropUserMessage)
+    {
+        if (_session is not { } s || _busy || _rolling)
+        {
+            return null;
+        }
+
+        var idx = LastUserIndex;
+        if (idx < 0 || !RpgStore.RestoreSnapshot(s.Id, idx))
+        {
+            _error = Lang.T("Не удалось откатить ход: нет снимка книги героя.", "Could not roll back the turn: there is no snapshot of the hero book.");
+            return null;
+        }
+
+        var user = s.Messages[idx];
+        var from = dropUserMessage ? idx : idx + 1;
+        s.Messages.RemoveRange(from, s.Messages.Count - from);
+        Store.Persist(s);
+        Store.NotifyChanged();
+        RefreshPhase();
+        return user;
+    }
+
+    private async Task RegenerateAsync()
+    {
+        var user = RewindLastTurn(dropUserMessage: false);
+        if (user is null || _session is null)
+        {
+            return;
+        }
+
+        var kind = IsTradeReceipt(user.Content) ? RequestKinds.Trade : null;
+        // Снимок остаётся прежним — переигрывать можно сколько угодно раз.
+        await RunTurnAsync(_session, user.Ooc, kind);
+    }
+
+    private async Task EditLastAsync()
+    {
+        var user = RewindLastTurn(dropUserMessage: true);
+        if (user is null)
+        {
+            return;
+        }
+
+        _draft = user.Content;
+        _mode = user.Ooc ? "player" : "hero";
+        if (user.Images is { Count: > 0 } imgs)
+        {
+            _pendingImages.Clear();
+            _pendingImages.AddRange(imgs);
+        }
+
+        StateHasChanged();
+        try
+        {
+            await JS.InvokeVoidAsync("harness.focusEl", _inputRef);
+        }
+        catch
+        {
+            // circuit закрыт
+        }
+    }
+
+    // ===== Броски игрока =====
+
+    private enum DiceKind { Coin, D4, D6, D8, D10, D12, D20, D100 }
+
+    private DiceKind _diceKind;
+    private bool _rolling;
+    private bool _diceSettled;
+    private string _diceFace = "";
+    private string _diceDisplay = "";
+
+    /// <summary>Броски, ожидающие отправки: лежат чипами в поле ввода и уходят одним сообщением.</summary>
+    private readonly List<(DiceKind Kind, string Face)> _pendingDice = new();
+
+    /// <summary>Чат, которому принадлежат чипы: при переходе в другой черновик бросков сбрасывается.</summary>
+    private string? _diceChatId;
+
+    private bool IsRollLocked => _busy || _rolling;
+
+    private static string DiceName(DiceKind kind) => kind == DiceKind.Coin ? Lang.T("Монета", "Coin") : "d" + DiceSides(kind);
+
+    /// <summary>Название броска для чипа и для строки сообщения: «Кубик d20» или «Монета».</summary>
+    private static string RollTitle(DiceKind kind) => kind == DiceKind.Coin ? Lang.T("Монета", "Coin") : Lang.T("Кубик ", "Die ") + DiceName(kind);
+
+    private string DiceLabel => RollTitle(_diceKind);
+
+    /// <summary>Убрать один бросок из черновика (крестик на чипе).</summary>
+    private void RemoveRoll(int index)
+    {
+        if (index >= 0 && index < _pendingDice.Count)
+        {
+            _pendingDice.RemoveAt(index);
+        }
+    }
+
+    private string DiceShapeClass => _diceKind switch
+    {
+        DiceKind.D4 => "shape-d4",
+        DiceKind.D6 => "shape-d6",
+        DiceKind.D8 => "shape-d8",
+        DiceKind.D10 or DiceKind.D100 => "shape-d10",
+        DiceKind.D12 => "shape-d12",
+        _ => "shape-d20",
+    };
+
+    private static int DiceSides(DiceKind kind) => kind switch
+    {
+        DiceKind.D4 => 4,
+        DiceKind.D6 => 6,
+        DiceKind.D8 => 8,
+        DiceKind.D10 => 10,
+        DiceKind.D12 => 12,
+        DiceKind.D20 => 20,
+        DiceKind.D100 => 100,
+        _ => 0,
+    };
+
+    private static string CoinFace => Random.Shared.Next(2) == 0 ? Lang.T("Орёл", "Heads") : Lang.T("Решка", "Tails");
+
+    private async Task RollAsync(DiceKind kind)
+    {
+        if (_busy || _rolling)
+        {
+            return;
+        }
+
+        var sides = DiceSides(kind);
+        _diceKind = kind;
+        _rolling = true;
+        _diceSettled = false;
+        _diceFace = kind == DiceKind.Coin ? CoinFace : Random.Shared.Next(1, sides + 1).ToString();
+        _diceDisplay = kind == DiceKind.Coin ? CoinFace : Random.Shared.Next(1, sides + 1).ToString();
+        StateHasChanged();
+
+        // Фаза броска: цифры мелькают, фигура кувыркается (CSS-анимация).
+        for (var i = 0; i < 11; i++)
+        {
+            await Task.Delay(85);
+            _diceDisplay = kind == DiceKind.Coin ? CoinFace : Random.Shared.Next(1, sides + 1).ToString();
+            StateHasChanged();
+        }
+
+        // Фиксация результата: фигура «приземляется» с отскоком и свечением.
+        _diceDisplay = _diceFace;
+        _diceSettled = true;
+        StateHasChanged();
+        await Task.Delay(1150);
+
+        _rolling = false;
+        StateHasChanged();
+
+        // Результат не уходит в чат сам: он ложится чипом в поле ввода, чтобы к нему
+        // можно было дописать текст и насобрать несколько кубиков в одно сообщение.
+        _pendingDice.Add((kind, _diceFace));
+        StateHasChanged();
+        try
+        {
+            await _inputRef.FocusAsync();
+        }
+        catch
+        {
+            // пререндер или разрыв соединения — фокус в поле ввода здесь не обязателен
+        }
+    }
+
+    private async Task ScrollToBottomAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("harness.scrollBottom", _logRef);
+        }
+        catch
+        {
+            // игнорируем: недоступно во время prerender/разрыва соединения
+        }
+    }
+
+    // ===== Форматирование =====
+
+    /// <summary>Что мастер делает «за кадром»: размышляет или пишет вызовы инструментов.</summary>
+    private string? ProgressText
+    {
+        get
+        {
+            if (_progress is not { } p)
+            {
+                return null;
+            }
+
+            if (p.ToolCalls > 0)
+            {
+                var what = ToolTitle(p.LastTool);
+                return Lang.T("Мастер делает записи", "The master is making records") + $"{(what is null ? "" : $": {what}")} · {p.ToolCalls} {Lang.T("шт.", "pcs")} · {Kilo(p.ToolChars)}";
+            }
+
+            return p.ReasoningChars > 0 ? Lang.T("Мастер обдумывает ход · ", "The master is thinking · ") + Kilo(p.ReasoningChars) : null;
+        }
+    }
+
+    private static string Kilo(int chars) =>
+        chars < 1000 ? $"{chars} {Lang.T("симв.", "chars")}" : $"{chars / 1000.0:0.#} {Lang.T("тыс. симв.", "k chars")}";
+
+    private static string? ToolTitle(string? tool) => Lang.IsEn ? ToolTitleEn(tool) : tool switch
+    {
+        null or "" => null,
+        "create_file" => "файл",
+        "edit_file" => "правка файла",
+        "read_file" or "list_files" => "чтение файлов",
+        "roll_dice" => "бросок",
+        "initiative" => "очередь хода",
+        "combat_turn" => "порядок раунда",
+        "resolve_death_save" => "спасбросок от смерти",
+        "travel" => Genre.Pick("колесо дороги", "колесо улиц", "колесо дороги"),
+        "start_instance" => "изолированная сцена",
+        "finish_instance" => "возврат основному мастеру",
+        "buy_rumors" => "колесо слухов",
+        "street_offer" => "уличное предложение",
+        "street_deal" => "уличная сделка",
+        "recall_rumor" => "воспоминание",
+        "offer_choices" => "варианты ответа",
+        "propose_arcs" => "сюжетные арки",
+        "update_character" or "set_stat" => "лист героя",
+        "update_npc" => "персонажи",
+        "update_party_member" or "update_party_inventory" => "группа",
+        "update_adversary" => "противники",
+        "update_city" => "места",
+        "update_quest" => "задания",
+        "update_arc" => "арка",
+        "update_world_event" => "события мира",
+        "set_world_state" => "положение в мире",
+        "equip_item" => "экипировка",
+        "update_grid_item" or "update_inventory" => "сумка",
+        "set_merchant" or "update_shop_item" => "лавка",
+        "open_trade" => "торговля",
+        "plan_encounter" => "расчёт боя",
+        "award_xp" => "опыт",
+        "level_up" => "новый уровень",
+        "roll_loot" => "добыча",
+        "update_companion_candidate" or "ask_companion_role" or "recruit_companion" => "новый спутник",
+        "update_skill" => "навыки",
+        "resolve_attack" => "действие в бою",
+        "skill_check" => "проверка",
+        "rest" => "отдых",
+        "update_clock" => "часы угрозы",
+        "update_faction" => "фракции",
+        _ => tool,
+    };
+
+    private static string? ToolTitleEn(string? tool) => tool switch
+    {
+        null or "" => null,
+        "create_file" => "file",
+        "edit_file" => "file edit",
+        "read_file" or "list_files" => "reading files",
+        "roll_dice" => "roll",
+        "initiative" => "turn order",
+        "combat_turn" => "round order",
+        "resolve_death_save" => "death save",
+        "travel" => Genre.Pick("road wheel", "street wheel", "road wheel"),
+        "start_instance" => "isolated scene",
+        "finish_instance" => "back to the main master",
+        "buy_rumors" => "rumor wheel",
+        "street_offer" => "street offer",
+        "street_deal" => "street deal",
+        "recall_rumor" => "memory",
+        "offer_choices" => "answer options",
+        "propose_arcs" => "story arcs",
+        "update_character" or "set_stat" => "hero sheet",
+        "update_npc" => "characters",
+        "update_party_member" or "update_party_inventory" => "party",
+        "update_adversary" => "adversaries",
+        "update_city" => "places",
+        "update_quest" => "quests",
+        "update_arc" => "arc",
+        "update_world_event" => "world events",
+        "set_world_state" => "world state",
+        "equip_item" => "equipment",
+        "update_grid_item" or "update_inventory" => "bag",
+        "set_merchant" or "update_shop_item" => "shop",
+        "open_trade" => "trading",
+        "plan_encounter" => "combat planning",
+        "award_xp" => "XP",
+        "level_up" => "new level",
+        "roll_loot" => "loot",
+        "update_companion_candidate" or "ask_companion_role" or "recruit_companion" => "new companion",
+        "update_skill" => "skills",
+        "resolve_attack" => "combat action",
+        "skill_check" => "check",
+        "rest" => "rest",
+        "update_clock" => "threat clocks",
+        "update_faction" => "factions",
+        _ => tool,
+    };
+
+    private static string RenderMd(string text) => Markdig.Markdown.ToHtml(text ?? "", MdPipeline);
+
+    private static string Plain(string text)
+    {
+        var encoded = System.Net.WebUtility.HtmlEncode(text ?? "");
+        return encoded.Replace("\r\n", "\n").Replace("\n", "<br />");
+    }
+
+    private static System.Text.Json.Nodes.JsonObject Args(ToolCall call)
+    {
+        try
+        {
+            return System.Text.Json.Nodes.JsonNode.Parse(string.IsNullOrWhiteSpace(call.Arguments) ? "{}" : call.Arguments)
+                as System.Text.Json.Nodes.JsonObject ?? new();
+        }
+        catch
+        {
+            return new();
+        }
+    }
+
+    private static string? S(System.Text.Json.Nodes.JsonObject o, string key)
+    {
+        try
+        {
+            return o[key]?.ToString();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>«3 × Гоблин, Шаман» — кратко о составе plan_encounter.</summary>
+    private static string PlanSummary(System.Text.Json.Nodes.JsonObject a) =>
+        a["enemies"] is System.Text.Json.Nodes.JsonArray arr
+            ? string.Join(", ", arr.OfType<System.Text.Json.Nodes.JsonObject>().Select(o =>
+                (o["count"]?.ToString() is { } cnt && cnt != "1" ? $"{cnt} × " : "") + (o["name"]?.ToString() ?? "?")))
+            : "";
+
+    /// <summary>Человекочитаемая подпись вызова инструмента: иконка + что изменилось.</summary>
+    private static (string Icon, string Text) ToolLabel(ToolCall call)
+    {
+        var a = Args(call);
+        var name = S(a, "name") ?? "";
+        switch (call.Name)
+        {
+            case "create_file": return ("📜", $"{Lang.T("файл", "file")} {S(a, "path")}");
+            case "edit_file": return ("✏️", $"{(S(a, "append") is not null ? Lang.T("дополнен", "appended") : Lang.T("правка", "edit"))} {S(a, "path")}");
+            case "read_file": return ("📖", $"{Lang.T("чтение", "reading")} {S(a, "path")}");
+            case "list_files": return ("🗂", Lang.T("список файлов", "file list"));
+            case "start_instance": return ("🌀", $"{Lang.T("начало", "start")}: {S(a, "title")}");
+            case "initiative":
+                if (a["clear"]?.ToString() == "true") return ("🚩", Lang.T("очередь хода сброшена", "turn order reset"));
+                if (a["remove"]?.ToString() == "true") return ("🚩", $"{Lang.T("из очереди", "removed from the queue")}: {name}");
+                return S(a, "value") is { Length: > 0 } value
+                    ? ("🚩", $"{Lang.T("инициатива", "initiative")} {name}: {value}")
+                    : ("🚩", Lang.T("очередь хода", "turn order"));
+            case "combat_turn": return ("⏱", S(a, "action") == "advance" ? $"{Lang.T("ход завершён", "turn done")}: {S(a, "actor")}" : Lang.T("порядок раунда", "round order"));
+            case "resolve_attack":
+                return (S(a, "mode") switch { "heal" => "✚", "shield" => "🛡", "buff" => "✦", _ => "⚔️" },
+                    $"{S(a, "attacker")}{(S(a, "skill") is { Length: > 0 } sk ? $" · {sk}" : "")} → {S(a, "target")}");
+            case "skill_check":
+                return ("🎲", $"{(a["save"]?.ToString() == "true" ? Lang.T("спасбросок", "saving throw") : Lang.T("проверка", "check"))}: {S(a, "skill")} (DC {S(a, "dc")})" +
+                              (call.Ok == true && call.Result is { } cr && System.Text.RegularExpressions.Regex.Match(cr, @"— (БЛЕСТЯЩИЙ УСПЕХ|УСПЕХ ЦЕНОЙ|УСПЕХ|ПРОВАЛ С ОСЛОЖНЕНИЕМ|ПРОВАЛ|BRILLIANT SUCCESS|SUCCESS AT A COST|SUCCESS|FAILURE WITH A COMPLICATION|FAILURE)") is { Success: true } cm
+                                  ? $" — {cm.Groups[1].Value.ToLowerInvariant()}" : ""));
+            case "rest": return ("🏕", S(a, "kind") == "long" ? Lang.T("ночлег", "night's rest") : Lang.T("короткий привал", "short halt"));
+            case "update_clock" when call.Result?.Contains(", тайные") == true || call.Result?.Contains(", secret") == true:
+                return ("⏳", Lang.T("мир не стоит на месте…", "the world does not stand still…"));
+            case "update_clock":
+                return ("⏳", $"{name}{(S(a, "tick") is { Length: > 0 } tk && tk != "0" ? $" {(tk.StartsWith('-') ? tk : "+" + tk)}" : "")}" +
+                              (a["remove"]?.ToString() == "true" ? Lang.T(" — снято", " — removed") : a["reset"]?.ToString() == "true" ? Lang.T(" — сброс", " — reset") : ""));
+            case "update_faction":
+                return ("🏳", $"{name}{(S(a, "delta") is { Length: > 0 } fd ? $" {(fd.StartsWith('-') ? fd : "+" + fd)}" : "")}");
+            case "resolve_death_save": return ("☠", $"{Lang.T("спасбросок", "death save")}: {S(a, "target")}");
+            case "finish_instance": return ("↩️", Lang.T("итоги изолированной сцены", "isolated scene outcome"));
+            case "set_stat": return ("💪", $"{S(a, "stat")?.ToUpperInvariant()} → {S(a, "value")}");
+            case "update_npc": return ("👤", name);
+            case "update_party_member": return ("🧭", $"{Lang.T("спутник", "companion")}: {name}");
+            case "recruit_companion": return ("🤝", $"{Lang.T("в группе", "joined")}: {name}{(S(a, "class") is { Length: > 0 } rc ? $", {rc}" : "")}");
+            case "update_companion_candidate": return ("🧭", $"{Lang.T("кандидат", "candidate")}: {name}{(S(a, "action") is { Length: > 0 } ca ? $" · {ca}" : "")}");
+            case "plan_encounter": return ("⚖️", $"{Lang.T("расчёт боя", "combat planning")}: {PlanSummary(a)}");
+            case "award_xp": return ("⭐", call.Ok == true && call.Result is { } xr && System.Text.RegularExpressions.Regex.Match(xr, @"(?:опыт|XP) \d+ → \d+") is { Success: true } xm ? xm.Value : Lang.T("опыт", "XP"));
+            case "level_up": return ("⬆️", $"{Lang.T("новый уровень", "new level")}: {(S(a, "owner") is { } lo && lo != "hero" ? lo : Lang.T("герой", "hero"))}");
+            case "roll_loot": return ("💰", S(a, "source") == "chest" ? Lang.T("добыча из тайника", "loot from a cache") : Lang.T("добыча с поверженных", "loot from the defeated"));
+            case "update_party_inventory": return ("🎒", $"{S(a, "member")}: {S(a, "item")}");
+            case "recall_rumor": return ("💭", $"{Lang.T("вспомнить", "recall")}: {S(a, "linked_to")}");
+            case "update_adversary": return ("⚔️", a["remove"]?.ToString() == "true" ? $"{name} — {Lang.T("выбыл", "out")}" : $"{name} {HpText(a)}".Trim());
+            case "update_city": return ("🏰", string.IsNullOrWhiteSpace(S(a, "poi_name")) ? name : $"{name}: {S(a, "poi_name")}");
+            case "update_quest": return ("📌", $"{name}{StateText(S(a, "state"))}");
+            case "update_arc": return ("🎯", $"{name}{StateText(S(a, "state"))}");
+            case "update_world_event": return ("🌍", name);
+            case "set_world_state": return ("🕰", Lang.T("состояние мира", "world state"));
+            case "set_merchant": return ("🏪", $"{Lang.T("лавка", "shop")}: {S(a, "npc")}{(a["restock"]?.ToString() == "true" ? Lang.T(" (завоз)", " (restock)") : "")}");
+            case "update_shop_item":
+                return ("🏷", $"{S(a, "npc")}: {(a["remove"]?.ToString() == "true" || S(a, "quantity") == "0" ? "−" : "")}{name}{(S(a, "price") is { } pr ? $" {pr} {Genre.Coin}" : "")}");
+            case "equip_item":
+                return ("🛡", a["unequip"]?.ToString() == "true" ? $"{Lang.T("снято", "taken off")}: {S(a, "slot")}" : $"{Lang.T("надето", "equipped")}: {name}");
+            case "update_grid_item":
+            case "update_inventory":
+                return ("🎒", a["remove"]?.ToString() == "true" ? $"−{name}" : $"{name}{(S(a, "quantity") is { } q ? $" x{q}" : "")}");
+            case "street_offer": return ("🧾", S(a, "seller") is { Length: > 0 } sl ? $"{Lang.T("предложение от", "an offer from")}: {sl}" : Lang.T("уличное предложение", "street offer"));
+            case "street_deal": return ("🧾", S(a, "action") == "reject" ? Lang.T("сделка отклонена", "deal declined") : Lang.T("уличная сделка", "street deal"));
+            case "update_character":
+                var parts = new List<string>();
+                if (S(a, "hp_current") is { } hp) parts.Add($"{Lang.T("ХП", "HP")} {hp}");
+                if (S(a, "hp_max") is { } hpm) parts.Add($"{Lang.T("макс. ХП", "max HP")} {hpm}");
+                if (S(a, "mana_current") is { } mp) parts.Add($"{Genre.Mana} {mp}");
+                if (S(a, "gold") is { } g) parts.Add($"{Genre.Money} {g}");
+                if (S(a, "xp") is { } xp) parts.Add($"{Lang.T("опыт", "XP")} {xp}");
+                if (S(a, "level") is { } lv) parts.Add($"{Lang.T("уровень", "level")} {lv}");
+                if (S(a, "add_status") is { } st) parts.Add($"+{st}");
+                if (S(a, "remove_status") is { } rs) parts.Add($"−{rs}");
+                return ("🧙", parts.Count > 0 ? string.Join(", ", parts) : Lang.T("лист героя", "hero sheet"));
+            default: return ("🛠", call.Name);
+        }
+
+        static string HpText(System.Text.Json.Nodes.JsonObject o) =>
+            S(o, "hp_current") is { } cur ? $"{Lang.T("ХП", "HP")} {cur}{(S(o, "hp_max") is { } max ? "/" + max : "")}" : "";
+
+        static string StateText(string? state) => state switch
+        {
+            "done" => " ✓",
+            "failed" => " ✗",
+            "abandoned" => Lang.T(" (оставлена)", " (abandoned)"),
+            "active" => Lang.T(" (активна)", " (active)"),
+            _ => "",
+        };
+    }
+
+    private static (string? Question, List<string> Options) ParseChoices(ToolCall call)
+    {
+        var a = Args(call);
+        var options = (a["options"] as System.Text.Json.Nodes.JsonArray)?
+            .Select(FileTools.ChoiceText)
+            .Where(o => !string.IsNullOrEmpty(o))
+            .Select(o => o!)
+            .Take(8)
+            .ToList() ?? new();
+        return (S(a, "question"), options);
+    }
+
+    private sealed record ArcOption(string Name, string Premise)
+    {
+        public string PickMessage => Lang.T($"Выбираю арку «{Name}».", $"I choose the arc \"{Name}\".");
+    }
+
+    private static List<ArcOption> ParseArcs(ToolCall call)
+    {
+        var a = Args(call);
+        return (a["arcs"] as System.Text.Json.Nodes.JsonArray)?
+            .OfType<System.Text.Json.Nodes.JsonObject>()
+            .Select(o => new ArcOption(S(o, "name") ?? "", S(o, "premise") ?? ""))
+            .Where(o => o.Name.Length > 0)
+            .Take(6)
+            .ToList() ?? new();
+    }
+
+    private static string TruncateResult(string result) =>
+        result.Length <= 400 ? result : result[..400] + Lang.T("\n…(показано 400 символов)", "\n…(showing 400 characters)");
+
+    public void Dispose()
+    {
+        if (_tradeSubscribed)
+        {
+            Trade.Completed -= OnTradeCompleted;
+            Guild.Completed -= OnGuildCompleted;
+            Battle.ActionRequested -= OnBattleAction;
+            RpgStore.StateChanged -= OnRpgStateChanged;
+            PartyFlow.LeaveRequested -= OnPartyLeaveRequested;
+            PartyFlow.ItemActionRequested -= OnPartyItemActionRequested;
+            Talk.TalkRequested -= OnTalkRequested;
+        }
+
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _self?.Dispose();
+
+        if (_watched)
+        {
+            try
+            {
+                _ = JS.InvokeVoidAsync("harness.unwatchEnter", _inputRef).AsTask()
+                    .ContinueWith(_ => { }, TaskScheduler.Default);
+            }
+            catch
+            {
+                // ignorable
+            }
+        }
+    }
+}

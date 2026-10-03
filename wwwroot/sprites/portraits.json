@@ -1,0 +1,4349 @@
+{
+ "sheets": {
+  "classic": {
+   "file": "enemy-portraits.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "humanoid": {
+   "file": "enemy-portraits-humanoids.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "monster": {
+   "file": "enemy-portraits-monsters.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "variants": {
+   "file": "enemy-portraits-variants.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "variants2": {
+   "file": "enemy-portraits-variants2.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "variants3": {
+   "file": "enemy-portraits-variants3.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "companion": {
+   "file": "companion-portraits.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "hero": {
+   "file": "hero-avatars.png",
+   "cols": 3,
+   "rows": 2
+  },
+  "cyber_street": {
+   "file": "cyber-enemies-street.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "cyber_machines": {
+   "file": "cyber-enemies-machines.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "cyber_persons": {
+   "file": "cyber-persons.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "cyber_hero": {
+   "file": "cyber-hero-avatars.png",
+   "cols": 3,
+   "rows": 2
+  },
+  "modern_street": {
+   "file": "modern-enemies-street.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "modern_threats": {
+   "file": "modern-enemies-threats.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "modern_supernatural": {
+   "file": "modern-enemies-supernatural.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "modern_persons": {
+   "file": "modern-persons.png",
+   "cols": 4,
+   "rows": 4
+  },
+  "modern_hero": {
+   "file": "modern-hero-avatars.png",
+   "cols": 3,
+   "rows": 2
+  }
+ },
+ "kinds": {
+  "humanoid": "гуманоид",
+  "beast": "зверь",
+  "undead": "нежить",
+  "construct": "конструкт",
+  "dragon": "дракон",
+  "demon": "демон",
+  "aberration": "аберрация",
+  "elemental": "элементаль",
+  "plant": "растение/гриб",
+  "ooze": "слизь",
+  "giant": "великан",
+  "celestial": "небожитель",
+  "monstrosity": "чудовище",
+  "cyborg": "киборг",
+  "android": "андроид",
+  "drone": "дрон",
+  "mech": "мех/робот",
+  "program": "программа/ИИ",
+  "mutant": "мутант",
+  "vehicle": "техника"
+ },
+ "portraits": [
+  {
+   "id": "goblin",
+   "sheet": "classic",
+   "cell": 0,
+   "title": "Гоблин с кинжалом и щитом",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "гоблин",
+    "хобгоблин",
+    "кобольд",
+    "бес-воришк",
+    "goblin",
+    "kobold"
+   ]
+  },
+  {
+   "id": "skeleton_warrior",
+   "sheet": "classic",
+   "cell": 1,
+   "title": "Скелет-воин в доспехе",
+   "kind": "undead",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "скелет",
+    "костян",
+    "мертвец",
+    "skeleton",
+    "костяк"
+   ]
+  },
+  {
+   "id": "cultist",
+   "sheet": "classic",
+   "cell": 2,
+   "title": "Культист в алой рясе",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "культист",
+    "сектант",
+    "жрец",
+    "послушник",
+    "фанатик",
+    "культ",
+    "cultist"
+   ]
+  },
+  {
+   "id": "wolf",
+   "sheet": "classic",
+   "cell": 3,
+   "title": "Волк",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "волк",
+    "волч",
+    "варг",
+    "пёс",
+    "пес",
+    "собак",
+    "гончая",
+    "шакал",
+    "гиен",
+    "лис",
+    "оборот",
+    "wolf",
+    "warg"
+   ]
+  },
+  {
+   "id": "giant_spider",
+   "sheet": "classic",
+   "cell": 4,
+   "title": "Гигантский паук",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "паук",
+    "паучих",
+    "паучь",
+    "арахн",
+    "тарантул",
+    "spider"
+   ]
+  },
+  {
+   "id": "bandit",
+   "sheet": "classic",
+   "cell": 5,
+   "title": "Разбойник в маске",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "разбойник",
+    "бандит",
+    "грабитель",
+    "налётчик",
+    "налетчик",
+    "головорез",
+    "вор",
+    "bandit"
+   ]
+  },
+  {
+   "id": "slime",
+   "sheet": "classic",
+   "cell": 6,
+   "title": "Кислотная слизь",
+   "kind": "ooze",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "слизь",
+    "слизень",
+    "желе",
+    "студень",
+    "ооз",
+    "слайм",
+    "кисел",
+    "slime",
+    "ooze"
+   ]
+  },
+  {
+   "id": "wraith",
+   "sheet": "classic",
+   "cell": 7,
+   "title": "Призрак-рыцарь в саване",
+   "kind": "undead",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "призрак",
+    "дух",
+    "привидение",
+    "фантом",
+    "тень",
+    "умертвие",
+    "wraith",
+    "ghost",
+    "spectre"
+   ]
+  },
+  {
+   "id": "troll",
+   "sheet": "classic",
+   "cell": 8,
+   "title": "Лесной тролль",
+   "kind": "giant",
+   "tier": "elite",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "тролль",
+    "troll"
+   ]
+  },
+  {
+   "id": "ogre_warlord",
+   "sheet": "classic",
+   "cell": 9,
+   "title": "Огр-военачальник в латах",
+   "kind": "giant",
+   "tier": "elite",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "огр",
+    "людоед",
+    "ogre",
+    "военачальник"
+   ]
+  },
+  {
+   "id": "vampire",
+   "sheet": "classic",
+   "cell": 10,
+   "title": "Вампир-аристократ",
+   "kind": "undead",
+   "tier": "boss",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "вампир",
+    "упырь",
+    "кровосос",
+    "граф",
+    "носферату",
+    "vampire"
+   ]
+  },
+  {
+   "id": "lich",
+   "sheet": "classic",
+   "cell": 11,
+   "title": "Лич с посохом-черепом",
+   "kind": "undead",
+   "tier": "boss",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "лич",
+    "некромант",
+    "чернокнижник",
+    "колдун-мертвец",
+    "lich",
+    "necromancer"
+   ]
+  },
+  {
+   "id": "dragon_red",
+   "sheet": "classic",
+   "cell": 12,
+   "title": "Красный дракон",
+   "kind": "dragon",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "дракон",
+    "красн",
+    "огнедыш",
+    "змий",
+    "dragon",
+    "wyrm"
+   ]
+  },
+  {
+   "id": "archdemon",
+   "sheet": "classic",
+   "cell": 13,
+   "title": "Архидемон",
+   "kind": "demon",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "демон",
+    "дьявол",
+    "архидемон",
+    "бес",
+    "балрог",
+    "инферн",
+    "demon",
+    "devil"
+   ]
+  },
+  {
+   "id": "eldritch_horror",
+   "sheet": "classic",
+   "cell": 14,
+   "title": "Древний ужас с глазом",
+   "kind": "aberration",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "ужас",
+    "древн",
+    "щупальц",
+    "спрут",
+    "бездн",
+    "кошмар",
+    "eldritch"
+   ]
+  },
+  {
+   "id": "golem_bronze",
+   "sheet": "classic",
+   "cell": 15,
+   "title": "Бронзовый голем",
+   "kind": "construct",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "голем",
+    "механизм",
+    "конструкт",
+    "автоматон",
+    "бронз",
+    "golem",
+    "construct"
+   ]
+  },
+  {
+   "id": "thug",
+   "sheet": "humanoid",
+   "cell": 0,
+   "title": "Головорез в капюшоне",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "головорез",
+    "громила",
+    "бандит",
+    "убийца",
+    "наёмник",
+    "наемник",
+    "thug",
+    "cutthroat"
+   ]
+  },
+  {
+   "id": "assassin",
+   "sheet": "humanoid",
+   "cell": 1,
+   "title": "Ассасин в чёрной маске",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "",
+   "person": true,
+   "kw": [
+    "ассасин",
+    "убийц",
+    "ниндзя",
+    "тень",
+    "шпион",
+    "assassin"
+   ]
+  },
+  {
+   "id": "soldier",
+   "sheet": "humanoid",
+   "cell": 2,
+   "title": "Солдат в шлеме-капеллине",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "солдат",
+    "стражник",
+    "страж",
+    "латник",
+    "пехот",
+    "караульн",
+    "дозорн",
+    "soldier",
+    "guard"
+   ]
+  },
+  {
+   "id": "mercenary_captain",
+   "sheet": "humanoid",
+   "cell": 3,
+   "title": "Капитан наёмников",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "капитан",
+    "наёмник",
+    "наемник",
+    "рыцарь",
+    "командир",
+    "сотник",
+    "captain",
+    "knight"
+   ]
+  },
+  {
+   "id": "pirate",
+   "sheet": "humanoid",
+   "cell": 4,
+   "title": "Пират с повязкой",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "пират",
+    "корсар",
+    "моряк",
+    "флибустьер",
+    "pirate"
+   ]
+  },
+  {
+   "id": "plague_doctor",
+   "sheet": "humanoid",
+   "cell": 5,
+   "title": "Чумной доктор",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "чумной",
+    "доктор",
+    "лекарь-маска",
+    "чума",
+    "plague"
+   ]
+  },
+  {
+   "id": "inquisitor",
+   "sheet": "humanoid",
+   "cell": 6,
+   "title": "Инквизитор",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "инквизитор",
+    "охотник",
+    "на",
+    "ведьм",
+    "храмовник",
+    "witch-hunter",
+    "inquisitor"
+   ]
+  },
+  {
+   "id": "blood_witch",
+   "sheet": "humanoid",
+   "cell": 7,
+   "title": "Кровавая ведьма",
+   "kind": "humanoid",
+   "tier": "boss",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "ведьм",
+    "колдунья",
+    "чародейка",
+    "магесса",
+    "кровав",
+    "witch",
+    "sorceress"
+   ]
+  },
+  {
+   "id": "dark_bishop",
+   "sheet": "humanoid",
+   "cell": 8,
+   "title": "Тёмный епископ",
+   "kind": "humanoid",
+   "tier": "boss",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "епископ",
+    "кардинал",
+    "жрец",
+    "священник",
+    "проповедник",
+    "первосвящ",
+    "bishop",
+    "priest"
+   ]
+  },
+  {
+   "id": "berserker",
+   "sheet": "humanoid",
+   "cell": 9,
+   "title": "Берсерк",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "берсерк",
+    "варвар",
+    "дикар",
+    "воитель",
+    "berserker",
+    "barbarian"
+   ]
+  },
+  {
+   "id": "duergar",
+   "sheet": "humanoid",
+   "cell": 10,
+   "title": "Серый гном-колдун",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "дуэргар",
+    "серый",
+    "гном",
+    "подземн",
+    "дварф",
+    "старейшин",
+    "duergar"
+   ]
+  },
+  {
+   "id": "drow_blade",
+   "sheet": "humanoid",
+   "cell": 11,
+   "title": "Тёмная эльфийка с саблей",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "дроу",
+    "тёмн",
+    "эльф",
+    "темн",
+    "эльфийк",
+    "drow"
+   ]
+  },
+  {
+   "id": "goblin_alchemist",
+   "sheet": "humanoid",
+   "cell": 12,
+   "title": "Гоблин-алхимик",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "гоблин",
+    "алхимик",
+    "подрывник",
+    "изобретатель",
+    "бомб"
+   ]
+  },
+  {
+   "id": "orc_shaman",
+   "sheet": "humanoid",
+   "cell": 13,
+   "title": "Орк-шаман",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "орк",
+    "шаман",
+    "вождь",
+    "знахарь",
+    "orc",
+    "shaman"
+   ]
+  },
+  {
+   "id": "ratfolk",
+   "sheet": "humanoid",
+   "cell": 14,
+   "title": "Крысолюд с бомбой",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "крыс",
+    "крысолюд",
+    "скавен",
+    "ratfolk"
+   ]
+  },
+  {
+   "id": "lizardfolk",
+   "sheet": "humanoid",
+   "cell": 15,
+   "title": "Людоящер",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "ящер",
+    "людоящер",
+    "ящеролюд",
+    "рептил",
+    "lizard"
+   ]
+  },
+  {
+   "id": "giant_scorpion",
+   "sheet": "monster",
+   "cell": 0,
+   "title": "Гигантский скорпион",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "скорпион",
+    "scorpion"
+   ]
+  },
+  {
+   "id": "giant_serpent",
+   "sheet": "monster",
+   "cell": 1,
+   "title": "Гигантский змей",
+   "kind": "monstrosity",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "змей",
+    "змея",
+    "василиск",
+    "наг",
+    "виверна",
+    "wyvern",
+    "serpent",
+    "basilisk"
+   ]
+  },
+  {
+   "id": "owlbear",
+   "sheet": "monster",
+   "cell": 2,
+   "title": "Совомедведь",
+   "kind": "monstrosity",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "совомедвед",
+    "медвед",
+    "медведь",
+    "сова",
+    "филин",
+    "owlbear",
+    "bear"
+   ]
+  },
+  {
+   "id": "dire_boar",
+   "sheet": "monster",
+   "cell": 3,
+   "title": "Лютый вепрь",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "вепрь",
+    "кабан",
+    "секач",
+    "свин",
+    "бык",
+    "тур",
+    "лось",
+    "boar"
+   ]
+  },
+  {
+   "id": "drowned_zombie",
+   "sheet": "monster",
+   "cell": 4,
+   "title": "Утопленник",
+   "kind": "undead",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "утоплен",
+    "зомби",
+    "мертвяк",
+    "гуль",
+    "болотн",
+    "живой",
+    "мертвец",
+    "zombie",
+    "ghoul"
+   ]
+  },
+  {
+   "id": "banshee",
+   "sheet": "monster",
+   "cell": 5,
+   "title": "Банши",
+   "kind": "undead",
+   "tier": "elite",
+   "gender": "f",
+   "person": false,
+   "kw": [
+    "банши",
+    "плакальщиц",
+    "вопл",
+    "дух",
+    "женщины",
+    "banshee"
+   ]
+  },
+  {
+   "id": "mummy_lord",
+   "sheet": "monster",
+   "cell": 6,
+   "title": "Мумия-фараон",
+   "kind": "undead",
+   "tier": "boss",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "мумия",
+    "фараон",
+    "гробниц",
+    "mummy"
+   ]
+  },
+  {
+   "id": "bone_hydra",
+   "sheet": "monster",
+   "cell": 7,
+   "title": "Костяная гидра",
+   "kind": "undead",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "гидра",
+    "костян",
+    "дракол",
+    "драколич",
+    "hydra"
+   ]
+  },
+  {
+   "id": "mimic",
+   "sheet": "monster",
+   "cell": 8,
+   "title": "Мимик-сундук",
+   "kind": "monstrosity",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "мимик",
+    "сундук",
+    "ларец",
+    "mimic"
+   ]
+  },
+  {
+   "id": "black_knight",
+   "sheet": "monster",
+   "cell": 9,
+   "title": "Чёрный рыцарь",
+   "kind": "undead",
+   "tier": "boss",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "чёрн",
+    "рыцарь",
+    "черн",
+    "рыцарь",
+    "рыцарь",
+    "смерти",
+    "паладин",
+    "падший",
+    "тёмный",
+    "рыцарь",
+    "death",
+    "knight"
+   ]
+  },
+  {
+   "id": "crystal_golem",
+   "sheet": "monster",
+   "cell": 10,
+   "title": "Кристальный голем",
+   "kind": "elemental",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "кристал",
+    "хрустал",
+    "самоцвет",
+    "голем",
+    "льдист",
+    "crystal"
+   ]
+  },
+  {
+   "id": "myconid",
+   "sheet": "monster",
+   "cell": 11,
+   "title": "Грибной ужас",
+   "kind": "plant",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "гриб",
+    "грибн",
+    "миконид",
+    "плесень",
+    "спор",
+    "fungus",
+    "myconid"
+   ]
+  },
+  {
+   "id": "storm_elemental",
+   "sheet": "monster",
+   "cell": 12,
+   "title": "Грозовой элементаль",
+   "kind": "elemental",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "буря",
+    "вихрь",
+    "смерч",
+    "гроз",
+    "элементаль",
+    "воздух",
+    "молни",
+    "storm",
+    "elemental"
+   ]
+  },
+  {
+   "id": "frost_giant",
+   "sheet": "monster",
+   "cell": 13,
+   "title": "Ледяной великан",
+   "kind": "giant",
+   "tier": "boss",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "великан",
+    "инеист",
+    "йотун",
+    "исполин",
+    "циклоп",
+    "giant"
+   ]
+  },
+  {
+   "id": "fallen_angel",
+   "sheet": "monster",
+   "cell": 14,
+   "title": "Падший ангел",
+   "kind": "celestial",
+   "tier": "legend",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "ангел",
+    "серафим",
+    "падш",
+    "небожител",
+    "angel"
+   ]
+  },
+  {
+   "id": "elder_eye",
+   "sheet": "monster",
+   "cell": 15,
+   "title": "Многоглазое древнее нечто",
+   "kind": "aberration",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "глаз",
+    "созерцат",
+    "бехолдер",
+    "многоглаз",
+    "щупальц",
+    "beholder"
+   ]
+  },
+  {
+   "id": "dragon_green",
+   "sheet": "variants",
+   "cell": 0,
+   "title": "Зелёный дракон",
+   "kind": "dragon",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "зелён",
+    "дракон",
+    "ядовит",
+    "болотн",
+    "дракон"
+   ]
+  },
+  {
+   "id": "dragon_blue",
+   "sheet": "variants",
+   "cell": 1,
+   "title": "Синий дракон",
+   "kind": "dragon",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "син",
+    "дракон",
+    "грозов",
+    "дракон",
+    "морск",
+    "дракон"
+   ]
+  },
+  {
+   "id": "dragon_black",
+   "sheet": "variants",
+   "cell": 2,
+   "title": "Чёрный дракон",
+   "kind": "dragon",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "чёрн",
+    "дракон",
+    "черн",
+    "дракон",
+    "теневой",
+    "дракон"
+   ]
+  },
+  {
+   "id": "dragon_white",
+   "sheet": "variants",
+   "cell": 3,
+   "title": "Белый дракон",
+   "kind": "dragon",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "бел",
+    "дракон",
+    "ледян",
+    "дракон",
+    "снежн",
+    "дракон",
+    "морозн",
+    "дракон"
+   ]
+  },
+  {
+   "id": "dragon_gold",
+   "sheet": "variants",
+   "cell": 4,
+   "title": "Золотой дракон",
+   "kind": "dragon",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "золот",
+    "дракон",
+    "солнечн",
+    "дракон"
+   ]
+  },
+  {
+   "id": "slime_blue",
+   "sheet": "variants",
+   "cell": 5,
+   "title": "Ледяная слизь",
+   "kind": "ooze",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "ледян",
+    "слизь",
+    "син",
+    "слизь",
+    "водян",
+    "слизь"
+   ]
+  },
+  {
+   "id": "slime_red",
+   "sheet": "variants",
+   "cell": 6,
+   "title": "Кровавая слизь",
+   "kind": "ooze",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "кровав",
+    "слизь",
+    "красн",
+    "слизь",
+    "магм",
+    "слизь"
+   ]
+  },
+  {
+   "id": "slime_violet",
+   "sheet": "variants",
+   "cell": 7,
+   "title": "Чёрная слизь бездны",
+   "kind": "ooze",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "фиолет",
+    "слизь",
+    "чёрн",
+    "слизь",
+    "черн",
+    "слизь",
+    "пурпурн",
+    "слизь"
+   ]
+  },
+  {
+   "id": "slime_amber",
+   "sheet": "variants",
+   "cell": 8,
+   "title": "Янтарная слизь",
+   "kind": "ooze",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "янтарн",
+    "слизь",
+    "бур",
+    "слизь",
+    "грязев",
+    "слизь"
+   ]
+  },
+  {
+   "id": "wolf_snow",
+   "sheet": "variants",
+   "cell": 9,
+   "title": "Снежный волк",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "снежн",
+    "волк",
+    "белый",
+    "волк",
+    "бел",
+    "волк",
+    "ледян",
+    "волк",
+    "зимн",
+    "волк"
+   ]
+  },
+  {
+   "id": "hellhound",
+   "sheet": "variants",
+   "cell": 10,
+   "title": "Адская гончая",
+   "kind": "demon",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "адск",
+    "гончая",
+    "адск",
+    "пёс",
+    "огнен",
+    "волк",
+    "огнен",
+    "пес",
+    "инферн",
+    "гонча",
+    "hellhound"
+   ]
+  },
+  {
+   "id": "spider_venom",
+   "sheet": "variants",
+   "cell": 11,
+   "title": "Ядовитый паук",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "ядовит",
+    "паук",
+    "зелён",
+    "паук",
+    "болотн",
+    "паук"
+   ]
+  },
+  {
+   "id": "spider_frost",
+   "sheet": "variants",
+   "cell": 12,
+   "title": "Ледяной паук",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "ледян",
+    "паук",
+    "син",
+    "паук",
+    "морозн",
+    "паук"
+   ]
+  },
+  {
+   "id": "wraith_green",
+   "sheet": "variants",
+   "cell": 13,
+   "title": "Чумной призрак",
+   "kind": "undead",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "зелён",
+    "призрак",
+    "чумн",
+    "призрак",
+    "болотн",
+    "дух",
+    "ядовит",
+    "призрак"
+   ]
+  },
+  {
+   "id": "wraith_crimson",
+   "sheet": "variants",
+   "cell": 14,
+   "title": "Кровавый призрак",
+   "kind": "undead",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "кровав",
+    "призрак",
+    "красн",
+    "призрак",
+    "багров",
+    "дух"
+   ]
+  },
+  {
+   "id": "demon_frost",
+   "sheet": "variants",
+   "cell": 15,
+   "title": "Ледяной демон",
+   "kind": "demon",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "ледян",
+    "демон",
+    "морозн",
+    "демон"
+   ]
+  },
+  {
+   "id": "demon_void",
+   "sheet": "variants2",
+   "cell": 0,
+   "title": "Демон бездны",
+   "kind": "demon",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "демон",
+    "бездн",
+    "пустот",
+    "демон",
+    "тёмн",
+    "демон"
+   ]
+  },
+  {
+   "id": "horror_green",
+   "sheet": "variants2",
+   "cell": 1,
+   "title": "Болотный ужас",
+   "kind": "aberration",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "болотн",
+    "ужас",
+    "зелён",
+    "ужас",
+    "трясин"
+   ]
+  },
+  {
+   "id": "golem_iron",
+   "sheet": "variants2",
+   "cell": 2,
+   "title": "Железный голем",
+   "kind": "construct",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "железн",
+    "голем",
+    "стальн",
+    "голем",
+    "чугун"
+   ]
+  },
+  {
+   "id": "troll_cave",
+   "sheet": "variants2",
+   "cell": 3,
+   "title": "Пещерный тролль",
+   "kind": "giant",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "пещерн",
+    "тролль",
+    "серый",
+    "тролль",
+    "камен",
+    "тролль",
+    "горн",
+    "тролль"
+   ]
+  },
+  {
+   "id": "troll_frost",
+   "sheet": "variants2",
+   "cell": 4,
+   "title": "Ледяной тролль",
+   "kind": "giant",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "ледян",
+    "тролль",
+    "снежн",
+    "тролль"
+   ]
+  },
+  {
+   "id": "lich_frost",
+   "sheet": "variants2",
+   "cell": 5,
+   "title": "Ледяной лич",
+   "kind": "undead",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "ледян",
+    "лич",
+    "морозн",
+    "некромант"
+   ]
+  },
+  {
+   "id": "lich_plague",
+   "sheet": "variants2",
+   "cell": 6,
+   "title": "Чумной лич",
+   "kind": "undead",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "чумн",
+    "лич",
+    "гнил",
+    "некромант",
+    "мор"
+   ]
+  },
+  {
+   "id": "fire_giant",
+   "sheet": "variants2",
+   "cell": 7,
+   "title": "Огненный великан",
+   "kind": "giant",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "огнен",
+    "великан",
+    "огнен",
+    "исполин"
+   ]
+  },
+  {
+   "id": "fire_elemental",
+   "sheet": "variants2",
+   "cell": 8,
+   "title": "Огненный вихрь",
+   "kind": "elemental",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "огнен",
+    "элементаль",
+    "огнен",
+    "вихрь",
+    "пламен",
+    "элементаль",
+    "огня",
+    "пламя"
+   ]
+  },
+  {
+   "id": "toxic_elemental",
+   "sheet": "variants2",
+   "cell": 9,
+   "title": "Ядовитый смерч",
+   "kind": "elemental",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "ядовит",
+    "смерч",
+    "ядовит",
+    "элементаль",
+    "миазм"
+   ]
+  },
+  {
+   "id": "crystal_ruby",
+   "sheet": "variants2",
+   "cell": 10,
+   "title": "Рубиновый голем",
+   "kind": "elemental",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "рубин",
+    "голем",
+    "красн",
+    "кристал"
+   ]
+  },
+  {
+   "id": "crystal_amethyst",
+   "sheet": "variants2",
+   "cell": 11,
+   "title": "Аметистовый голем",
+   "kind": "elemental",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "аметист",
+    "голем",
+    "фиолет",
+    "кристал"
+   ]
+  },
+  {
+   "id": "crystal_emerald",
+   "sheet": "variants2",
+   "cell": 12,
+   "title": "Изумрудный голем",
+   "kind": "elemental",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "изумруд",
+    "голем",
+    "зелён",
+    "кристал"
+   ]
+  },
+  {
+   "id": "scorpion_black",
+   "sheet": "variants2",
+   "cell": 13,
+   "title": "Чёрный скорпион",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "чёрн",
+    "скорпион",
+    "черн",
+    "скорпион",
+    "пещерн",
+    "скорпион"
+   ]
+  },
+  {
+   "id": "scorpion_fire",
+   "sheet": "variants2",
+   "cell": 14,
+   "title": "Огненный скорпион",
+   "kind": "beast",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "огнен",
+    "скорпион",
+    "красн",
+    "скорпион"
+   ]
+  },
+  {
+   "id": "serpent_sea",
+   "sheet": "variants2",
+   "cell": 15,
+   "title": "Морской змей",
+   "kind": "monstrosity",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "морск",
+    "змей",
+    "левиафан",
+    "водян",
+    "змей"
+   ]
+  },
+  {
+   "id": "serpent_crimson",
+   "sheet": "variants3",
+   "cell": 0,
+   "title": "Багровый змей",
+   "kind": "monstrosity",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "багров",
+    "змей",
+    "красн",
+    "змей",
+    "кровав",
+    "змей"
+   ]
+  },
+  {
+   "id": "banshee_green",
+   "sheet": "variants3",
+   "cell": 1,
+   "title": "Болотная банши",
+   "kind": "undead",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "болотн",
+    "банши",
+    "зелён",
+    "банши"
+   ]
+  },
+  {
+   "id": "myconid_violet",
+   "sheet": "variants3",
+   "cell": 2,
+   "title": "Лиловый грибной ужас",
+   "kind": "plant",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "лилов",
+    "гриб",
+    "фиолет",
+    "гриб",
+    "ядовит",
+    "гриб"
+   ]
+  },
+  {
+   "id": "myconid_glow",
+   "sheet": "variants3",
+   "cell": 3,
+   "title": "Светящийся грибной ужас",
+   "kind": "plant",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "светящ",
+    "гриб",
+    "голуб",
+    "гриб",
+    "пещерн",
+    "гриб"
+   ]
+  },
+  {
+   "id": "eldritch_green",
+   "sheet": "variants3",
+   "cell": 4,
+   "title": "Изумрудное око бездны",
+   "kind": "aberration",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "зелён",
+    "глаз",
+    "изумрудн",
+    "око"
+   ]
+  },
+  {
+   "id": "salamander",
+   "sheet": "variants3",
+   "cell": 5,
+   "title": "Огненный людоящер",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "саламандр",
+    "огнен",
+    "ящер",
+    "красн",
+    "ящер"
+   ]
+  },
+  {
+   "id": "orc_grey",
+   "sheet": "variants3",
+   "cell": 6,
+   "title": "Серый орк-шаман",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "серый",
+    "орк",
+    "гнил",
+    "орк",
+    "орк-шаман"
+   ]
+  },
+  {
+   "id": "goblin_blue",
+   "sheet": "variants3",
+   "cell": 7,
+   "title": "Пещерный гоблин",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "пещерн",
+    "гоблин",
+    "син",
+    "гоблин",
+    "горн",
+    "гоблин"
+   ]
+  },
+  {
+   "id": "human-male",
+   "sheet": "companion",
+   "cell": 0,
+   "title": "Человек-воин",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "воин",
+    "рыцарь",
+    "боец",
+    "страж",
+    "паладин"
+   ]
+  },
+  {
+   "id": "elf-female",
+   "sheet": "companion",
+   "cell": 1,
+   "title": "Эльфийка-лучница",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "эльф",
+    "лучн",
+    "следопыт"
+   ]
+  },
+  {
+   "id": "darkelf-female",
+   "sheet": "companion",
+   "cell": 2,
+   "title": "Тёмная эльфийка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "дроу",
+    "тёмн",
+    "эльф",
+    "темн",
+    "эльф"
+   ]
+  },
+  {
+   "id": "dwarf-male",
+   "sheet": "companion",
+   "cell": 3,
+   "title": "Дварф",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "дварф",
+    "гном",
+    "дворф"
+   ]
+  },
+  {
+   "id": "orc-male",
+   "sheet": "companion",
+   "cell": 4,
+   "title": "Орк",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "орк",
+    "полуорк"
+   ]
+  },
+  {
+   "id": "tiefling-female",
+   "sheet": "companion",
+   "cell": 5,
+   "title": "Тифлинг",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "тифлинг",
+    "демоническ"
+   ]
+  },
+  {
+   "id": "human-female-cleric",
+   "sheet": "companion",
+   "cell": 6,
+   "title": "Жрица",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "жриц",
+    "жрец",
+    "целител",
+    "монахин",
+    "клирик"
+   ]
+  },
+  {
+   "id": "human-male-rogue",
+   "sheet": "companion",
+   "cell": 7,
+   "title": "Плут в капюшоне",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "плут",
+    "вор",
+    "следопыт",
+    "охотник",
+    "разведч",
+    "ассасин"
+   ]
+  },
+  {
+   "id": "dragonborn-male",
+   "sheet": "companion",
+   "cell": 8,
+   "title": "Драконорождённый",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "драконорожд",
+    "дракон"
+   ]
+  },
+  {
+   "id": "halfling-male",
+   "sheet": "companion",
+   "cell": 9,
+   "title": "Полурослик",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "полурослик",
+    "хоббит"
+   ]
+  },
+  {
+   "id": "catfolk-female",
+   "sheet": "companion",
+   "cell": 10,
+   "title": "Кошколюдка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "кошк",
+    "табакс",
+    "зверолюд"
+   ]
+  },
+  {
+   "id": "goblin-male",
+   "sheet": "companion",
+   "cell": 11,
+   "title": "Гоблин-спутник",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "гоблин"
+   ]
+  },
+  {
+   "id": "human-female-mage",
+   "sheet": "companion",
+   "cell": 12,
+   "title": "Огненная чародейка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "чарод",
+    "маг",
+    "волшеб",
+    "колдун",
+    "ведьм",
+    "пиромант"
+   ]
+  },
+  {
+   "id": "elf-male",
+   "sheet": "companion",
+   "cell": 13,
+   "title": "Эльф-друид",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "эльф",
+    "друид",
+    "следопыт"
+   ]
+  },
+  {
+   "id": "darkelf-male",
+   "sheet": "companion",
+   "cell": 14,
+   "title": "Тёмный эльф-некромант",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "дроу",
+    "тёмн",
+    "эльф",
+    "темн",
+    "эльф",
+    "некромант"
+   ]
+  },
+  {
+   "id": "human-female-warrior",
+   "sheet": "companion",
+   "cell": 15,
+   "title": "Воительница",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "воин",
+    "воительниц",
+    "наёмниц",
+    "наемниц",
+    "паладин",
+    "страж"
+   ]
+  },
+  {
+   "id": "warrior-male",
+   "sheet": "hero",
+   "cell": 0,
+   "title": "Воин",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "воин",
+    "боец",
+    "рыцарь",
+    "варвар"
+   ]
+  },
+  {
+   "id": "rogue-male",
+   "sheet": "hero",
+   "cell": 1,
+   "title": "Ловкач",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "следопыт",
+    "лучник",
+    "охотник"
+   ]
+  },
+  {
+   "id": "mage-male",
+   "sheet": "hero",
+   "cell": 2,
+   "title": "Маг",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "маг",
+    "волшеб",
+    "чарод",
+    "колдун",
+    "старец"
+   ]
+  },
+  {
+   "id": "warrior-female",
+   "sheet": "hero",
+   "cell": 3,
+   "title": "Воительница",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "воин",
+    "боец",
+    "рыцарь",
+    "варвар"
+   ]
+  },
+  {
+   "id": "rogue-female",
+   "sheet": "hero",
+   "cell": 4,
+   "title": "Ловкачка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "следопыт",
+    "лучн",
+    "охотниц",
+    "плут"
+   ]
+  },
+  {
+   "id": "mage-female",
+   "sheet": "hero",
+   "cell": 5,
+   "title": "Волшебница",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "маг",
+    "волшеб",
+    "чарод",
+    "колдун",
+    "жриц"
+   ]
+  },
+  {
+   "id": "ganger",
+   "sheet": "cyber_street",
+   "cell": 0,
+   "title": "Ганкер с тату",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "ганкер",
+    "бандит",
+    "гопник",
+    "уличн",
+    "налётчик",
+    "налетчик",
+    "шпан",
+    "ganger"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "ganger_f",
+   "sheet": "cyber_street",
+   "cell": 1,
+   "title": "Бандитка с розовым каре",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "бандитк",
+    "ганкерш",
+    "девушк-банд"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "punk",
+   "sheet": "cyber_street",
+   "cell": 2,
+   "title": "Панк с ирокезом",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "панк",
+    "ирокез",
+    "punk"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "bruiser",
+   "sheet": "cyber_street",
+   "cell": 3,
+   "title": "Громила с железной челюстью",
+   "kind": "cyborg",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "громил",
+    "вышибал",
+    "головорез",
+    "бугай",
+    "качок",
+    "thug",
+    "bruiser"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "corp_guard",
+   "sheet": "cyber_street",
+   "cell": 4,
+   "title": "Корпоративный охранник в шлеме",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "охранник",
+    "охран",
+    "корпоратив",
+    "страж",
+    "секьюрити",
+    "guard",
+    "security"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "corp_soldier",
+   "sheet": "cyber_street",
+   "cell": 5,
+   "title": "Корпоративный штурмовик",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "корпоративн",
+    "штурмовик",
+    "солдат",
+    "спецназ",
+    "боец",
+    "оперативник",
+    "soldier"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cop",
+   "sheet": "cyber_street",
+   "cell": 6,
+   "title": "Полицейский в кепи",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "полицейск",
+    "коп",
+    "патрульн",
+    "офицер",
+    "сержант",
+    "cop",
+    "police"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "netrunner",
+   "sheet": "cyber_street",
+   "cell": 7,
+   "title": "Нетраннерша в капюшоне",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "нетраннер",
+    "хакер",
+    "взломщик",
+    "netrunner",
+    "hacker"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cyberpsycho",
+   "sheet": "cyber_street",
+   "cell": 8,
+   "title": "Киберпсих в хроме",
+   "kind": "cyborg",
+   "tier": "boss",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "киберпсих",
+    "психопат",
+    "безумец",
+    "маньяк",
+    "cyberpsycho"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cyber_ninja",
+   "sheet": "cyber_street",
+   "cell": 9,
+   "title": "Киберниндзя с катаной",
+   "kind": "cyborg",
+   "tier": "elite",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "ниндзя",
+    "ассасин",
+    "убийц",
+    "ninja",
+    "assassin"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "mercenary",
+   "sheet": "cyber_street",
+   "cell": 10,
+   "title": "Наёмник-ветеран с кибер-глазом",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "наёмник",
+    "наемник",
+    "ветеран",
+    "солдат",
+    "удачи",
+    "merc",
+    "mercenary"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "sniper",
+   "sheet": "cyber_street",
+   "cell": 11,
+   "title": "Снайперша",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "снайпер",
+    "стрелок",
+    "sniper"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "tech_priest",
+   "sheet": "cyber_street",
+   "cell": 12,
+   "title": "Техножрец",
+   "kind": "cyborg",
+   "tier": "elite",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "техножрец",
+    "культист",
+    "сектант",
+    "жрец",
+    "машин",
+    "фанатик",
+    "cultist"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "raider",
+   "sheet": "cyber_street",
+   "cell": 13,
+   "title": "Рейдер Пустошей",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "рейдер",
+    "кочевник",
+    "пустош",
+    "мародёр",
+    "мародер",
+    "байкер",
+    "raider"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "fixer_boss",
+   "sheet": "cyber_street",
+   "cell": 14,
+   "title": "Фиксер-босс в очках",
+   "kind": "humanoid",
+   "tier": "boss",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "фиксер",
+    "босс",
+    "главарь",
+    "пахан",
+    "мафиоз",
+    "барон",
+    "король",
+    "fixer",
+    "boss"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "corp_exec",
+   "sheet": "cyber_street",
+   "cell": 15,
+   "title": "Директор корпорации",
+   "kind": "humanoid",
+   "tier": "legend",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "директор",
+    "корпорат",
+    "топ-менеджер",
+    "глава",
+    "совет",
+    "исполнительн",
+    "exec",
+    "ceo"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "drone_sec",
+   "sheet": "cyber_machines",
+   "cell": 0,
+   "title": "Охранный дрон",
+   "kind": "drone",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "дрон",
+    "охранн",
+    "камер",
+    "наблюден",
+    "drone"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "drone_combat",
+   "sheet": "cyber_machines",
+   "cell": 1,
+   "title": "Боевой квадрокоптер",
+   "kind": "drone",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "квадрокоптер",
+    "штурмов",
+    "боевой",
+    "дрон"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "turret",
+   "sheet": "cyber_machines",
+   "cell": 2,
+   "title": "Автоматическая турель",
+   "kind": "mech",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "турел",
+    "пулемётн",
+    "точк",
+    "турель",
+    "turret"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "combat_robot",
+   "sheet": "cyber_machines",
+   "cell": 3,
+   "title": "Боевой робот",
+   "kind": "mech",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "робот",
+    "боевой",
+    "автомат-солдат",
+    "robot"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "android",
+   "sheet": "cyber_machines",
+   "cell": 4,
+   "title": "Андроид",
+   "kind": "android",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "андроид",
+    "синтетик",
+    "репликант",
+    "android"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "mech",
+   "sheet": "cyber_machines",
+   "cell": 5,
+   "title": "Шагающий мех",
+   "kind": "mech",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "мех",
+    "шагоход",
+    "экзоробот",
+    "погрузчик",
+    "mech"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cyberdog",
+   "sheet": "cyber_machines",
+   "cell": 6,
+   "title": "Киберпёс",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "киберпёс",
+    "киберпес",
+    "собак",
+    "пёс",
+    "пес",
+    "гончая",
+    "доберман",
+    "волк",
+    "cyberdog"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "mutant_rat",
+   "sheet": "cyber_machines",
+   "cell": 7,
+   "title": "Крыса-мутант",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "крыса-мутант",
+    "крыс",
+    "мутант-крыс",
+    "rat"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "mutant",
+   "sheet": "cyber_machines",
+   "cell": 8,
+   "title": "Мутант",
+   "kind": "mutant",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "мутант",
+    "урод",
+    "выродок",
+    "отродье",
+    "mutant"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "ai_ghost",
+   "sheet": "cyber_machines",
+   "cell": 9,
+   "title": "Сетевой призрак",
+   "kind": "program",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "призрак",
+    "сетев",
+    "ии",
+    "искусственн",
+    "дух",
+    "аватар",
+    "ghost",
+    "ai"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "ice_daemon",
+   "sheet": "cyber_machines",
+   "cell": 10,
+   "title": "Демон-защитник (ICE)",
+   "kind": "program",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "лёд",
+    "лед",
+    "айс",
+    "демон",
+    "защит",
+    "программ",
+    "файрвол",
+    "ice",
+    "daemon"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "spider_bot",
+   "sheet": "cyber_machines",
+   "cell": 11,
+   "title": "Паук-робот",
+   "kind": "drone",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "паук-робот",
+    "паук",
+    "спайдер",
+    "spider"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "borg_titan",
+   "sheet": "cyber_machines",
+   "cell": 12,
+   "title": "Киборг-титан",
+   "kind": "cyborg",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "титан",
+    "киборг-гигант",
+    "гигант",
+    "тяжёл",
+    "киборг",
+    "cyborg"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "war_mech",
+   "sheet": "cyber_machines",
+   "cell": 13,
+   "title": "Военный мех",
+   "kind": "mech",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "военн",
+    "мех",
+    "танк",
+    "шагоход",
+    "боевая",
+    "машин",
+    "war"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "ai_core",
+   "sheet": "cyber_machines",
+   "cell": 14,
+   "title": "Ядро сверхразума",
+   "kind": "program",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "ядро",
+    "сверхразум",
+    "суперкомпьютер",
+    "ии-бог",
+    "core"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "android_assassin",
+   "sheet": "cyber_machines",
+   "cell": 15,
+   "title": "Андроид-убийца",
+   "kind": "android",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "андроид-убийц",
+    "синтетическ",
+    "убийц",
+    "ликвидатор"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-solo-m",
+   "sheet": "cyber_persons",
+   "cell": 0,
+   "title": "Соло с кибер-глазом",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "соло",
+    "наёмник",
+    "наемник",
+    "боец",
+    "телохранител"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-solo-f",
+   "sheet": "cyber_persons",
+   "cell": 1,
+   "title": "Соло с тату",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "соло",
+    "наёмниц",
+    "наемниц",
+    "бойц"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-netrunner-f",
+   "sheet": "cyber_persons",
+   "cell": 2,
+   "title": "Нетраннерша с визором",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "нетраннер",
+    "хакер"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-netrunner-m",
+   "sheet": "cyber_persons",
+   "cell": 3,
+   "title": "Нетраннер в очках",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "нетраннер",
+    "хакер"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-techie-m",
+   "sheet": "cyber_persons",
+   "cell": 4,
+   "title": "Техник в очках",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "техник",
+    "инженер",
+    "механик",
+    "дронщик"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-techie-f",
+   "sheet": "cyber_persons",
+   "cell": 5,
+   "title": "Техничка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "техник",
+    "инженер",
+    "механик"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-medtech-f",
+   "sheet": "cyber_persons",
+   "cell": 6,
+   "title": "Медтех",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "медтех",
+    "медик",
+    "врач",
+    "риппердок",
+    "медсестр"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-medtech-m",
+   "sheet": "cyber_persons",
+   "cell": 7,
+   "title": "Медтех с визором",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "медтех",
+    "медик",
+    "врач",
+    "риппердок"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-nomad-m",
+   "sheet": "cyber_persons",
+   "cell": 8,
+   "title": "Кочевник",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "кочевник",
+    "байкер",
+    "водител",
+    "контрабандист"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-nomad-f",
+   "sheet": "cyber_persons",
+   "cell": 9,
+   "title": "Кочевница",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "кочевниц",
+    "байкерш",
+    "водител"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-fixer-m",
+   "sheet": "cyber_persons",
+   "cell": 10,
+   "title": "Фиксер",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "фиксер",
+    "посредник",
+    "делец"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-corpo-f",
+   "sheet": "cyber_persons",
+   "cell": 11,
+   "title": "Корпоратка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "корпорат",
+    "менеджер",
+    "агент",
+    "шпион"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-rocker-m",
+   "sheet": "cyber_persons",
+   "cell": 12,
+   "title": "Рокер-киборг",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "рокер",
+    "музыкант",
+    "киборг"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-bartender-f",
+   "sheet": "cyber_persons",
+   "cell": 13,
+   "title": "Барменша",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "бармен",
+    "барменш",
+    "официантк"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-cop-m",
+   "sheet": "cyber_persons",
+   "cell": 14,
+   "title": "Коп",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "коп",
+    "полицейск",
+    "детектив"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-punk-f",
+   "sheet": "cyber_persons",
+   "cell": 15,
+   "title": "Панкушка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "панк",
+    "уличн"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-hero-solo-m",
+   "sheet": "cyber_hero",
+   "cell": 0,
+   "title": "Соло",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "соло",
+    "наёмник",
+    "боец"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-hero-runner-m",
+   "sheet": "cyber_hero",
+   "cell": 1,
+   "title": "Раннер",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "раннер",
+    "вор",
+    "ниндзя",
+    "разведч"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-hero-netrunner-m",
+   "sheet": "cyber_hero",
+   "cell": 2,
+   "title": "Нетраннер",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "нетраннер",
+    "хакер",
+    "техник"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-hero-solo-f",
+   "sheet": "cyber_hero",
+   "cell": 3,
+   "title": "Соло",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "соло",
+    "наёмниц",
+    "бойц"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-hero-runner-f",
+   "sheet": "cyber_hero",
+   "cell": 4,
+   "title": "Раннерша",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "раннер",
+    "воровк",
+    "разведч"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "cy-hero-netrunner-f",
+   "sheet": "cyber_hero",
+   "cell": 5,
+   "title": "Нетраннерша",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "нетраннер",
+    "хакер",
+    "техник"
+   ],
+   "genre": "cyberpunk"
+  },
+  {
+   "id": "gopnik",
+   "sheet": "modern_street",
+   "cell": 0,
+   "title": "Гопник в спортивном костюме",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "гопник",
+    "шпан",
+    "хулиган",
+    "пацан",
+    "урка",
+    "gopnik"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "robber",
+   "sheet": "modern_street",
+   "cell": 1,
+   "title": "Грабитель в балаклаве",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "грабител",
+    "налётчик",
+    "налетчик",
+    "балаклав",
+    "маск",
+    "robber"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "biker",
+   "sheet": "modern_street",
+   "cell": 2,
+   "title": "Байкер с банданой",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "байкер",
+    "мотоциклист",
+    "biker"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "dealer",
+   "sheet": "modern_street",
+   "cell": 3,
+   "title": "Барыга в капюшоне",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "барыг",
+    "дилер",
+    "торгаш",
+    "закладчик",
+    "dealer"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "enforcer",
+   "sheet": "modern_street",
+   "cell": 4,
+   "title": "Бритый громила",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "громил",
+    "бык",
+    "вышибал",
+    "бандит",
+    "браток",
+    "боевик",
+    "enforcer",
+    "bandit"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "hitman",
+   "sheet": "modern_street",
+   "cell": 5,
+   "title": "Киллер в тёмных очках",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "киллер",
+    "убийц",
+    "наёмный",
+    "убийц",
+    "hitman"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "sec_guard",
+   "sheet": "modern_street",
+   "cell": 6,
+   "title": "Охранник",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "охранник",
+    "охран",
+    "чоп",
+    "секьюрити",
+    "guard"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "police_officer",
+   "sheet": "modern_street",
+   "cell": 7,
+   "title": "Полицейский",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "полицейск",
+    "мент",
+    "патрульн",
+    "участков",
+    "сержант",
+    "police",
+    "cop"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "swat_officer",
+   "sheet": "modern_street",
+   "cell": 8,
+   "title": "Боец спецназа",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "спецназ",
+    "омон",
+    "собр",
+    "штурмовик",
+    "swat"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "pmc_operator",
+   "sheet": "modern_street",
+   "cell": 9,
+   "title": "Боец ЧВК",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "боец",
+    "чвк",
+    "чвк",
+    "наёмник",
+    "наемник",
+    "оператор",
+    "контрактник",
+    "pmc",
+    "merc"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "army_soldier",
+   "sheet": "modern_street",
+   "cell": 10,
+   "title": "Солдат",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "солдат",
+    "военн",
+    "рядов",
+    "боец",
+    "армии",
+    "soldier"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "marksman",
+   "sheet": "modern_street",
+   "cell": 11,
+   "title": "Снайперша",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "снайпер",
+    "стрелок",
+    "marksman"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "mob_boss",
+   "sheet": "modern_street",
+   "cell": 12,
+   "title": "Мафиозный босс",
+   "kind": "humanoid",
+   "tier": "boss",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "босс",
+    "мафи",
+    "авторитет",
+    "вор",
+    "в",
+    "законе",
+    "главар",
+    "пахан",
+    "boss"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "kingpin",
+   "sheet": "modern_street",
+   "cell": 13,
+   "title": "Король наркотрафика",
+   "kind": "humanoid",
+   "tier": "legend",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "наркобарон",
+    "картел",
+    "король",
+    "барон",
+    "kingpin"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "corrupt_official",
+   "sheet": "modern_street",
+   "cell": 14,
+   "title": "Продажный чиновник",
+   "kind": "humanoid",
+   "tier": "boss",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "чиновник",
+    "депутат",
+    "мэр",
+    "полковник",
+    "продажн",
+    "official"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "prisoner",
+   "sheet": "modern_street",
+   "cell": 15,
+   "title": "Беглый зэк",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "зэк",
+    "заключённ",
+    "заключен",
+    "беглец",
+    "уголовник",
+    "prisoner"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "guard_dog",
+   "sheet": "modern_threats",
+   "cell": 0,
+   "title": "Сторожевой пёс",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "пёс",
+    "пес",
+    "собак",
+    "ротвейлер",
+    "сторожев",
+    "овчарк",
+    "dog"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "doberman",
+   "sheet": "modern_threats",
+   "cell": 1,
+   "title": "Доберман",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "доберман",
+    "бойцов",
+    "собак",
+    "питбул"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "timber_wolf",
+   "sheet": "modern_threats",
+   "cell": 2,
+   "title": "Волк",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "волк",
+    "волч",
+    "wolf"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "brown_bear",
+   "sheet": "modern_threats",
+   "cell": 3,
+   "title": "Бурый медведь",
+   "kind": "beast",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "медвед",
+    "медведиц",
+    "шатун",
+    "bear"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "wild_boar",
+   "sheet": "modern_threats",
+   "cell": 4,
+   "title": "Кабан",
+   "kind": "beast",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "кабан",
+    "вепрь",
+    "секач",
+    "boar"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "armored_suv",
+   "sheet": "modern_threats",
+   "cell": 5,
+   "title": "Бронированный внедорожник",
+   "kind": "vehicle",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "внедорожник",
+    "джип",
+    "машин",
+    "броневик",
+    "бронированн",
+    "suv"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "technical",
+   "sheet": "modern_threats",
+   "cell": 6,
+   "title": "Пикап с пулемётом",
+   "kind": "vehicle",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "пикап",
+    "тачанк",
+    "пулемёт",
+    "пулемет",
+    "technical"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "police_car",
+   "sheet": "modern_threats",
+   "cell": 7,
+   "title": "Полицейская машина",
+   "kind": "vehicle",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "полицейск",
+    "машин",
+    "патрульн",
+    "машин",
+    "мигалк"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "helicopter",
+   "sheet": "modern_threats",
+   "cell": 8,
+   "title": "Вертолёт",
+   "kind": "vehicle",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "вертолёт",
+    "вертолет",
+    "вертушк",
+    "helicopter"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "quad_drone",
+   "sheet": "modern_threats",
+   "cell": 9,
+   "title": "Квадрокоптер",
+   "kind": "drone",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "квадрокоптер",
+    "дрон",
+    "беспилотник",
+    "drone"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "maniac",
+   "sheet": "modern_threats",
+   "cell": 10,
+   "title": "Маньяк в маске",
+   "kind": "humanoid",
+   "tier": "boss",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "маньяк",
+    "психопат",
+    "убийца",
+    "в",
+    "маске",
+    "maniac"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "sect_leader",
+   "sheet": "modern_threats",
+   "cell": 11,
+   "title": "Лидер секты",
+   "kind": "humanoid",
+   "tier": "boss",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "сект",
+    "культ",
+    "пророк",
+    "гуру",
+    "лидер",
+    "секты"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "killer_f",
+   "sheet": "modern_threats",
+   "cell": 12,
+   "title": "Наёмная убийца",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "наёмная",
+    "убийца",
+    "убийц",
+    "киллерш",
+    "наёмниц",
+    "наемниц"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "heavy_gunner",
+   "sheet": "modern_threats",
+   "cell": 13,
+   "title": "Пулемётчик",
+   "kind": "humanoid",
+   "tier": "elite",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "пулемётчик",
+    "пулеметчик",
+    "тяжёл",
+    "тяжел",
+    "гранатомётчик"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "riot_cop",
+   "sheet": "modern_threats",
+   "cell": 14,
+   "title": "Боец ОМОНа",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": false,
+   "kw": [
+    "омон",
+    "росгвард",
+    "щит",
+    "оцеплен"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "warlord",
+   "sheet": "modern_threats",
+   "cell": 15,
+   "title": "Полевой командир",
+   "kind": "humanoid",
+   "tier": "legend",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "полевой",
+    "командир",
+    "генерал",
+    "командир",
+    "боевиков",
+    "warlord"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_restless_ghost",
+   "sheet": "modern_supernatural",
+   "cell": 0,
+   "title": "Беспокойный призрак",
+   "kind": "undead",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "призрак",
+    "дух",
+    "привидение",
+    "фантом",
+    "мертвец",
+    "ghost",
+    "spirit",
+    "phantom"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_possessed",
+   "sheet": "modern_supernatural",
+   "cell": 1,
+   "title": "Одержимый",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "одержим",
+    "бесноват",
+    "вселение",
+    "демон",
+    "внутри",
+    "possessed"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_feral_vampire",
+   "sheet": "modern_supernatural",
+   "cell": 2,
+   "title": "Одичавший вампир",
+   "kind": "undead",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "вампир",
+    "кровосос",
+    "упырь",
+    "вурдалак",
+    "feral",
+    "vampire"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_vampire_aristocrat",
+   "sheet": "modern_supernatural",
+   "cell": 3,
+   "title": "Вампир-аристократ",
+   "kind": "undead",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "вампир",
+    "аристократ",
+    "древний",
+    "князь",
+    "госпожа",
+    "vampire",
+    "aristocrat"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_urban_werewolf",
+   "sheet": "modern_supernatural",
+   "cell": 4,
+   "title": "Городской оборотень",
+   "kind": "monstrosity",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "оборотень",
+    "вервольф",
+    "волколак",
+    "ликантроп",
+    "werewolf",
+    "lycan"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_occult_cultist",
+   "sheet": "modern_supernatural",
+   "cell": 5,
+   "title": "Оккультный культист",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "культист",
+    "сектант",
+    "оккультист",
+    "ритуалист",
+    "cultist",
+    "occult"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_revenant",
+   "sheet": "modern_supernatural",
+   "cell": 6,
+   "title": "Ревенант",
+   "kind": "undead",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "ревенант",
+    "оживший",
+    "мертвец",
+    "зомби",
+    "ходячий",
+    "труп",
+    "revenant",
+    "zombie"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_banshee",
+   "sheet": "modern_supernatural",
+   "cell": 7,
+   "title": "Банши",
+   "kind": "undead",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "банши",
+    "плакальщица",
+    "кричащий",
+    "дух",
+    "призрак",
+    "banshee",
+    "wraith"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_shadow_demon",
+   "sheet": "modern_supernatural",
+   "cell": 8,
+   "title": "Теневой демон",
+   "kind": "demon",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "теневой",
+    "демон",
+    "бес",
+    "тень",
+    "дым",
+    "мрак",
+    "shadow",
+    "demon"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_horned_demon",
+   "sheet": "modern_supernatural",
+   "cell": 9,
+   "title": "Рогатый демон",
+   "kind": "demon",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "рогатый",
+    "демон",
+    "дьявол",
+    "исчадие",
+    "сатир",
+    "demon",
+    "devil",
+    "fiend"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_living_mannequin",
+   "sheet": "modern_supernatural",
+   "cell": 10,
+   "title": "Живой манекен",
+   "kind": "construct",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "живой",
+    "манекен",
+    "кукла",
+    "автомат",
+    "оживший",
+    "предмет",
+    "mannequin",
+    "doll",
+    "construct"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_concrete_gargoyle",
+   "sheet": "modern_supernatural",
+   "cell": 11,
+   "title": "Бетонная горгулья",
+   "kind": "construct",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "горгулья",
+    "каменный",
+    "демон",
+    "статуя",
+    "бетон",
+    "gargoyle",
+    "statue"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_sewer_aberration",
+   "sheet": "modern_supernatural",
+   "cell": 12,
+   "title": "Канализационная тварь",
+   "kind": "aberration",
+   "tier": "ordinary",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "канализационная",
+    "тварь",
+    "мутант",
+    "многоглазый",
+    "монстр",
+    "sewer",
+    "aberration",
+    "creature"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_eldritch_anomaly",
+   "sheet": "modern_supernatural",
+   "cell": 13,
+   "title": "Потусторонняя аномалия",
+   "kind": "aberration",
+   "tier": "boss",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "аномалия",
+    "разлом",
+    "искажение",
+    "пустота",
+    "потусторонний",
+    "ужас",
+    "eldritch",
+    "anomaly",
+    "rift"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_fire_elemental",
+   "sheet": "modern_supernatural",
+   "cell": 14,
+   "title": "Огненный элементаль",
+   "kind": "elemental",
+   "tier": "elite",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "огненный",
+    "элементаль",
+    "дух",
+    "огня",
+    "пламя",
+    "пожар",
+    "fire",
+    "elemental"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md_urban_celestial",
+   "sheet": "modern_supernatural",
+   "cell": 15,
+   "title": "Городской небожитель",
+   "kind": "celestial",
+   "tier": "legend",
+   "gender": "",
+   "person": false,
+   "kw": [
+    "небожитель",
+    "ангел",
+    "серафим",
+    "сияющий",
+    "посланник",
+    "celestial",
+    "angel",
+    "seraph"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-soldier-m",
+   "sheet": "modern_persons",
+   "cell": 0,
+   "title": "Солдат",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "солдат",
+    "военн",
+    "контрактник",
+    "боец",
+    "десантник"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-soldier-f",
+   "sheet": "modern_persons",
+   "cell": 1,
+   "title": "Военная",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "солдат",
+    "военн",
+    "контрактниц"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-medic-f",
+   "sheet": "modern_persons",
+   "cell": 2,
+   "title": "Медсестра",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "медсестр",
+    "медик",
+    "врач",
+    "фельдшер"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-medic-m",
+   "sheet": "modern_persons",
+   "cell": 3,
+   "title": "Врач",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "врач",
+    "медик",
+    "хирург",
+    "фельдшер"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-hacker-m",
+   "sheet": "modern_persons",
+   "cell": 4,
+   "title": "Хакер",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "хакер",
+    "айтишник",
+    "программист"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-hacker-f",
+   "sheet": "modern_persons",
+   "cell": 5,
+   "title": "Хакерша",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "хакер",
+    "айтишниц",
+    "программист"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-detective-m",
+   "sheet": "modern_persons",
+   "cell": 6,
+   "title": "Детектив",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "детектив",
+    "сыщик",
+    "следовател"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-journalist-f",
+   "sheet": "modern_persons",
+   "cell": 7,
+   "title": "Журналистка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "журналист",
+    "репортёр",
+    "репортер",
+    "блогер"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-driver-m",
+   "sheet": "modern_persons",
+   "cell": 8,
+   "title": "Водитель",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "водител",
+    "дальнобойщик",
+    "таксист"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-mechanic-f",
+   "sheet": "modern_persons",
+   "cell": 9,
+   "title": "Механик",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "механик",
+    "технар"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-cop-m",
+   "sheet": "modern_persons",
+   "cell": 10,
+   "title": "Полицейский",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "полицейск",
+    "мент",
+    "опер"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-lawyer-f",
+   "sheet": "modern_persons",
+   "cell": 11,
+   "title": "Адвокат",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "адвокат",
+    "юрист",
+    "бизнесвумен"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-boxer-m",
+   "sheet": "modern_persons",
+   "cell": 12,
+   "title": "Боксёр",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "боксёр",
+    "боксер",
+    "боец",
+    "спортсмен"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-bartender-f",
+   "sheet": "modern_persons",
+   "cell": 13,
+   "title": "Барменша",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "бармен",
+    "официантк"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-veteran-m",
+   "sheet": "modern_persons",
+   "cell": 14,
+   "title": "Ветеран",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "ветеран",
+    "старик",
+    "отставник"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-student-f",
+   "sheet": "modern_persons",
+   "cell": 15,
+   "title": "Студентка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "студент",
+    "девушк"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-hero-fighter-m",
+   "sheet": "modern_hero",
+   "cell": 0,
+   "title": "Боец",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "боец",
+    "солдат",
+    "наёмник"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-hero-rogue-m",
+   "sheet": "modern_hero",
+   "cell": 1,
+   "title": "Ловкач",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "вор",
+    "ловкач"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-hero-expert-m",
+   "sheet": "modern_hero",
+   "cell": 2,
+   "title": "Специалист",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "m",
+   "person": true,
+   "kw": [
+    "человек",
+    "специалист",
+    "детектив",
+    "хакер",
+    "медик"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-hero-fighter-f",
+   "sheet": "modern_hero",
+   "cell": 3,
+   "title": "Боец",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "боец",
+    "солдат",
+    "наёмниц"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-hero-rogue-f",
+   "sheet": "modern_hero",
+   "cell": 4,
+   "title": "Ловкачка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "воровк",
+    "ловкач"
+   ],
+   "genre": "modern"
+  },
+  {
+   "id": "md-hero-expert-f",
+   "sheet": "modern_hero",
+   "cell": 5,
+   "title": "Специалистка",
+   "kind": "humanoid",
+   "tier": "ordinary",
+   "gender": "f",
+   "person": true,
+   "kw": [
+    "человек",
+    "специалист",
+    "детектив",
+    "хакер",
+    "медик"
+   ],
+   "genre": "modern"
+  }
+ ]
+}

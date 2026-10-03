@@ -1,0 +1,1463 @@
+/* ============================================================
+   Темы оформления = сеттинги игры: «Фэнтези», «Киберпанк», «Современность».
+
+   Базовая тема «Фэнтези» живёт в :root файла app.css; сюда она не вынесена,
+   чтобы страница оставалась оформленной, даже если этот файл не загрузился.
+   «Киберпанк» — второй сеттинг: на <html> атрибут data-theme ставит App.razor из
+   настройки HarnessSettings.Theme (она же Genre.Current), переключатель — на странице
+   «Настройки» → «Оформление»; там же атрибут лежит на плашках-превью, чтобы
+   показать палитру настоящими токенами.
+
+   Устройство блока темы:
+   1) токены --rh-* на [data-theme="…"] — их читают и превью в настройках;
+   2) правила формы на html[data-theme="…"] … — срезанные углы, HUD-рамки, капитель.
+      Префикс html[...] нужен, чтобы перебить scoped-CSS компонентов (у тех селектор
+      «класс + атрибут», а этот файл подключён раньше бандла RPG_Harness.styles.css).
+   --rh-accent-rgb обязателен: из него собираются все полупрозрачные рамки и свечения.
+
+   Редкости предметов (rar-common…rar-legendary) не темизируются.
+   ============================================================ */
+
+/* =================== Фэнтези: базовые токены для превью ===================
+   Сама тема живёт в :root (app.css). Здесь — те же значения на [data-theme="fantasy"],
+   чтобы плашка-превью в настройках показывала свою палитру, когда активен киберпанк. */
+[data-theme="fantasy"] {
+    --rh-text: #ebe2d3;
+    --rh-bg: #13110e;
+    --rh-surface: #1a1714;
+    --rh-surface-2: #211d19;
+    --rh-accent: #c9a55c;
+    --rh-accent-rgb: 201, 165, 92;
+}
+
+/* =================== Киберпанк: ночной мегаполис, кислотный неон, HUD =================== */
+[data-theme="cyberpunk"] {
+    /* Шрифты с кириллицей: заголовки — Russo One, текст — Exo 2, числа — JetBrains Mono */
+    --rh-font: "Exo 2", "Segoe UI", system-ui, sans-serif;
+    --rh-serif: "Russo One", "Exo 2", "Segoe UI", sans-serif;
+    --rh-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+    /* Текст — холодный свет экранов */
+    --rh-text: #e9f7ff;
+    --rh-text-2: #8fb4c8;
+    --rh-text-3: #546b7c;
+
+    /* Поверхности — ночь с синим отливом */
+    --rh-bg: #04050a;
+    --rh-surface: #080b13;
+    --rh-surface-2: #0c111d;
+    --rh-surface-3: #131a2a;
+    --rh-inset: #030408;
+
+    /* Акцент — кислотно-жёлтый, второй — циан, третий — маджента */
+    --rh-accent: #fcee0a;
+    --rh-accent-hover: #fff86e;
+    --rh-accent-ink: #0b0b00;
+    --rh-accent-rgb: 252, 238, 10;
+    --rh-accent-2: #00f0ff;
+    --rh-accent-3: #ff2bd6;
+    --rh-cyan-rgb: 0, 240, 255;
+    --rh-magenta-rgb: 255, 43, 214;
+
+    /* Линии — циановая подсветка кромок */
+    --rh-border: rgba(0, 240, 255, .13);
+    --rh-border-strong: rgba(0, 240, 255, .32);
+    --rh-input-border: rgba(0, 240, 255, .26);
+    --rh-shadow-card: 0 0 0 1px rgba(0, 240, 255, .06);
+    --rh-shadow-pop: 0 0 40px rgba(0, 240, 255, .12), 0 20px 60px rgba(0, 0, 0, .75);
+
+    /* Смысловые цвета — неон */
+    --rh-success: #39ff88;
+    --rh-danger: #ff003c;
+    --rh-warning: #ff9a1f;
+    --rh-ooc: #00f0ff;
+    --rh-hp: #ff003c;
+    --rh-mana: #00f0ff;
+
+    /* Геометрия — прямые углы; срезы делает clip-path ниже */
+    --rh-radius-btn: 0;
+    --rh-radius-card: 0;
+    --rh-radius-panel: 0;
+    --cut: 9px;
+    --cut-lg: 16px;
+
+    /* Заголовки — капитель с широкой разрядкой */
+    --rh-title-transform: uppercase;
+    --rh-title-spacing: .12em;
+}
+
+/* ---------- Фон: сетка, развёртка ЭЛТ, неоновая дымка ---------- */
+html[data-theme="cyberpunk"] body {
+    background-color: var(--rh-bg);
+    background-image:
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, .28) 0 1px, transparent 1px 3px),
+        linear-gradient(rgba(0, 240, 255, .03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, .03) 1px, transparent 1px),
+        radial-gradient(ellipse at 8% -10%, rgba(255, 43, 214, .14), transparent 45%),
+        radial-gradient(ellipse at 100% 110%, rgba(0, 240, 255, .1), transparent 50%),
+        radial-gradient(ellipse at 60% 50%, transparent 40%, rgba(0, 0, 0, .55) 100%);
+    background-size: auto, 40px 40px, 40px 40px, auto, auto, auto;
+    background-attachment: fixed;
+    letter-spacing: .01em;
+}
+
+html[data-theme="cyberpunk"] ::selection {
+    background: rgba(255, 43, 214, .45);
+    color: #fff;
+}
+
+html[data-theme="cyberpunk"] :focus-visible {
+    outline: 1px solid var(--rh-accent-2);
+    outline-offset: 2px;
+}
+
+html[data-theme="cyberpunk"] ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 240, 255, .2);
+    border-radius: 0;
+}
+
+/* ---------- Заголовки: капитель, неоновое свечение ---------- */
+html[data-theme="cyberpunk"] .ch-title,
+html[data-theme="cyberpunk"] .card-header,
+html[data-theme="cyberpunk"] .rp-title,
+html[data-theme="cyberpunk"] .arcs-title,
+html[data-theme="cyberpunk"] .cc-title,
+html[data-theme="cyberpunk"] .sb-name {
+    font-family: var(--rh-serif);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    text-shadow: 0 0 14px rgba(252, 238, 10, .28);
+}
+
+html[data-theme="cyberpunk"] .welcome-title {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #fff;
+    text-shadow: 2px 0 rgba(255, 0, 60, .75), -2px 0 rgba(0, 240, 255, .75), 0 0 24px rgba(252, 238, 10, .25);
+    animation: cy-glitch 4.5s steps(1) infinite;
+}
+
+@keyframes cy-glitch {
+    0%, 92%, 100% {
+        transform: none;
+        text-shadow: 2px 0 rgba(255, 0, 60, .75), -2px 0 rgba(0, 240, 255, .75), 0 0 24px rgba(252, 238, 10, .25);
+    }
+
+    93% {
+        transform: translateX(-3px) skewX(-8deg);
+        text-shadow: -4px 0 rgba(255, 0, 60, .9), 4px 0 rgba(0, 240, 255, .9);
+    }
+
+    95% {
+        transform: translateX(2px);
+        text-shadow: 3px 0 rgba(255, 43, 214, .9), -3px 0 rgba(252, 238, 10, .9);
+    }
+}
+
+html[data-theme="cyberpunk"] .card-header::before,
+html[data-theme="cyberpunk"] .arcs-title::before {
+    content: "// ";
+    color: var(--rh-accent-2);
+}
+
+/* ---------- Кнопки: жёлтые плашки со срезом, капитель ---------- */
+html[data-theme="cyberpunk"] .btn {
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 600;
+    font-size: .8rem;
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+}
+
+html[data-theme="cyberpunk"] .btn-primary,
+html[data-theme="cyberpunk"] .btn-primary:focus {
+    background: var(--rh-accent);
+    border-color: var(--rh-accent);
+    color: var(--rh-accent-ink);
+}
+
+html[data-theme="cyberpunk"] .btn-primary:hover {
+    background: var(--rh-accent-2);
+    border-color: var(--rh-accent-2);
+    color: #001014;
+    text-shadow: 1px 0 rgba(255, 0, 60, .6);
+}
+
+html[data-theme="cyberpunk"] .btn-outline,
+html[data-theme="cyberpunk"] .btn-outline-secondary {
+    border-color: rgba(0, 240, 255, .5);
+    color: var(--rh-accent-2);
+}
+
+html[data-theme="cyberpunk"] .btn-outline:hover,
+html[data-theme="cyberpunk"] .btn-outline-secondary:hover {
+    background: rgba(0, 240, 255, .12);
+    color: #fff;
+}
+
+html[data-theme="cyberpunk"] .card {
+    background: linear-gradient(180deg, rgba(0, 240, 255, .04), transparent 40px), var(--rh-surface);
+    border-color: var(--rh-border-strong);
+    clip-path: polygon(0 0, calc(100% - var(--cut-lg)) 0, 100% var(--cut-lg), 100% 100%, 0 100%);
+}
+
+html[data-theme="cyberpunk"] .form-control,
+html[data-theme="cyberpunk"] .form-select {
+    font-family: var(--rh-mono);
+    font-size: .88rem;
+}
+
+/* ---------- Каркас: боковая панель и шапка ---------- */
+html[data-theme="cyberpunk"] .sidebar {
+    background: linear-gradient(180deg, rgba(255, 43, 214, .06), transparent 220px), #05070d;
+    border-right: 1px solid rgba(255, 43, 214, .28);
+    box-shadow: inset -1px 0 0 rgba(0, 240, 255, .08);
+}
+
+html[data-theme="cyberpunk"] .sb-sigil {
+    color: var(--rh-accent-3);
+    filter: drop-shadow(0 0 6px rgba(255, 43, 214, .7));
+}
+
+html[data-theme="cyberpunk"] .sb-sub {
+    font-family: var(--rh-mono);
+    font-size: .64rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--rh-accent-2);
+}
+
+html[data-theme="cyberpunk"] .sb-new {
+    background: var(--rh-accent);
+    border: none;
+    color: var(--rh-accent-ink);
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+}
+
+html[data-theme="cyberpunk"] .sb-new:hover {
+    background: var(--rh-accent-2);
+}
+
+html[data-theme="cyberpunk"] .sb-section {
+    font-family: var(--rh-mono);
+    color: var(--rh-accent-3);
+    letter-spacing: .14em;
+}
+
+html[data-theme="cyberpunk"] .sb-link {
+    border-radius: 0;
+}
+
+html[data-theme="cyberpunk"] .sb-initial {
+    border-radius: 0;
+    font-family: var(--rh-serif);
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 100%, 0 100%);
+}
+
+html[data-theme="cyberpunk"] .chat-header {
+    background: linear-gradient(90deg, rgba(252, 238, 10, .06), transparent 40%), rgba(4, 5, 10, .85);
+    border-bottom: 1px solid transparent;
+    border-image: linear-gradient(90deg, var(--rh-accent), rgba(0, 240, 255, .6) 40%, rgba(255, 43, 214, .5) 80%, transparent) 1;
+}
+
+html[data-theme="cyberpunk"] .ch-title::before {
+    content: "▮ ";
+    color: var(--rh-accent);
+}
+
+html[data-theme="cyberpunk"] .ch-steps li {
+    font-family: var(--rh-mono);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+html[data-theme="cyberpunk"] .ch-book,
+html[data-theme="cyberpunk"] .ch-model,
+html[data-theme="cyberpunk"] .ch-kind,
+html[data-theme="cyberpunk"] .ch-warn,
+html[data-theme="cyberpunk"] .ch-instance {
+    border-radius: 0;
+    font-family: var(--rh-mono);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+html[data-theme="cyberpunk"] .ch-book {
+    border-color: rgba(252, 238, 10, .6);
+    color: var(--rh-accent);
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+}
+
+html[data-theme="cyberpunk"] .ch-book:hover,
+html[data-theme="cyberpunk"] .ch-book.is-open {
+    background: var(--rh-accent);
+    color: var(--rh-accent-ink);
+}
+
+/* ---------- Сообщения: реплики мастера — неоновые плашки-терминалы ---------- */
+html[data-theme="cyberpunk"] .who {
+    display: inline-block;
+    padding: 1px 9px 1px 7px;
+    font-family: var(--rh-mono);
+    font-size: .64rem;
+    letter-spacing: .16em;
+    color: var(--rh-accent-ink);
+    background: var(--rh-accent);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
+html[data-theme="cyberpunk"] .msg.gm .prose {
+    font-family: var(--rh-font);
+    font-size: 1.02rem;
+    line-height: 1.7;
+    max-width: 74ch;
+    padding: 14px 18px 14px 16px;
+    background:
+        linear-gradient(var(--rh-accent), var(--rh-accent)) top left / 18px 2px no-repeat,
+        linear-gradient(var(--rh-accent), var(--rh-accent)) top left / 2px 18px no-repeat,
+        linear-gradient(rgba(0, 240, 255, .8), rgba(0, 240, 255, .8)) bottom right / 18px 2px no-repeat,
+        linear-gradient(rgba(0, 240, 255, .8), rgba(0, 240, 255, .8)) bottom right / 2px 18px no-repeat,
+        linear-gradient(90deg, rgba(0, 240, 255, .05), rgba(12, 17, 29, .75) 30%);
+    border-left: 1px solid rgba(0, 240, 255, .25);
+}
+
+html[data-theme="cyberpunk"] .msg.gm .prose strong,
+html[data-theme="cyberpunk"] .msg.gm .prose b {
+    color: var(--rh-accent);
+    font-weight: 600;
+}
+
+html[data-theme="cyberpunk"] .msg.gm .prose em {
+    color: #9fe9ff;
+}
+
+html[data-theme="cyberpunk"] .msg.hero {
+    border-left: 2px solid var(--rh-accent-2);
+    background: linear-gradient(90deg, rgba(0, 240, 255, .07), transparent 60%);
+    padding: 6px 10px 6px 14px;
+}
+
+html[data-theme="cyberpunk"] .msg.hero .who {
+    background: var(--rh-accent-2);
+    color: #001014;
+}
+
+html[data-theme="cyberpunk"] .msg.hero .hero-line {
+    font-family: var(--rh-mono);
+    font-size: .9rem;
+}
+
+html[data-theme="cyberpunk"] .msg.hero.ooc,
+html[data-theme="cyberpunk"] .msg.gm.ooc {
+    border-color: rgba(255, 43, 214, .6);
+}
+
+html[data-theme="cyberpunk"] .msg.hero.ooc .who,
+html[data-theme="cyberpunk"] .msg.gm.ooc .who {
+    background: var(--rh-accent-3);
+    color: #18000f;
+}
+
+/* ---------- Варианты выбора: строки терминала ---------- */
+html[data-theme="cyberpunk"] .choice {
+    border-color: rgba(0, 240, 255, .28);
+    background: linear-gradient(90deg, rgba(0, 240, 255, .06), rgba(8, 11, 19, .9) 35%);
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+    font-family: var(--rh-font);
+}
+
+html[data-theme="cyberpunk"] .choice:hover:not(:disabled) {
+    border-color: var(--rh-accent);
+    background: linear-gradient(90deg, rgba(252, 238, 10, .16), rgba(8, 11, 19, .9) 45%);
+    color: #fff;
+}
+
+html[data-theme="cyberpunk"] .choice-n {
+    font-family: var(--rh-mono);
+    color: var(--rh-accent-ink);
+    background: var(--rh-accent);
+    border-radius: 0;
+    min-width: 22px;
+    text-align: center;
+}
+
+html[data-theme="cyberpunk"] .choices-q,
+html[data-theme="cyberpunk"] .choices-hint {
+    font-family: var(--rh-mono);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--rh-accent-2);
+}
+
+/* ---------- Карточки арок, ролей, торговли, колёс ---------- */
+html[data-theme="cyberpunk"] .arc-card,
+html[data-theme="cyberpunk"] .role-card,
+html[data-theme="cyberpunk"] .trade-card,
+html[data-theme="cyberpunk"] .wheel,
+html[data-theme="cyberpunk"] .rumor-wheel,
+html[data-theme="cyberpunk"] .dice-card {
+    border-radius: 0;
+    border-color: rgba(0, 240, 255, .3);
+    background: linear-gradient(160deg, rgba(255, 43, 214, .07), transparent 45%), var(--rh-surface-2);
+    clip-path: polygon(0 0, calc(100% - var(--cut-lg)) 0, 100% var(--cut-lg), 100% 100%, var(--cut-lg) 100%, 0 calc(100% - var(--cut-lg)));
+}
+
+html[data-theme="cyberpunk"] .arc-card:hover,
+html[data-theme="cyberpunk"] .role-card:hover {
+    border-color: var(--rh-accent);
+    background: linear-gradient(160deg, rgba(252, 238, 10, .12), transparent 55%), var(--rh-surface-2);
+}
+
+html[data-theme="cyberpunk"] .arc-name,
+html[data-theme="cyberpunk"] .trade-card-title {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+html[data-theme="cyberpunk"] .arc-num,
+html[data-theme="cyberpunk"] .wheel-kicker,
+html[data-theme="cyberpunk"] .trade-card-kicker {
+    font-family: var(--rh-mono);
+    color: var(--rh-accent-3);
+    letter-spacing: .14em;
+}
+
+html[data-theme="cyberpunk"] .wheel-window {
+    border-radius: 0;
+    border-color: var(--rh-accent);
+    box-shadow: inset 0 0 18px rgba(252, 238, 10, .15);
+}
+
+/* ---------- Поле ввода ---------- */
+html[data-theme="cyberpunk"] .composer-box {
+    border-color: rgba(0, 240, 255, .35);
+    background:
+        linear-gradient(var(--rh-accent-2), var(--rh-accent-2)) top left / 14px 2px no-repeat,
+        linear-gradient(var(--rh-accent-2), var(--rh-accent-2)) top left / 2px 14px no-repeat,
+        linear-gradient(var(--rh-accent-2), var(--rh-accent-2)) bottom right / 14px 2px no-repeat,
+        linear-gradient(var(--rh-accent-2), var(--rh-accent-2)) bottom right / 2px 14px no-repeat,
+        #060910;
+}
+
+html[data-theme="cyberpunk"] .composer-box:focus-within {
+    border-color: var(--rh-accent);
+    box-shadow: 0 0 22px rgba(252, 238, 10, .12);
+}
+
+html[data-theme="cyberpunk"] .composer-input {
+    font-family: var(--rh-mono);
+    font-size: .92rem;
+    caret-color: var(--rh-accent);
+}
+
+html[data-theme="cyberpunk"] .btn-send {
+    border-radius: 0;
+    background: var(--rh-accent);
+    color: var(--rh-accent-ink);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+html[data-theme="cyberpunk"] .btn-send:hover:not(:disabled) {
+    background: var(--rh-accent-2);
+}
+
+html[data-theme="cyberpunk"] .dice-btn,
+html[data-theme="cyberpunk"] .dice-chip,
+html[data-theme="cyberpunk"] .mode-select {
+    border-radius: 0;
+    font-family: var(--rh-mono);
+}
+
+html[data-theme="cyberpunk"] .battle-open-tab {
+    border-radius: 0;
+    background: var(--rh-danger);
+    color: #fff;
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    box-shadow: 0 0 24px rgba(255, 0, 60, .45);
+}
+
+/* ---------- Приветствие и блокировка чужого сеттинга ---------- */
+html[data-theme="cyberpunk"] .welcome-mark {
+    color: var(--rh-accent-3);
+    filter: drop-shadow(0 0 10px rgba(255, 43, 214, .8));
+}
+
+html[data-theme="cyberpunk"] .welcome-steps li {
+    border-radius: 0;
+    border-color: rgba(0, 240, 255, .25);
+    font-family: var(--rh-mono);
+}
+
+html[data-theme="cyberpunk"] .welcome-steps li b {
+    color: var(--rh-accent);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+/* ---------- Книга героя → досье ---------- */
+html[data-theme="cyberpunk"] .rp {
+    background:
+        linear-gradient(rgba(0, 240, 255, .025) 1px, transparent 1px) 0 0 / 100% 24px,
+        linear-gradient(180deg, rgba(0, 240, 255, .05), transparent 160px),
+        #05070d;
+    border-left: 1px solid rgba(0, 240, 255, .3);
+}
+
+html[data-theme="cyberpunk"] .rp-head {
+    border-bottom: 1px solid rgba(252, 238, 10, .45);
+}
+
+html[data-theme="cyberpunk"] .rp-avatar {
+    border-radius: 0;
+    image-rendering: auto;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    box-shadow: inset 0 0 0 2px rgba(0, 240, 255, .5);
+}
+
+html[data-theme="cyberpunk"] .rp-name {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+html[data-theme="cyberpunk"] .rp-subtitle,
+html[data-theme="cyberpunk"] .rp-sec-head {
+    font-family: var(--rh-mono);
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--rh-accent-2);
+}
+
+html[data-theme="cyberpunk"] .rp-track {
+    border-radius: 0;
+    background: #02030a;
+    box-shadow: inset 0 0 0 1px rgba(0, 240, 255, .2);
+}
+
+html[data-theme="cyberpunk"] .rp-fill {
+    border-radius: 0;
+    background-image: repeating-linear-gradient(90deg, transparent 0 6px, rgba(0, 0, 0, .35) 6px 8px);
+}
+
+html[data-theme="cyberpunk"] .rp-fill.mana {
+    box-shadow: 0 0 10px rgba(0, 240, 255, .55);
+}
+
+html[data-theme="cyberpunk"] .rp-pill,
+html[data-theme="cyberpunk"] .rp-chip,
+html[data-theme="cyberpunk"] .rp-tag,
+html[data-theme="cyberpunk"] .rp-btn,
+html[data-theme="cyberpunk"] .rp-stat,
+html[data-theme="cyberpunk"] .rp-skill,
+html[data-theme="cyberpunk"] .rp-card,
+html[data-theme="cyberpunk"] .rp-slot,
+html[data-theme="cyberpunk"] .rp-in {
+    border-radius: 0;
+}
+
+html[data-theme="cyberpunk"] .rp-pill,
+html[data-theme="cyberpunk"] .rp-stat-val,
+html[data-theme="cyberpunk"] .rp-combat-num {
+    font-family: var(--rh-mono);
+}
+
+html[data-theme="cyberpunk"] .rp-pill-gold {
+    color: var(--rh-accent);
+}
+
+html[data-theme="cyberpunk"] .rp-coin {
+    background: var(--rh-accent);
+    border-radius: 0;
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+html[data-theme="cyberpunk"] .rp-stat {
+    clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
+    border-color: rgba(0, 240, 255, .22);
+}
+
+html[data-theme="cyberpunk"] .rp-btn {
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-size: .7rem;
+    border-color: rgba(252, 238, 10, .45);
+    color: var(--rh-accent);
+    background: rgba(252, 238, 10, .06);
+}
+
+html[data-theme="cyberpunk"] .rp-btn:hover {
+    background: var(--rh-accent);
+    color: var(--rh-accent-ink);
+}
+
+html[data-theme="cyberpunk"] .rp-skill-icon,
+html[data-theme="cyberpunk"] .bw-skill-icon {
+    image-rendering: pixelated;
+}
+
+html[data-theme="cyberpunk"] .rp-slot,
+html[data-theme="cyberpunk"] .rp-grid-item,
+html[data-theme="cyberpunk"] .bw-slot,
+html[data-theme="cyberpunk"] .bw-inv-item {
+    border-radius: 0;
+}
+
+html[data-theme="cyberpunk"] .rp-slot.filled,
+html[data-theme="cyberpunk"] .bw-slot.filled {
+    background: radial-gradient(circle at 50% 45%, rgba(0, 240, 255, .14), rgba(4, 6, 12, .7) 75%);
+    border-color: rgba(0, 240, 255, .45);
+}
+
+/* ---------- Окно боя: тактический HUD вместо багрово-каменного ---------- */
+html[data-theme="cyberpunk"] .bw-backdrop {
+    background: rgba(2, 3, 8, .93);
+}
+
+html[data-theme="cyberpunk"] .bw-modal {
+    background:
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, .22) 0 1px, transparent 1px 3px),
+        linear-gradient(180deg, rgba(255, 0, 60, .08), transparent 200px),
+        #070a12;
+    border: 1px solid rgba(255, 0, 60, .7);
+    box-shadow: 0 0 60px rgba(255, 0, 60, .18), 0 0 120px #000;
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+    font-family: var(--rh-font);
+}
+
+html[data-theme="cyberpunk"] .bw-modal header {
+    border-bottom-color: rgba(255, 0, 60, .5);
+}
+
+html[data-theme="cyberpunk"] .bw-modal h2 {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #fff;
+    text-shadow: 0 0 12px rgba(255, 0, 60, .6);
+}
+
+html[data-theme="cyberpunk"] .bw-modal button,
+html[data-theme="cyberpunk"] .bw-modal select {
+    border-radius: 0;
+    background: #0d1220;
+    border-color: rgba(0, 240, 255, .35);
+    font-family: var(--rh-font);
+}
+
+html[data-theme="cyberpunk"] .bw-vs {
+    font-family: var(--rh-serif);
+    color: var(--rh-danger);
+    text-shadow: 0 0 14px rgba(255, 0, 60, .8);
+}
+
+html[data-theme="cyberpunk"] .bw-actor {
+    background: linear-gradient(90deg, rgba(0, 240, 255, .07), #0b0f1a 50%) !important;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+}
+
+html[data-theme="cyberpunk"] .bw-actor.selected {
+    outline: 1px solid var(--rh-accent);
+    background: linear-gradient(90deg, rgba(252, 238, 10, .14), #0b0f1a 60%) !important;
+}
+
+html[data-theme="cyberpunk"] .bw-turn {
+    background: var(--rh-accent) !important;
+    color: var(--rh-accent-ink) !important;
+    border: none !important;
+    font-family: var(--rh-serif) !important;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+html[data-theme="cyberpunk"] .bw-init {
+    color: var(--rh-accent-ink);
+    background: var(--rh-accent);
+    border: none;
+    border-radius: 0;
+    font-family: var(--rh-mono);
+}
+
+html[data-theme="cyberpunk"] .bw-inv-pop,
+html[data-theme="cyberpunk"] .bw-skill-pop {
+    background: #070a12;
+    border-color: rgba(0, 240, 255, .45);
+    border-radius: 0;
+}
+
+html[data-theme="cyberpunk"] .bw-inv-head,
+html[data-theme="cyberpunk"] .bw-skill-desc h4 {
+    color: var(--rh-accent);
+    font-family: var(--rh-mono);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+/* ---------- Лавка, доска фиксера, создание героя: модальные HUD-окна ---------- */
+html[data-theme="cyberpunk"] .tw-modal,
+html[data-theme="cyberpunk"] .gw-modal,
+html[data-theme="cyberpunk"] .cc-modal {
+    border-radius: 0;
+    border: 1px solid rgba(0, 240, 255, .5);
+    background:
+        linear-gradient(var(--rh-accent), var(--rh-accent)) top left / 28px 3px no-repeat,
+        linear-gradient(var(--rh-accent), var(--rh-accent)) top left / 3px 28px no-repeat,
+        linear-gradient(var(--rh-accent-3), var(--rh-accent-3)) bottom right / 28px 3px no-repeat,
+        linear-gradient(var(--rh-accent-3), var(--rh-accent-3)) bottom right / 3px 28px no-repeat,
+        linear-gradient(180deg, rgba(0, 240, 255, .06), transparent 160px),
+        #070a12;
+    box-shadow: 0 0 50px rgba(0, 240, 255, .12), 0 30px 80px #000;
+}
+
+html[data-theme="cyberpunk"] .tw-head h2,
+html[data-theme="cyberpunk"] .gw-modal h2 {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+html[data-theme="cyberpunk"] .gw-job,
+html[data-theme="cyberpunk"] .tw-card,
+html[data-theme="cyberpunk"] .tw-btn,
+html[data-theme="cyberpunk"] .cc-in,
+html[data-theme="cyberpunk"] .cc-chip,
+html[data-theme="cyberpunk"] .cc-mode-btn,
+html[data-theme="cyberpunk"] .cc-stat,
+html[data-theme="cyberpunk"] .cc-avatar,
+html[data-theme="cyberpunk"] .cc-pool {
+    border-radius: 0;
+}
+
+html[data-theme="cyberpunk"] .gw-rank {
+    font-family: var(--rh-serif);
+    color: var(--rh-accent-ink);
+    background: var(--rh-accent);
+    border-radius: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%);
+}
+
+html[data-theme="cyberpunk"] .tw-gold,
+html[data-theme="cyberpunk"] .tw-log-gold {
+    font-family: var(--rh-mono);
+    color: var(--rh-accent);
+}
+
+html[data-theme="cyberpunk"] .cc-avatar {
+    image-rendering: auto;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+html[data-theme="cyberpunk"] .cc-avatar.is-on {
+    box-shadow: inset 0 0 0 3px var(--rh-accent);
+}
+
+html[data-theme="cyberpunk"] .cc-mode-btn.is-on {
+    background: var(--rh-accent);
+    color: var(--rh-accent-ink);
+}
+
+html[data-theme="cyberpunk"] .cc-stat-val,
+html[data-theme="cyberpunk"] .cc-stat-mod {
+    font-family: var(--rh-mono);
+}
+
+/* ---------- Настройки ---------- */
+html[data-theme="cyberpunk"] .theme-card {
+    border-radius: 0;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+}
+
+html[data-theme="cyberpunk"] .theme-card.is-active {
+    border-color: var(--rh-accent);
+    box-shadow: inset 0 0 0 1px var(--rh-accent);
+}
+
+/* ---------- Окно боя: заголовки, журнал, кубы — без «каменного» Georgia ---------- */
+html[data-theme="cyberpunk"] .bw-side h3,
+html[data-theme="cyberpunk"] .bw-blog-head,
+html[data-theme="cyberpunk"] .bw-history-head,
+html[data-theme="cyberpunk"] .rp-menu-title {
+    font-family: var(--rh-serif);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--rh-accent-2);
+}
+
+html[data-theme="cyberpunk"] .bw-blog,
+html[data-theme="cyberpunk"] .bw-history {
+    border-radius: 0;
+    background:
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, .2) 0 1px, transparent 1px 3px),
+        #060910;
+    border: 1px solid rgba(0, 240, 255, .35);
+    font-family: var(--rh-mono);
+}
+
+html[data-theme="cyberpunk"] .bw-die span {
+    font-family: var(--rh-serif);
+    color: var(--rh-accent);
+}
+
+html[data-theme="cyberpunk"] .bw-think-text {
+    font-family: var(--rh-mono);
+    font-style: normal;
+}
+
+/* Полосы: сегментированные неоновые шкалы */
+html[data-theme="cyberpunk"] .rp-fill.hp {
+    background: repeating-linear-gradient(90deg, #ff003c 0 6px, #b8002b 6px 8px);
+    box-shadow: 0 0 10px rgba(255, 0, 60, .55);
+}
+
+html[data-theme="cyberpunk"] .rp-fill.mana {
+    background: repeating-linear-gradient(90deg, #00f0ff 0 6px, #0098a8 6px 8px);
+    box-shadow: 0 0 10px rgba(0, 240, 255, .55);
+}
+
+html[data-theme="cyberpunk"] .rp-fill.adv {
+    background: repeating-linear-gradient(90deg, #fcee0a 0 6px, #a89e00 6px 8px);
+    box-shadow: 0 0 10px rgba(252, 238, 10, .45);
+}
+
+/* =================== Современность: оперативное досье — асфальт, сигнальный оранжевый, сталь =================== */
+[data-theme="modern"] {
+    /* Шрифты: заголовки — Oswald (газета, полицейский рапорт), текст — Roboto, числа — Roboto Mono */
+    --rh-font: "Roboto", "Segoe UI", system-ui, sans-serif;
+    --rh-serif: "Oswald", "Roboto Condensed", "Segoe UI", sans-serif;
+    --rh-mono: "Roboto Mono", ui-monospace, Consolas, monospace;
+
+    /* Текст — тёплый офисный белый */
+    --rh-text: #e7e4dd;
+    --rh-text-2: #aaa69d;
+    --rh-text-3: #706d66;
+
+    /* Поверхности — асфальт и графит */
+    --rh-bg: #111214;
+    --rh-surface: #18191c;
+    --rh-surface-2: #1e2023;
+    --rh-surface-3: #27292d;
+    --rh-inset: #0c0d0e;
+
+    /* Акцент — сигнальный оранжевый; второй — сталь; третий — олива */
+    --rh-accent: #f08a24;
+    --rh-accent-hover: #ffa24a;
+    --rh-accent-ink: #1a0d00;
+    --rh-accent-rgb: 240, 138, 36;
+    --rh-accent-2: #6b9cc6;
+    --rh-accent-3: #8f9d5e;
+
+    --rh-border: rgba(231, 228, 221, .09);
+    --rh-border-strong: rgba(231, 228, 221, .2);
+    --rh-input-border: rgba(231, 228, 221, .16);
+    --rh-shadow-card: 0 1px 0 rgba(0, 0, 0, .4);
+    --rh-shadow-pop: 0 20px 50px rgba(0, 0, 0, .6), 0 0 0 1px rgba(231, 228, 221, .08);
+
+    --rh-success: #7fa35a;
+    --rh-danger: #d64541;
+    --rh-warning: #e0a030;
+    --rh-ooc: #6b9cc6;
+    --rh-hp: #c8433d;
+    --rh-mana: #d9a441;
+
+    /* Геометрия — почти прямые углы, как у папок и бланков */
+    --rh-radius-btn: 2px;
+    --rh-radius-card: 3px;
+    --rh-radius-panel: 3px;
+
+    --rh-title-transform: uppercase;
+    --rh-title-spacing: .06em;
+
+    /* Сигнальная лента */
+    --md-tape: repeating-linear-gradient(-45deg, #f0b323 0 10px, #141414 10px 20px);
+}
+
+/* ---------- Фон: асфальт, тонкая сетка карты, виньетка ---------- */
+html[data-theme="modern"] body {
+    background-color: var(--rh-bg);
+    background-image:
+        linear-gradient(rgba(231, 228, 221, .022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(231, 228, 221, .022) 1px, transparent 1px),
+        radial-gradient(ellipse at 15% -10%, rgba(240, 138, 36, .07), transparent 50%),
+        radial-gradient(ellipse at 60% 50%, transparent 45%, rgba(0, 0, 0, .5) 100%);
+    background-size: 64px 64px, 64px 64px, auto, auto;
+    background-attachment: fixed;
+}
+
+html[data-theme="modern"] ::selection {
+    background: rgba(240, 138, 36, .4);
+    color: #fff;
+}
+
+/* ---------- Заголовки: Oswald капителью, как в газете и рапорте ---------- */
+html[data-theme="modern"] .ch-title,
+html[data-theme="modern"] .card-header,
+html[data-theme="modern"] .rp-title,
+html[data-theme="modern"] .arcs-title,
+html[data-theme="modern"] .cc-title,
+html[data-theme="modern"] .sb-name,
+html[data-theme="modern"] .rp-name,
+html[data-theme="modern"] .arc-name,
+html[data-theme="modern"] .trade-card-title {
+    font-family: var(--rh-serif);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+html[data-theme="modern"] .welcome-title {
+    font-family: var(--rh-serif);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    line-height: 1.05;
+}
+
+/* Под заголовком — вымаранные строки, как в рассекреченном деле */
+html[data-theme="modern"] .welcome-title::after {
+    content: "";
+    display: block;
+    width: 140px;
+    height: 10px;
+    margin: 14px auto 0;
+    background: #0a0a0a;
+    box-shadow: 160px 0 0 -2px #0a0a0a, -150px 0 0 -3px #0a0a0a;
+}
+
+html[data-theme="modern"] .card-header::before {
+    content: "■ ";
+    color: var(--rh-accent);
+}
+
+/* ---------- Кнопки ---------- */
+html[data-theme="modern"] .btn {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 500;
+}
+
+html[data-theme="modern"] .btn-outline,
+html[data-theme="modern"] .btn-outline-secondary {
+    border-color: rgba(107, 156, 198, .55);
+    color: var(--rh-accent-2);
+}
+
+html[data-theme="modern"] .btn-outline:hover,
+html[data-theme="modern"] .btn-outline-secondary:hover {
+    background: rgba(107, 156, 198, .12);
+    color: #fff;
+}
+
+html[data-theme="modern"] .card {
+    border-top: 3px solid var(--rh-accent);
+}
+
+/* ---------- Боковая панель: список дел ---------- */
+html[data-theme="modern"] .sidebar {
+    background: #0f1012;
+    border-right: 1px solid rgba(231, 228, 221, .08);
+}
+
+html[data-theme="modern"] .sb-sigil {
+    color: var(--rh-accent);
+}
+
+html[data-theme="modern"] .sb-sub {
+    font-family: var(--rh-mono);
+    font-size: .64rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--rh-text-3);
+}
+
+html[data-theme="modern"] .sb-new {
+    background: var(--rh-accent);
+    border: none;
+    color: var(--rh-accent-ink);
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+html[data-theme="modern"] .sb-section {
+    font-family: var(--rh-serif);
+    letter-spacing: .14em;
+    color: var(--rh-accent);
+}
+
+html[data-theme="modern"] .sb-initial {
+    border-radius: 2px;
+    font-family: var(--rh-serif);
+    background: #26282c;
+}
+
+/* ---------- Шапка чата с сигнальной лентой ---------- */
+html[data-theme="modern"] .chat-header {
+    position: relative;
+    background: #0f1012;
+    border-bottom: none;
+}
+
+html[data-theme="modern"] .chat-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5px;
+    background: var(--md-tape);
+    opacity: .85;
+}
+
+html[data-theme="modern"] .ch-steps li {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+html[data-theme="modern"] .ch-book,
+html[data-theme="modern"] .ch-model,
+html[data-theme="modern"] .ch-kind {
+    border-radius: 2px;
+    font-family: var(--rh-mono);
+}
+
+html[data-theme="modern"] .ch-book {
+    border-color: rgba(240, 138, 36, .6);
+    color: var(--rh-accent);
+}
+
+html[data-theme="modern"] .ch-book:hover,
+html[data-theme="modern"] .ch-book.is-open {
+    background: var(--rh-accent);
+    color: var(--rh-accent-ink);
+}
+
+/* ---------- Сообщения: рапорт мастера со штампом, реплики героя — стенограмма ---------- */
+html[data-theme="modern"] .who {
+    display: inline-block;
+    padding: 0 7px;
+    font-family: var(--rh-serif);
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .18em;
+    color: #d64541;
+    border: 2px solid rgba(214, 69, 65, .85);
+    border-radius: 2px;
+    transform: rotate(-2deg);
+    opacity: .9;
+}
+
+html[data-theme="modern"] .msg.gm .prose {
+    font-family: var(--rh-font);
+    font-size: 1.02rem;
+    line-height: 1.7;
+    max-width: 72ch;
+    padding: 14px 18px;
+    background: linear-gradient(180deg, #1d1f22, #191a1d);
+    border-left: 3px solid var(--rh-accent);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .4);
+}
+
+html[data-theme="modern"] .msg.gm .prose strong,
+html[data-theme="modern"] .msg.gm .prose b {
+    color: #fff;
+    background: linear-gradient(transparent 62%, rgba(240, 138, 36, .35) 62%);
+}
+
+html[data-theme="modern"] .msg.hero {
+    border-left: 3px solid var(--rh-accent-2);
+    padding-left: 14px;
+}
+
+html[data-theme="modern"] .msg.hero .who {
+    color: var(--rh-accent-2);
+    border-color: rgba(107, 156, 198, .8);
+    transform: rotate(1deg);
+}
+
+html[data-theme="modern"] .msg.hero .hero-line {
+    font-family: var(--rh-mono);
+    font-size: .9rem;
+}
+
+/* ---------- Варианты выбора: пункты рапорта ---------- */
+html[data-theme="modern"] .choice {
+    border-radius: 2px;
+    background: #1a1b1e;
+    border-color: rgba(231, 228, 221, .12);
+    border-left: 3px solid rgba(231, 228, 221, .15);
+}
+
+html[data-theme="modern"] .choice:hover:not(:disabled) {
+    border-left-color: var(--rh-accent);
+    background: #212327;
+    color: #fff;
+}
+
+html[data-theme="modern"] .choice-n {
+    font-family: var(--rh-mono);
+    color: var(--rh-accent-ink);
+    background: var(--rh-accent);
+    border-radius: 2px;
+    min-width: 22px;
+    text-align: center;
+}
+
+html[data-theme="modern"] .choices-q,
+html[data-theme="modern"] .choices-hint {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--rh-text-2);
+}
+
+/* ---------- Карточки арок, ролей, торговли, колёс: папки с делом ---------- */
+html[data-theme="modern"] .arc-card,
+html[data-theme="modern"] .role-card,
+html[data-theme="modern"] .trade-card,
+html[data-theme="modern"] .wheel,
+html[data-theme="modern"] .rumor-wheel,
+html[data-theme="modern"] .dice-card {
+    border-radius: 3px;
+    border-color: rgba(231, 228, 221, .12);
+    border-top: 3px solid var(--rh-accent-3);
+    background: #1b1c1f;
+}
+
+html[data-theme="modern"] .arc-card:hover,
+html[data-theme="modern"] .role-card:hover {
+    border-top-color: var(--rh-accent);
+    background: #212226;
+}
+
+html[data-theme="modern"] .arc-num,
+html[data-theme="modern"] .wheel-kicker,
+html[data-theme="modern"] .trade-card-kicker {
+    font-family: var(--rh-serif);
+    color: var(--rh-accent);
+    letter-spacing: .14em;
+}
+
+/* ---------- Поле ввода ---------- */
+html[data-theme="modern"] .composer-box {
+    border-radius: 3px;
+    background: #141517;
+    border-color: rgba(231, 228, 221, .16);
+}
+
+html[data-theme="modern"] .composer-box:focus-within {
+    border-color: var(--rh-accent);
+    box-shadow: 0 0 0 3px rgba(240, 138, 36, .12);
+}
+
+html[data-theme="modern"] .composer-input {
+    font-family: var(--rh-mono);
+    font-size: .92rem;
+}
+
+html[data-theme="modern"] .btn-send {
+    border-radius: 2px;
+    background: var(--rh-accent);
+    color: var(--rh-accent-ink);
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+html[data-theme="modern"] .battle-open-tab {
+    border-radius: 2px;
+    background: var(--rh-danger);
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+}
+
+html[data-theme="modern"] .welcome-steps li b {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    color: var(--rh-accent);
+}
+
+/* ---------- Личное дело (книга героя) ---------- */
+html[data-theme="modern"] .rp {
+    background: #141517;
+    border-left: 1px solid rgba(231, 228, 221, .08);
+}
+
+html[data-theme="modern"] .rp-head {
+    border-bottom: 3px solid var(--rh-accent);
+}
+
+html[data-theme="modern"] .rp-avatar {
+    border-radius: 2px;
+    image-rendering: pixelated;
+    box-shadow: 0 0 0 1px rgba(231, 228, 221, .25), 3px 3px 0 rgba(0, 0, 0, .45);
+}
+
+html[data-theme="modern"] .rp-subtitle,
+html[data-theme="modern"] .rp-sec-head,
+html[data-theme="modern"] .rp-menu-title {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--rh-text-2);
+}
+
+html[data-theme="modern"] .rp-track {
+    border-radius: 1px;
+    background: #0b0c0d;
+}
+
+html[data-theme="modern"] .rp-fill {
+    border-radius: 1px;
+}
+
+html[data-theme="modern"] .rp-fill.hp {
+    background: #c8433d;
+    box-shadow: none;
+}
+
+html[data-theme="modern"] .rp-fill.mana {
+    background: #d9a441;
+    box-shadow: none;
+}
+
+html[data-theme="modern"] .rp-pill,
+html[data-theme="modern"] .rp-chip,
+html[data-theme="modern"] .rp-tag,
+html[data-theme="modern"] .rp-btn,
+html[data-theme="modern"] .rp-stat,
+html[data-theme="modern"] .rp-skill,
+html[data-theme="modern"] .rp-card,
+html[data-theme="modern"] .rp-slot,
+html[data-theme="modern"] .rp-in,
+html[data-theme="modern"] .rp-grid-item {
+    border-radius: 2px;
+}
+
+html[data-theme="modern"] .rp-pill,
+html[data-theme="modern"] .rp-stat-val,
+html[data-theme="modern"] .rp-combat-num {
+    font-family: var(--rh-mono);
+}
+
+html[data-theme="modern"] .rp-coin {
+    background: #7fa35a;
+    border-radius: 1px;
+}
+
+html[data-theme="modern"] .rp-btn {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    border-color: rgba(240, 138, 36, .45);
+    color: var(--rh-accent);
+    background: rgba(240, 138, 36, .06);
+}
+
+html[data-theme="modern"] .rp-btn:hover {
+    background: var(--rh-accent);
+    color: var(--rh-accent-ink);
+}
+
+html[data-theme="modern"] .rp-skill-icon,
+html[data-theme="modern"] .bw-skill-icon {
+    image-rendering: pixelated;
+}
+
+html[data-theme="modern"] .rp-slot.filled,
+html[data-theme="modern"] .bw-slot.filled {
+    background: radial-gradient(circle at 50% 45%, rgba(231, 228, 221, .08), rgba(10, 10, 12, .6) 75%);
+    border-color: rgba(240, 138, 36, .4);
+}
+
+/* ---------- Окно боя: тактический планшет ---------- */
+html[data-theme="modern"] .bw-backdrop {
+    background: rgba(6, 6, 7, .92);
+}
+
+html[data-theme="modern"] .bw-modal {
+    background:
+        linear-gradient(rgba(143, 157, 94, .05) 1px, transparent 1px) 0 0 / 100% 32px,
+        linear-gradient(90deg, rgba(143, 157, 94, .05) 1px, transparent 1px) 0 0 / 32px 100%,
+        #15171a;
+    border: 1px solid rgba(231, 228, 221, .14);
+    border-top: 6px solid #f0b323;
+    box-shadow: 0 -6px 0 -0px transparent, 0 30px 80px #000;
+    font-family: var(--rh-font);
+}
+
+html[data-theme="modern"] .bw-modal header {
+    border-bottom-color: rgba(231, 228, 221, .14);
+}
+
+html[data-theme="modern"] .bw-modal h2,
+html[data-theme="modern"] .bw-side h3,
+html[data-theme="modern"] .bw-blog-head,
+html[data-theme="modern"] .bw-history-head {
+    font-family: var(--rh-serif);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+html[data-theme="modern"] .bw-modal button,
+html[data-theme="modern"] .bw-modal select {
+    border-radius: 2px;
+    background: #202226;
+    border-color: rgba(231, 228, 221, .2);
+}
+
+html[data-theme="modern"] .bw-vs {
+    font-family: var(--rh-serif);
+    color: var(--rh-accent);
+}
+
+html[data-theme="modern"] .bw-actor {
+    background: #1d1f22 !important;
+    border-left: 3px solid rgba(231, 228, 221, .12);
+}
+
+html[data-theme="modern"] .bw-actor.selected {
+    outline: 1px solid var(--rh-accent);
+    border-left-color: var(--rh-accent);
+}
+
+html[data-theme="modern"] .bw-turn {
+    background: var(--rh-accent) !important;
+    color: var(--rh-accent-ink) !important;
+    border: none !important;
+    font-family: var(--rh-serif) !important;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+}
+
+html[data-theme="modern"] .bw-init {
+    color: var(--rh-accent-ink);
+    background: var(--rh-accent);
+    border: none;
+    border-radius: 1px;
+    font-family: var(--rh-mono);
+}
+
+html[data-theme="modern"] .bw-blog,
+html[data-theme="modern"] .bw-history {
+    border-radius: 2px;
+    background: #121315;
+    border: 1px solid rgba(231, 228, 221, .12);
+    font-family: var(--rh-mono);
+}
+
+html[data-theme="modern"] .bw-die span {
+    font-family: var(--rh-serif);
+    color: var(--rh-accent);
+}
+
+html[data-theme="modern"] .bw-think-text {
+    font-family: var(--rh-mono);
+    font-style: normal;
+}
+
+html[data-theme="modern"] .bw-inv-pop,
+html[data-theme="modern"] .bw-skill-pop {
+    background: #15171a;
+    border-radius: 2px;
+}
+
+html[data-theme="modern"] .bw-inv-head,
+html[data-theme="modern"] .bw-skill-desc h4 {
+    color: var(--rh-accent);
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+}
+
+/* ---------- Модальные окна: лавка, посредник, создание героя ---------- */
+html[data-theme="modern"] .tw-modal,
+html[data-theme="modern"] .gw-modal,
+html[data-theme="modern"] .cc-modal {
+    border-radius: 3px;
+    background: #17181b;
+    border: 1px solid rgba(231, 228, 221, .14);
+    border-top: 4px solid var(--rh-accent);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .7);
+}
+
+html[data-theme="modern"] .tw-head h2,
+html[data-theme="modern"] .gw-modal h2 {
+    font-family: var(--rh-serif);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+/* Заказы посредника — листки на доске: бумага и штамп ранга */
+html[data-theme="modern"] .gw-rank {
+    font-family: var(--rh-serif);
+    color: #d64541;
+    background: transparent;
+    border: 2px solid rgba(214, 69, 65, .8);
+    border-radius: 2px;
+    transform: rotate(-4deg);
+}
+
+html[data-theme="modern"] .gw-job,
+html[data-theme="modern"] .tw-card,
+html[data-theme="modern"] .tw-btn,
+html[data-theme="modern"] .cc-in,
+html[data-theme="modern"] .cc-chip,
+html[data-theme="modern"] .cc-mode-btn,
+html[data-theme="modern"] .cc-stat,
+html[data-theme="modern"] .cc-avatar,
+html[data-theme="modern"] .cc-pool {
+    border-radius: 2px;
+}
+
+html[data-theme="modern"] .gw-job {
+    background: #e7e2d4;
+    color: #1d1d1d;
+}
+
+html[data-theme="modern"] .gw-job p,
+html[data-theme="modern"] .gw-job small {
+    color: #3c3b38;
+}
+
+html[data-theme="modern"] .tw-gold,
+html[data-theme="modern"] .tw-log-gold {
+    font-family: var(--rh-mono);
+    color: #8fbf6a;
+}
+
+html[data-theme="modern"] .cc-avatar {
+    image-rendering: pixelated;
+}
+
+html[data-theme="modern"] .cc-avatar.is-on {
+    box-shadow: inset 0 0 0 3px var(--rh-accent);
+}
+
+html[data-theme="modern"] .cc-mode-btn.is-on {
+    background: var(--rh-accent);
+    color: var(--rh-accent-ink);
+}
+
+html[data-theme="modern"] .cc-stat-val,
+html[data-theme="modern"] .cc-stat-mod {
+    font-family: var(--rh-mono);
+}
+
+html[data-theme="modern"] .theme-card.is-active {
+    border-color: var(--rh-accent);
+    box-shadow: inset 0 0 0 1px var(--rh-accent);
+}

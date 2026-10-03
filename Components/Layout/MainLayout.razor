@@ -1,0 +1,105 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@using Microsoft.AspNetCore.Components.Routing
+@inject NavigationManager Nav
+@inject RpgStateStore RpgStore
+@inject IJSRuntime JS
+
+<div class="page">
+    <button class="nav-toggle" title="@Lang.T("Кампании", "Campaigns")" aria-label="@Lang.T("Открыть список кампаний", "Open the campaign list")" @onclick="() => _navOpen = !_navOpen">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5.5h14M3 10h14M3 14.5h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+    </button>
+    @if (_navOpen)
+    {
+        <div class="nav-scrim" @onclick="() => _navOpen = false"></div>
+    }
+
+    <aside class="sidebar @(_navOpen ? "is-open" : "")">
+        <ChatSidebar />
+    </aside>
+
+    <main class="main-area">
+        @Body
+    </main>
+
+    @if (RpgStore.PanelOpen)
+    {
+        <aside class="rpg-panel">
+            <RpgPanel ChatId="@_currentChatId" />
+        </aside>
+    }
+
+    @* Модальный редактор героя: персонаж задаётся только при создании чата *@
+    <CharacterCreator />
+
+    @* Окно торговли с NPC: открывается мастером (open_trade) или из книги героя *@
+    <TradeWindow />
+    <GuildWindow />
+    <BattleWindow />
+
+    @* Первый запуск: выбор языка поверх всего *@
+    <LanguagePicker />
+</div>
+
+@code {
+    private string? _currentChatId;
+    private bool _viewportChecked;
+    private bool _navOpen;
+
+    protected override void OnInitialized()
+    {
+        _currentChatId = ParseChatId(Nav.Uri);
+        Nav.LocationChanged += OnLocationChanged;
+        RpgStore.PanelChanged += OnPanelChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // На узких экранах панель по умолчанию скрыта (там она работает как оверлей).
+        if (_viewportChecked)
+        {
+            return;
+        }
+
+        _viewportChecked = true;
+        try
+        {
+            if (await JS.InvokeAsync<bool>("harness.isNarrow"))
+            {
+                RpgStore.SetPanelOpen(false);
+            }
+        }
+        catch
+        {
+            // JS недоступен (prerender / разрыв circuit) — пропускаем
+        }
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _currentChatId = ParseChatId(e.Location);
+        _navOpen = false;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void OnPanelChanged() => _ = InvokeAsync(StateHasChanged);
+
+    private static string? ParseChatId(string uri)
+    {
+        var path = new Uri(uri).AbsolutePath;
+        const string prefix = "/chat/";
+        if (!path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        var id = path[prefix.Length..].TrimEnd('/');
+        return string.IsNullOrWhiteSpace(id) ? null : Uri.UnescapeDataString(id);
+    }
+
+    public void Dispose()
+    {
+        Nav.LocationChanged -= OnLocationChanged;
+        RpgStore.PanelChanged -= OnPanelChanged;
+    }
+}

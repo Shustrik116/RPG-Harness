@@ -1,0 +1,327 @@
+/* ===== Бренд ===== */
+.sb-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    padding: 18px 16px 14px;
+}
+
+.sb-sigil {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    color: var(--rh-accent);
+    transition: transform .6s var(--rh-ease);
+}
+
+.sb-brand:hover .sb-sigil {
+    transform: rotate(60deg);
+}
+
+.sb-brand-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.15;
+}
+
+.sb-name {
+    font-family: var(--rh-serif);
+    font-size: 1.12rem;
+    font-weight: 500;
+    color: var(--rh-text);
+    letter-spacing: .01em;
+}
+
+.sb-sub {
+    font-size: .7rem;
+    color: var(--rh-text-3);
+    letter-spacing: .04em;
+}
+
+/* ===== Новый герой ===== */
+.sb-new {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 2px 14px 6px;
+    padding: 8px 12px;
+    border: 1px dashed rgba(var(--rh-accent-rgb), .45);
+    border-radius: var(--rh-radius-btn);
+    background: transparent;
+    color: var(--rh-accent);
+    font: 500 .88rem var(--rh-font);
+    cursor: pointer;
+    transition: background-color var(--rh-dur) ease, border-color var(--rh-dur) ease, color var(--rh-dur) ease;
+}
+
+.sb-new:hover {
+    background: var(--rh-accent-soft);
+    border-style: solid;
+    color: var(--rh-accent-hover);
+}
+
+.sb-new-plus {
+    font-size: 1.1rem;
+    line-height: 1;
+    transition: transform .25s var(--rh-ease);
+}
+
+.sb-new:hover .sb-new-plus {
+    transform: rotate(90deg);
+}
+
+/* ===== Заголовок секции ===== */
+.sb-section {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 16px 16px 6px;
+    font-size: .68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--rh-text-3);
+}
+
+.sb-count {
+    font-family: var(--rh-mono);
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+/* ===== Список кампаний ===== */
+.sb-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 8px 12px;
+}
+
+.sb-empty {
+    padding: 14px 10px;
+    font-size: .82rem;
+    line-height: 1.5;
+    color: var(--rh-text-3);
+}
+
+.sb-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    animation: rh-fade .3s ease both;
+}
+
+.sb-item ::deep .sb-link {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 34px 8px 8px;
+    border-radius: var(--rh-radius-btn);
+    color: var(--rh-text-2);
+    text-decoration: none;
+    position: relative;
+    transition: background-color var(--rh-dur) ease, color var(--rh-dur) ease;
+}
+
+.sb-item ::deep .sb-link:hover {
+    background: var(--rh-surface-2);
+    color: var(--rh-text);
+}
+
+.sb-item ::deep .sb-link.active {
+    background: var(--rh-surface-3);
+    color: var(--rh-text);
+}
+
+/* Латунная метка активной кампании */
+.sb-item ::deep .sb-link::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--rh-accent);
+    transform: scaleY(0);
+    transition: transform .25s var(--rh-ease);
+}
+
+.sb-item ::deep .sb-link.active::before {
+    transform: scaleY(1);
+}
+
+.sb-initial {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--rh-border-strong);
+    border-radius: 50%;
+    font-family: var(--rh-serif);
+    font-size: .95rem;
+    color: var(--rh-text-2);
+    background: var(--rh-inset);
+}
+
+.sb-item ::deep .sb-link.active .sb-initial {
+    border-color: rgba(var(--rh-accent-rgb), .6);
+    color: var(--rh-accent);
+}
+
+.sb-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.25;
+}
+
+.sb-title {
+    font-size: .9rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sb-meta {
+    font-size: .72rem;
+    color: var(--rh-text-3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sb-live {
+    color: var(--rh-accent);
+}
+
+.sb-live::after {
+    content: "…";
+    animation: rh-blink 1.2s steps(1) infinite;
+}
+
+.sb-del {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    margin-top: -12px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--rh-text-3);
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity var(--rh-dur) ease, color var(--rh-dur) ease, background-color var(--rh-dur) ease;
+}
+
+.sb-del svg {
+    width: 12px;
+    height: 12px;
+}
+
+.sb-item:hover .sb-del,
+.sb-del:focus-visible {
+    opacity: 1;
+}
+
+.sb-del:hover {
+    color: var(--rh-danger);
+    background: rgba(201, 97, 74, .1);
+}
+
+.sb-error {
+    margin: 0 14px 8px;
+    padding: 6px 8px;
+    border-left: 2px solid var(--rh-danger);
+    font-size: .74rem;
+    color: #e7a391;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ===== Подвал ===== */
+.sb-footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 8px 12px;
+    border-top: 1px solid var(--rh-border);
+}
+
+.sb-dir {
+    padding: 0 8px;
+    font-family: var(--rh-mono);
+    font-size: .66rem;
+    color: var(--rh-text-3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    direction: rtl;
+    text-align: left;
+}
+
+.sb-footer ::deep .sb-settings {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: var(--rh-radius-btn);
+    color: var(--rh-text-2);
+    font-size: .86rem;
+    text-decoration: none;
+    transition: background-color var(--rh-dur) ease, color var(--rh-dur) ease;
+}
+
+.sb-footer ::deep .sb-settings svg {
+    width: 17px;
+    height: 17px;
+    transition: transform .5s var(--rh-ease);
+}
+
+.sb-footer ::deep .sb-settings:hover {
+    background: var(--rh-surface-2);
+    color: var(--rh-text);
+}
+
+.sb-footer ::deep .sb-settings:hover svg {
+    transform: rotate(90deg);
+}
+
+.sb-footer ::deep .sb-settings.active {
+    background: var(--rh-surface-3);
+    color: var(--rh-accent);
+}
+
+/* Кампания другого сеттинга: приглушена и подписана — откроется только после смены темы. */
+.sb-item.is-other-genre {
+    opacity: .55;
+}
+
+.sb-genre {
+    margin-left: 6px;
+    padding: 0 5px;
+    border: 1px solid var(--rh-border-strong);
+    border-radius: var(--rh-radius-btn);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--rh-text-3);
+    vertical-align: 1px;
+}

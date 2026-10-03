@@ -1,0 +1,155 @@
+@implements IDisposable
+@inject ChatStore Store
+@inject RpgStateStore RpgStore
+@inject NavigationManager Nav
+@inject SettingsService SettingsSvc
+@inject IJSRuntime JS
+@inject ChatCreationFlow CreationFlow
+
+<div class="sb-brand">
+    <svg class="sb-sigil" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 2.5 28 9.5v13L16 29.5 4 22.5v-13Z" fill="none" stroke="currentColor" stroke-width="1.4" />
+        <path d="M16 2.5 10 20h12Z M4 9.5 10 20 M28 9.5 22 20 M10 20 16 29.5 22 20 M4 22.5 10 20 M28 22.5 22 20"
+              fill="none" stroke="currentColor" stroke-width="1" opacity=".7" />
+    </svg>
+    <div class="sb-brand-text">
+        <span class="sb-name">RPG Harness</span>
+        <span class="sb-sub">@Genre.PickT("текстовые приключения", "нейромастер ночного города", "криминальная драма в реальном мире", "text adventures", "a neuro-master of the night city", "crime drama in the real world")</span>
+    </div>
+</div>
+
+<button class="sb-new" @onclick="NewChat">
+    <span class="sb-new-plus" aria-hidden="true">+</span> @Lang.T("Новый герой", "New hero")
+</button>
+
+<div class="sb-section">@Lang.T("Кампании", "Campaigns") <span class="sb-count">@_chats.Count</span></div>
+
+<nav class="sb-list">
+    @if (_chats.Count == 0)
+    {
+        <div class="sb-empty">@Lang.T("Кампаний пока нет.", "No campaigns yet.")<br />@Lang.T("Создайте героя — и мастер начнёт игру.", "Create a hero — and the master will start the game.")</div>
+    }
+    else
+    {
+        @foreach (var chat in _chats)
+        {
+            var id = chat.Id;
+            var chatState = RpgStore.GetOrCreate(id);
+            var sheet = chatState.Character;
+            var chatGenre = Genre.Of(chatState);
+            var otherGenre = chatGenre != Genre.Current;
+            var meta = string.Join(" · ", new[] { sheet.CharClass, sheet.Race, sheet.Gender }.Where(s => !string.IsNullOrWhiteSpace(s)));
+            <div class="sb-item @(chat.Busy ? "is-busy" : "") @(otherGenre ? "is-other-genre" : "")"
+                 title="@(otherGenre ? Lang.T($"Кампания сеттинга «{Genre.Title(chatGenre)}» — откроется после смены темы", $"A campaign of the \"{Genre.Title(chatGenre)}\" setting — opens after switching the theme") : null)">
+                <NavLink class="sb-link" href="@($"/chat/{id}")" title="@chat.Title">
+                    <span class="sb-initial" aria-hidden="true">@Initial(chat.Title)</span>
+                    <span class="sb-text">
+                        <span class="sb-title">@chat.Title@if (otherGenre){<span class="sb-genre">@Genre.Title(chatGenre)</span>}</span>
+                        <span class="sb-meta">
+                            @if (chat.Busy)
+                            {
+                                <span class="sb-live">@Lang.T("мастер пишет", "the master is writing")</span>
+                            }
+                            else
+                            {
+                                @(meta.Length > 0 ? meta + " · " : "")@Ago(chat.UpdatedAt)
+                            }
+                        </span>
+                    </span>
+                </NavLink>
+                <button class="sb-del" title="@Lang.T("Удалить кампанию", "Delete the campaign")" @onclick="() => DeleteAsync(id)">
+                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" /></svg>
+                </button>
+            </div>
+        }
+    }
+</nav>
+
+@if (Store.LastError is not null)
+{
+    <div class="sb-error" title="@Store.LastError">@Store.LastError</div>
+}
+
+<div class="sb-footer">
+    <div class="sb-dir" title="@(Store.StorageDirectory ?? Lang.T("Директория не выбрана — чаты не сохраняются на диск", "No directory chosen — chats are not saved to disk"))">
+        @DirLabel
+    </div>
+    <NavLink class="sb-settings" href="/settings" title="@Lang.T("Настройки", "Settings")">
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+            <circle cx="10" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.4" />
+            <path d="M10 2.5v2.2M10 15.3v2.2M2.5 10h2.2M15.3 10h2.2M4.7 4.7l1.6 1.6M13.7 13.7l1.6 1.6M4.7 15.3l1.6-1.6M13.7 6.3l1.6-1.6"
+                  stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+        </svg>
+        <span>@Lang.T("Настройки", "Settings")</span>
+    </NavLink>
+</div>
+
+@code {
+    private IReadOnlyList<ChatSession> _chats = Array.Empty<ChatSession>();
+
+    private string DirLabel =>
+        string.IsNullOrWhiteSpace(Store.StorageDirectory)
+            ? Lang.T("директория не задана", "no directory set")
+            : Store.StorageDirectory!;
+
+    protected override void OnInitialized()
+    {
+        Refresh();
+        Store.Changed += OnStoreChanged;
+    }
+
+    private void OnStoreChanged()
+    {
+        _ = InvokeAsync(() =>
+        {
+            Refresh();
+            StateHasChanged();
+        });
+    }
+
+    private void Refresh() => _chats = Store.Sessions;
+
+    private static string Initial(string title)
+    {
+        var t = (title ?? "").Trim();
+        return t.Length == 0 ? "?" : char.ToUpperInvariant(t[0]).ToString();
+    }
+
+    /// <summary>Сколько времени прошло с последнего хода — коротко, по-русски.</summary>
+    private static string Ago(DateTime utc)
+    {
+        var span = DateTime.UtcNow - utc;
+        if (span.TotalMinutes < 1) return Lang.T("только что", "just now");
+        if (span.TotalMinutes < 60) return Lang.T($"{(int)span.TotalMinutes} мин назад", $"{(int)span.TotalMinutes} min ago");
+        if (span.TotalHours < 24) return Lang.T($"{(int)span.TotalHours} ч назад", $"{(int)span.TotalHours} h ago");
+        if (span.TotalDays < 7) return Lang.T($"{(int)span.TotalDays} дн назад", $"{(int)span.TotalDays} d ago");
+        return utc.ToLocalTime().ToString("d MMM", System.Globalization.CultureInfo.GetCultureInfo(Lang.IsEn ? "en-US" : "ru-RU"));
+    }
+
+    private void NewChat()
+    {
+        // Персонаж задаётся только при создании — открываем редактор героя.
+        CreationFlow.Request();
+    }
+
+    private async Task DeleteAsync(string id)
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", Lang.T("Удалить эту кампанию? Это действие нельзя отменить.", "Delete this campaign? This cannot be undone."));
+        if (!confirmed)
+        {
+            return;
+        }
+
+        Store.Delete(id);
+
+        if (Nav.Uri.EndsWith($"/chat/{id}", StringComparison.OrdinalIgnoreCase))
+        {
+            Nav.NavigateTo("/");
+        }
+    }
+
+    public void Dispose()
+    {
+        Store.Changed -= OnStoreChanged;
+    }
+}

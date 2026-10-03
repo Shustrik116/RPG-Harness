@@ -1,0 +1,2729 @@
+{
+ "cols": 16,
+ "rows": 9,
+ "items": [
+  {
+   "id": "cy_pistol",
+   "name": "Пистолет",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "пистолет",
+    "ствол",
+    "пушк",
+    "глок"
+   ],
+   "genre": "cyberpunk",
+   "price": 15,
+   "trade": "ranged",
+   "damage": "1d6 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_revolver",
+   "name": "Револьвер",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "револьвер",
+    "барабан"
+   ],
+   "genre": "cyberpunk",
+   "price": 25,
+   "trade": "ranged",
+   "damage": "1d8 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_heavy_pistol",
+   "name": "Тяжёлый пистолет",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "тяжёл",
+    "пистолет",
+    "магнум"
+   ],
+   "genre": "cyberpunk",
+   "price": 35,
+   "trade": "ranged",
+   "damage": "1d8 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_smart_pistol",
+   "name": "Умный пистолет",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "умн",
+    "смарт",
+    "пистолет",
+    "самонавод"
+   ],
+   "genre": "cyberpunk",
+   "price": 60,
+   "trade": "ranged",
+   "damage": "1d6 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_laser_pistol",
+   "name": "Лазерный пистолет",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "лазер",
+    "бластер"
+   ],
+   "genre": "cyberpunk",
+   "price": 80,
+   "trade": "ranged",
+   "damage": "1d6 энергетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_smg",
+   "name": "Пистолет-пулемёт",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "пистолет-пулем",
+    "пп",
+    "узи",
+    "автомат",
+    "smg"
+   ],
+   "genre": "cyberpunk",
+   "price": 35,
+   "trade": "ranged",
+   "damage": "1d6 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_compact_smg",
+   "name": "Компактный ПП",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "компактн",
+    "пп"
+   ],
+   "genre": "cyberpunk",
+   "price": 25,
+   "trade": "ranged",
+   "damage": "1d6 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_rifle",
+   "name": "Штурмовая винтовка",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "штурмов",
+    "винтовк",
+    "автомат",
+    "калаш",
+    "ак"
+   ],
+   "genre": "cyberpunk",
+   "price": 60,
+   "trade": "ranged",
+   "damage": "1d10 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_carbine",
+   "name": "Карабин",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "карабин"
+   ],
+   "genre": "cyberpunk",
+   "price": 45,
+   "trade": "ranged",
+   "damage": "1d8 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_shotgun",
+   "name": "Помповый дробовик",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "дробовик",
+    "помпов",
+    "обрез",
+    "ружь"
+   ],
+   "genre": "cyberpunk",
+   "price": 40,
+   "trade": "ranged",
+   "damage": "1d10 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_auto_shotgun",
+   "name": "Автоматический дробовик",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "автоматическ",
+    "дробовик"
+   ],
+   "genre": "cyberpunk",
+   "price": 75,
+   "trade": "ranged",
+   "damage": "2d6 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_sniper",
+   "name": "Снайперская винтовка",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "снайпер",
+    "винтовк"
+   ],
+   "genre": "cyberpunk",
+   "price": 120,
+   "trade": "ranged",
+   "damage": "1d12 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_railgun",
+   "name": "Рельсотрон",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "рельсотрон",
+    "гаусс",
+    "тех-винтовк"
+   ],
+   "genre": "cyberpunk",
+   "price": 250,
+   "trade": "polearms",
+   "damage": "1d12 энергетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_launcher",
+   "name": "Гранатомёт",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "гранатом",
+    "ракетниц",
+    "базук"
+   ],
+   "genre": "cyberpunk",
+   "price": 200,
+   "trade": "polearms",
+   "damage": "2d6 термический",
+   "ranged": true
+  },
+  {
+   "id": "cy_knife",
+   "name": "Нож",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "нож",
+    "кинжал",
+    "заточк"
+   ],
+   "genre": "cyberpunk",
+   "price": 3,
+   "trade": "blades",
+   "damage": "1d4 режущий",
+   "finesse": true
+  },
+  {
+   "id": "cy_vibroknife",
+   "name": "Виброклинок",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "вибро",
+    "вибронож"
+   ],
+   "genre": "cyberpunk",
+   "price": 18,
+   "trade": "blades",
+   "damage": "1d4 режущий",
+   "finesse": true
+  },
+  {
+   "id": "cy_machete",
+   "name": "Термомачете",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "мачете",
+    "тесак",
+    "термо"
+   ],
+   "genre": "cyberpunk",
+   "price": 15,
+   "trade": "blades",
+   "damage": "1d8 режущий"
+  },
+  {
+   "id": "cy_katana",
+   "name": "Катана",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "катан",
+    "клинок",
+    "меч"
+   ],
+   "genre": "cyberpunk",
+   "price": 40,
+   "trade": "blades",
+   "damage": "1d8 режущий",
+   "finesse": true
+  },
+  {
+   "id": "cy_monokatana",
+   "name": "Мономолекулярная катана",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "моно",
+    "мономолекул",
+    "катан"
+   ],
+   "genre": "cyberpunk",
+   "price": 120,
+   "trade": "blades",
+   "damage": "1d8 режущий",
+   "finesse": true
+  },
+  {
+   "id": "cy_mantis",
+   "name": "Клинки-богомолы",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "богомол",
+    "клинки-имплант",
+    "руки-лезви"
+   ],
+   "genre": "cyberpunk",
+   "price": 150,
+   "trade": "blades",
+   "damage": "1d6 режущий",
+   "finesse": true
+  },
+  {
+   "id": "cy_baton",
+   "name": "Шоковая дубинка",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "дубинк",
+    "шокер",
+    "электродубинк"
+   ],
+   "genre": "cyberpunk",
+   "price": 12,
+   "trade": "weapons",
+   "damage": "1d6 ударный"
+  },
+  {
+   "id": "cy_pipe",
+   "name": "Обрезок трубы",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "труб",
+    "арматур",
+    "обрезок"
+   ],
+   "genre": "cyberpunk",
+   "price": 1,
+   "trade": "weapons",
+   "damage": "1d4 ударный"
+  },
+  {
+   "id": "cy_bat",
+   "name": "Бита",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "бит",
+    "бейсбол"
+   ],
+   "genre": "cyberpunk",
+   "price": 3,
+   "trade": "weapons",
+   "damage": "1d6 ударный"
+  },
+  {
+   "id": "cy_hammer",
+   "name": "Гидравлический молот",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "молот",
+    "кувалд",
+    "гидравлич"
+   ],
+   "genre": "cyberpunk",
+   "price": 45,
+   "trade": "weapons",
+   "damage": "2d6 ударный"
+  },
+  {
+   "id": "cy_knuckles",
+   "name": "Кастет",
+   "cat": "weapon",
+   "w": 1,
+   "h": 1,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кастет"
+   ],
+   "genre": "cyberpunk",
+   "price": 4,
+   "trade": "weapons",
+   "damage": "1d4 ударный"
+  },
+  {
+   "id": "cy_deck",
+   "name": "Кибердека",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кибердек",
+    "дека",
+    "деки",
+    "нетран"
+   ],
+   "genre": "cyberpunk",
+   "price": 60,
+   "trade": "magic",
+   "damage": "1d6 кибератака"
+  },
+  {
+   "id": "cy_deck_mil",
+   "name": "Военная кибердека",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "военн",
+    "дека"
+   ],
+   "genre": "cyberpunk",
+   "price": 140,
+   "trade": "magic",
+   "damage": "1d6 кибератака"
+  },
+  {
+   "id": "cy_deck_pro",
+   "name": "Кибердека нетраннера-профи",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "профи",
+    "дека"
+   ],
+   "genre": "cyberpunk",
+   "price": 250,
+   "trade": "magic",
+   "damage": "1d6 кибератака"
+  },
+  {
+   "id": "cy_drone_remote",
+   "name": "Пульт боевого дрона",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "пульт",
+    "дрон",
+    "техник"
+   ],
+   "genre": "cyberpunk",
+   "price": 90,
+   "trade": "magic",
+   "damage": "1d6 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_jacket",
+   "name": "Кожанка с бронепластинами",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кожанк",
+    "куртк"
+   ],
+   "genre": "cyberpunk",
+   "price": 12,
+   "trade": "light_armor",
+   "armor": 1
+  },
+  {
+   "id": "cy_jacket_neon",
+   "name": "Неоновая куртка",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "неонов",
+    "куртк",
+    "бомбер"
+   ],
+   "genre": "cyberpunk",
+   "price": 30,
+   "trade": "clothing",
+   "armor": 1
+  },
+  {
+   "id": "cy_vest",
+   "name": "Кевларовый жилет",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кевлар",
+    "жилет",
+    "бронежилет"
+   ],
+   "genre": "cyberpunk",
+   "price": 30,
+   "trade": "light_armor",
+   "armor": 3,
+   "weight": "medium"
+  },
+  {
+   "id": "cy_tactical",
+   "name": "Тактическая броня",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "тактическ",
+    "броня"
+   ],
+   "genre": "cyberpunk",
+   "price": 90,
+   "trade": "heavy_armor",
+   "armor": 5,
+   "weight": "medium"
+  },
+  {
+   "id": "cy_combat_armor",
+   "name": "Боевой бронекостюм",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "бронекостюм",
+    "боев",
+    "брон"
+   ],
+   "genre": "cyberpunk",
+   "price": 160,
+   "trade": "heavy_armor",
+   "armor": 6,
+   "weight": "heavy"
+  },
+  {
+   "id": "cy_riot",
+   "name": "Броня спецназа",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "спецназ",
+    "омон",
+    "штурмов",
+    "брон"
+   ],
+   "genre": "cyberpunk",
+   "price": 130,
+   "trade": "heavy_armor",
+   "armor": 6,
+   "weight": "heavy"
+  },
+  {
+   "id": "cy_exo",
+   "name": "Силовой экзоскелет",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "экзоскелет",
+    "силов",
+    "брон"
+   ],
+   "genre": "cyberpunk",
+   "price": 450,
+   "trade": "heavy_armor",
+   "armor": 8,
+   "weight": "heavy"
+  },
+  {
+   "id": "cy_hoodie",
+   "name": "Худи",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "худи",
+    "толстовк",
+    "капюшон"
+   ],
+   "genre": "cyberpunk",
+   "price": 3,
+   "trade": "clothing"
+  },
+  {
+   "id": "cy_suit",
+   "name": "Корпоративный костюм",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "костюм",
+    "корпорат",
+    "пиджак"
+   ],
+   "genre": "cyberpunk",
+   "price": 45,
+   "trade": "clothing",
+   "armor": 1
+  },
+  {
+   "id": "cy_coat",
+   "name": "Длинный плащ",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "плащ",
+    "пальто",
+    "тренч"
+   ],
+   "genre": "cyberpunk",
+   "price": 20,
+   "trade": "clothing"
+  },
+  {
+   "id": "cy_coat_armored",
+   "name": "Бронированный плащ",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "бронирован",
+    "плащ"
+   ],
+   "genre": "cyberpunk",
+   "price": 60,
+   "trade": "light_armor",
+   "armor": 1
+  },
+  {
+   "id": "cy_helmet",
+   "name": "Тактический шлем",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "шлем",
+    "тактическ"
+   ],
+   "genre": "cyberpunk",
+   "price": 15,
+   "trade": "heavy_armor",
+   "armor": 1
+  },
+  {
+   "id": "cy_helmet_full",
+   "name": "Закрытый шлем",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "закрыт",
+    "шлем"
+   ],
+   "genre": "cyberpunk",
+   "price": 45,
+   "trade": "heavy_armor",
+   "armor": 1
+  },
+  {
+   "id": "cy_shades",
+   "name": "Тактические очки",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "очки",
+    "визор"
+   ],
+   "genre": "cyberpunk",
+   "price": 12,
+   "trade": "clothing"
+  },
+  {
+   "id": "cy_mask",
+   "name": "Респиратор",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "респиратор",
+    "маск",
+    "противогаз"
+   ],
+   "genre": "cyberpunk",
+   "price": 8,
+   "trade": "light_armor"
+  },
+  {
+   "id": "cy_cap",
+   "name": "Кепка",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кепк",
+    "бейсболк"
+   ],
+   "genre": "cyberpunk",
+   "price": 1,
+   "trade": "clothing"
+  },
+  {
+   "id": "cy_gloves",
+   "name": "Тактические перчатки",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Gloves",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "перчатк"
+   ],
+   "genre": "cyberpunk",
+   "price": 4,
+   "trade": "light_armor"
+  },
+  {
+   "id": "cy_power_gloves",
+   "name": "Силовые перчатки",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Gloves",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "силов",
+    "перчатк"
+   ],
+   "genre": "cyberpunk",
+   "price": 30,
+   "trade": "heavy_armor",
+   "armor": 1
+  },
+  {
+   "id": "cy_boots",
+   "name": "Ботинки",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "ботинк",
+    "кроссовк",
+    "обув"
+   ],
+   "genre": "cyberpunk",
+   "price": 3,
+   "trade": "light_armor"
+  },
+  {
+   "id": "cy_combat_boots",
+   "name": "Штурмовые ботинки",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "штурмов",
+    "берц"
+   ],
+   "genre": "cyberpunk",
+   "price": 15,
+   "trade": "heavy_armor"
+  },
+  {
+   "id": "cy_belt",
+   "name": "Разгрузочный пояс",
+   "cat": "armor",
+   "w": 2,
+   "h": 1,
+   "slot": "Belt",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "пояс",
+    "разгрузк",
+    "ремень"
+   ],
+   "genre": "cyberpunk",
+   "price": 4,
+   "trade": "light_armor"
+  },
+  {
+   "id": "cy_ballistic",
+   "name": "Баллистический щит",
+   "cat": "shield",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand2",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "баллистич",
+    "щит"
+   ],
+   "genre": "cyberpunk",
+   "price": 30,
+   "trade": "shields",
+   "armor": 2
+  },
+  {
+   "id": "cy_riot_shield",
+   "name": "Щит спецназа",
+   "cat": "shield",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand2",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "щит",
+    "спецназ"
+   ],
+   "genre": "cyberpunk",
+   "price": 50,
+   "trade": "shields",
+   "armor": 3
+  },
+  {
+   "id": "cy_projector",
+   "name": "Проектор силового поля",
+   "cat": "shield",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand2",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "проектор",
+    "пол",
+    "силов"
+   ],
+   "genre": "cyberpunk",
+   "price": 90,
+   "trade": "shields",
+   "armor": 2
+  },
+  {
+   "id": "cy_neuroport",
+   "name": "Нейропорт",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "нейропорт",
+    "порт"
+   ],
+   "genre": "cyberpunk",
+   "price": 40,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_cortex",
+   "name": "Кортикальный чип",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кортикал",
+    "чип",
+    "мозг"
+   ],
+   "genre": "cyberpunk",
+   "price": 90,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_optic",
+   "name": "Оптический имплант",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "оптическ",
+    "глаз",
+    "оптик"
+   ],
+   "genre": "cyberpunk",
+   "price": 70,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_neural_link",
+   "name": "Нейроинтерфейс",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "нейроинтерфейс",
+    "нейролинк"
+   ],
+   "genre": "cyberpunk",
+   "price": 110,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_reflex",
+   "name": "Рефлекс-бустер",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "рефлекс",
+    "бустер",
+    "позвоноч"
+   ],
+   "genre": "cyberpunk",
+   "price": 90,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_subdermal",
+   "name": "Подкожная броня",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "подкож",
+    "броня",
+    "пластин"
+   ],
+   "genre": "cyberpunk",
+   "price": 80,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_muscle",
+   "name": "Синтетические мышцы",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "мышц",
+    "синтетическ",
+    "волокн"
+   ],
+   "genre": "cyberpunk",
+   "price": 70,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_heart",
+   "name": "Биомеханическое сердце",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "сердц",
+    "биомехан"
+   ],
+   "genre": "cyberpunk",
+   "price": 120,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_adrenal",
+   "name": "Адреналиновый насос",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "адренал",
+    "насос"
+   ],
+   "genre": "cyberpunk",
+   "price": 60,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_nano",
+   "name": "Капсула наноботов",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "нано",
+    "наноботы"
+   ],
+   "genre": "cyberpunk",
+   "price": 100,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_cyberlimb",
+   "name": "Киберпротез руки",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "протез",
+    "киберрук",
+    "рука"
+   ],
+   "genre": "cyberpunk",
+   "price": 60,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_medstim",
+   "name": "Медстим",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "медстим",
+    "стим",
+    "лечени",
+    "аптечк"
+   ],
+   "genre": "cyberpunk",
+   "price": 6,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_ram_stim",
+   "name": "Стим ОЗУ",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "озу",
+    "память"
+   ],
+   "genre": "cyberpunk",
+   "price": 7,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_antitox",
+   "name": "Антитоксин",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "антитокс",
+    "противояд"
+   ],
+   "genre": "cyberpunk",
+   "price": 8,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_combat_stim",
+   "name": "Боевой стим",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "боев",
+    "стим",
+    "ярост",
+    "берсерк"
+   ],
+   "genre": "cyberpunk",
+   "price": 14,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_stealth_stim",
+   "name": "Стим-невидимка",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "невидим",
+    "камуфляж"
+   ],
+   "genre": "cyberpunk",
+   "price": 28,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_shield_stim",
+   "name": "Инъекция бронегеля",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "бронегел",
+    "щит"
+   ],
+   "genre": "cyberpunk",
+   "price": 10,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_reflex_stim",
+   "name": "Стим рефлексов",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "рефлекс",
+    "скорост"
+   ],
+   "genre": "cyberpunk",
+   "price": 15,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_neuro_stim",
+   "name": "Нейроусилитель",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "нейроусил",
+    "усилител"
+   ],
+   "genre": "cyberpunk",
+   "price": 18,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_cleanser",
+   "name": "Очиститель систем",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "очистител",
+    "перезагруз"
+   ],
+   "genre": "cyberpunk",
+   "price": 12,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_toxin",
+   "name": "Нейротоксин",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "токсин",
+    "яд"
+   ],
+   "genre": "cyberpunk",
+   "price": 18,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_cheap_stim",
+   "name": "Дешёвый стим",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "дешёв",
+    "уличн",
+    "стим"
+   ],
+   "genre": "cyberpunk",
+   "price": 3,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_medkit",
+   "name": "Аптечка",
+   "cat": "potion",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "аптечк",
+    "медкомплект"
+   ],
+   "genre": "cyberpunk",
+   "price": 25,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_trauma_kit",
+   "name": "Реанимационный набор",
+   "cat": "potion",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "реанимац",
+    "травма-набор"
+   ],
+   "genre": "cyberpunk",
+   "price": 60,
+   "trade": "potions"
+  },
+  {
+   "id": "cy_grenade",
+   "name": "Осколочная граната",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "граната",
+    "осколочн"
+   ],
+   "genre": "cyberpunk",
+   "price": 15,
+   "trade": "scrolls"
+  },
+  {
+   "id": "cy_emp_grenade",
+   "name": "ЭМИ-граната",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "эми",
+    "электромагн"
+   ],
+   "genre": "cyberpunk",
+   "price": 25,
+   "trade": "scrolls"
+  },
+  {
+   "id": "cy_flash_grenade",
+   "name": "Светошумовая граната",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "светошум",
+    "флешк"
+   ],
+   "genre": "cyberpunk",
+   "price": 12,
+   "trade": "scrolls"
+  },
+  {
+   "id": "cy_smoke_grenade",
+   "name": "Дымовая шашка",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "дымов",
+    "шашк"
+   ],
+   "genre": "cyberpunk",
+   "price": 8,
+   "trade": "scrolls"
+  },
+  {
+   "id": "cy_chip_attack",
+   "name": "Чип боевой программы",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "чип",
+    "программ",
+    "боев",
+    "взлом"
+   ],
+   "genre": "cyberpunk",
+   "price": 30,
+   "trade": "scrolls"
+  },
+  {
+   "id": "cy_chip_shield",
+   "name": "Чип защитного протокола",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "чип",
+    "защит",
+    "протокол"
+   ],
+   "genre": "cyberpunk",
+   "price": 25,
+   "trade": "scrolls"
+  },
+  {
+   "id": "cy_chip_util",
+   "name": "Чип утилиты",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "чип",
+    "утилит"
+   ],
+   "genre": "cyberpunk",
+   "price": 25,
+   "trade": "scrolls"
+  },
+  {
+   "id": "cy_shard",
+   "name": "Шард данных",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "шард",
+    "данн",
+    "запис"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "scrolls"
+  },
+  {
+   "id": "cy_holomap",
+   "name": "Голокарта района",
+   "cat": "scroll",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "голокарт",
+    "карт"
+   ],
+   "genre": "cyberpunk",
+   "price": 20,
+   "trade": "scrolls"
+  },
+  {
+   "id": "cy_skillchip",
+   "name": "Обучающий чип",
+   "cat": "book",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "обучающ",
+    "навык",
+    "скилчип"
+   ],
+   "genre": "cyberpunk",
+   "price": 60,
+   "trade": "books"
+  },
+  {
+   "id": "cy_databank",
+   "name": "Накопитель с базой данных",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "накопител",
+    "баз",
+    "архив"
+   ],
+   "genre": "cyberpunk",
+   "price": 40,
+   "trade": "books"
+  },
+  {
+   "id": "cy_manual",
+   "name": "Техническое руководство",
+   "cat": "book",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "руководств",
+    "мануал",
+    "инструкц"
+   ],
+   "genre": "cyberpunk",
+   "price": 15,
+   "trade": "books"
+  },
+  {
+   "id": "cy_noodles",
+   "name": "Лапша в коробке",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "лапш",
+    "рамен",
+    "еда"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "food"
+  },
+  {
+   "id": "cy_soda",
+   "name": "Газировка",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "газиров",
+    "кол",
+    "банк"
+   ],
+   "genre": "cyberpunk",
+   "price": 1,
+   "trade": "food"
+  },
+  {
+   "id": "cy_energy",
+   "name": "Энергетик",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "энергетик"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "food"
+  },
+  {
+   "id": "cy_burger",
+   "name": "Синтбургер",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "бургер",
+    "синт"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "food"
+  },
+  {
+   "id": "cy_ration",
+   "name": "Синтепаёк",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "паёк",
+    "паек",
+    "рацион"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "food"
+  },
+  {
+   "id": "cy_coffee",
+   "name": "Синтекофе",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кофе"
+   ],
+   "genre": "cyberpunk",
+   "price": 1,
+   "trade": "food"
+  },
+  {
+   "id": "cy_beer",
+   "name": "Пиво",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "пив",
+    "бутылк",
+    "выпивк"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "food"
+  },
+  {
+   "id": "cy_water",
+   "name": "Очищенная вода",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "вода"
+   ],
+   "genre": "cyberpunk",
+   "price": 1,
+   "trade": "food"
+  },
+  {
+   "id": "cy_multitool",
+   "name": "Мультитул",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "мультитул",
+    "инструмент"
+   ],
+   "genre": "cyberpunk",
+   "price": 6,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_flashlight",
+   "name": "Фонарь",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "фонар",
+    "фонарик"
+   ],
+   "genre": "cyberpunk",
+   "price": 3,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_keycard",
+   "name": "Ключ-карта",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "ключ-карт",
+    "пропуск",
+    "карт",
+    "доступ"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_decoder",
+   "name": "Электронная отмычка",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "отмычк",
+    "декодер",
+    "взломщик"
+   ],
+   "genre": "cyberpunk",
+   "price": 25,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_scanner",
+   "name": "Сканер",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "сканер",
+    "детектор"
+   ],
+   "genre": "cyberpunk",
+   "price": 20,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_cable",
+   "name": "Кабель",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кабел",
+    "провод",
+    "трос"
+   ],
+   "genre": "cyberpunk",
+   "price": 1,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_phone",
+   "name": "Холофон",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "холофон",
+    "телефон",
+    "коммуникатор"
+   ],
+   "genre": "cyberpunk",
+   "price": 10,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_minidrone",
+   "name": "Разведдрон",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "разведдрон",
+    "дрон-разведчик"
+   ],
+   "genre": "cyberpunk",
+   "price": 40,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_bag",
+   "name": "Сумка",
+   "cat": "tool",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "сумк",
+    "рюкзак",
+    "мешок"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_lighter",
+   "name": "Зажигалка",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "зажигалк"
+   ],
+   "genre": "cyberpunk",
+   "price": 1,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_toolbox",
+   "name": "Ящик с инструментами",
+   "cat": "tool",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "ящик",
+    "инструмент"
+   ],
+   "genre": "cyberpunk",
+   "price": 12,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_binoculars",
+   "name": "Цифровой бинокль",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "бинокл"
+   ],
+   "genre": "cyberpunk",
+   "price": 15,
+   "trade": "tools"
+  },
+  {
+   "id": "cy_watch",
+   "name": "Золотые часы",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "часы"
+   ],
+   "genre": "cyberpunk",
+   "price": 80,
+   "trade": "gems"
+  },
+  {
+   "id": "cy_holofig",
+   "name": "Голофигурка",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "голофигур",
+    "статуэтк"
+   ],
+   "genre": "cyberpunk",
+   "price": 35,
+   "trade": "gems"
+  },
+  {
+   "id": "cy_jewel",
+   "name": "Кольцо с бриллиантом",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "бриллиант",
+    "кольц",
+    "драгоцен"
+   ],
+   "genre": "cyberpunk",
+   "price": 120,
+   "trade": "gems"
+  },
+  {
+   "id": "cy_crystal",
+   "name": "Кристалл памяти",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кристалл",
+    "памят"
+   ],
+   "genre": "cyberpunk",
+   "price": 60,
+   "trade": "gems"
+  },
+  {
+   "id": "cy_proto_module",
+   "name": "Модуль-прототип",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "прототип",
+    "модул"
+   ],
+   "genre": "cyberpunk",
+   "price": 150,
+   "trade": "gems"
+  },
+  {
+   "id": "cy_rare_chip",
+   "name": "Коллекционный чип",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "коллекцион",
+    "чип"
+   ],
+   "genre": "cyberpunk",
+   "price": 90,
+   "trade": "gems"
+  },
+  {
+   "id": "cy_vinyl",
+   "name": "Виниловая пластинка",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "винил",
+    "пластинк"
+   ],
+   "genre": "cyberpunk",
+   "price": 25,
+   "trade": "curios"
+  },
+  {
+   "id": "cy_toy",
+   "name": "Игрушечный робот",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "игрушк",
+    "робот"
+   ],
+   "genre": "cyberpunk",
+   "price": 6,
+   "trade": "curios"
+  },
+  {
+   "id": "cy_photo",
+   "name": "Старое фото",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "фото",
+    "фотограф",
+    "снимок"
+   ],
+   "genre": "cyberpunk",
+   "price": 1,
+   "trade": "curios"
+  },
+  {
+   "id": "cy_cigs",
+   "name": "Пачка сигарет",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "сигарет",
+    "курев"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "curios"
+  },
+  {
+   "id": "cy_dice",
+   "name": "Игральные кости",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кости",
+    "кубик"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "curios"
+  },
+  {
+   "id": "cy_scrap",
+   "name": "Металлолом",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "металлолом",
+    "лом",
+    "железк"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_circuit",
+   "name": "Печатная плата",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "плат",
+    "схем",
+    "микросхем"
+   ],
+   "genre": "cyberpunk",
+   "price": 8,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_battery",
+   "name": "Аккумулятор",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "аккумулятор",
+    "батаре",
+    "элемент",
+    "питан"
+   ],
+   "genre": "cyberpunk",
+   "price": 10,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_wires",
+   "name": "Пучок проводов",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "провод"
+   ],
+   "genre": "cyberpunk",
+   "price": 2,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_servo",
+   "name": "Сервопривод",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "серво",
+    "привод",
+    "мотор"
+   ],
+   "genre": "cyberpunk",
+   "price": 12,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_lens",
+   "name": "Оптическая линза",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "линз",
+    "оптик"
+   ],
+   "genre": "cyberpunk",
+   "price": 14,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_chem",
+   "name": "Химреагенты",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "химреагент",
+    "химикат",
+    "реагент"
+   ],
+   "genre": "cyberpunk",
+   "price": 8,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_biosample",
+   "name": "Образец тканей",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "образец",
+    "ткан",
+    "биообраз"
+   ],
+   "genre": "cyberpunk",
+   "price": 15,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_code",
+   "name": "Фрагмент кода",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "фрагмент",
+    "код",
+    "ключ",
+    "шифров"
+   ],
+   "genre": "cyberpunk",
+   "price": 20,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_polymer",
+   "name": "Рулон полимера",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "полимер",
+    "пластик"
+   ],
+   "genre": "cyberpunk",
+   "price": 4,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_core",
+   "name": "Силовое ядро",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "ядро",
+    "реактор",
+    "силов"
+   ],
+   "genre": "cyberpunk",
+   "price": 40,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_tissue",
+   "name": "Мутировавшая ткань",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "мутаген",
+    "мутир",
+    "ткан"
+   ],
+   "genre": "cyberpunk",
+   "price": 10,
+   "trade": "materials"
+  },
+  {
+   "id": "cy_art_katana",
+   "name": "Моноклинок «Тихий шторм»",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": true,
+   "diag": true,
+   "kw": [
+    "тихий",
+    "шторм"
+   ],
+   "genre": "cyberpunk",
+   "price": 400,
+   "trade": "blades",
+   "damage": "1d8 режущий",
+   "finesse": true
+  },
+  {
+   "id": "cy_art_revolver",
+   "name": "Револьвер «Последний довод»",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "последн",
+    "довод"
+   ],
+   "genre": "cyberpunk",
+   "price": 380,
+   "trade": "ranged",
+   "damage": "1d8 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_art_sniper",
+   "name": "Винтовка «Око бога»",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": true,
+   "diag": true,
+   "kw": [
+    "око",
+    "бога"
+   ],
+   "genre": "cyberpunk",
+   "price": 500,
+   "trade": "ranged",
+   "damage": "1d12 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_art_smg",
+   "name": "ПП «Рой»",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "рой"
+   ],
+   "genre": "cyberpunk",
+   "price": 360,
+   "trade": "ranged",
+   "damage": "1d6 кинетический",
+   "ranged": true
+  },
+  {
+   "id": "cy_art_deck",
+   "name": "Кибердека «Призрак-7»",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "призрак-7",
+    "призрак"
+   ],
+   "genre": "cyberpunk",
+   "price": 520,
+   "trade": "magic",
+   "damage": "1d6 кибератака"
+  },
+  {
+   "id": "cy_art_hammer",
+   "name": "Молот «Землетряс»",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": true,
+   "diag": true,
+   "kw": [
+    "землетряс"
+   ],
+   "genre": "cyberpunk",
+   "price": 420,
+   "trade": "weapons",
+   "damage": "2d6 ударный"
+  },
+  {
+   "id": "cy_art_armor",
+   "name": "Броня «Цитадель»",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "цитадел"
+   ],
+   "genre": "cyberpunk",
+   "price": 900,
+   "trade": "heavy_armor",
+   "armor": 8,
+   "weight": "heavy"
+  },
+  {
+   "id": "cy_art_coat",
+   "name": "Плащ «Невидимка»",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "невидимк",
+    "хамелеон"
+   ],
+   "genre": "cyberpunk",
+   "price": 600,
+   "trade": "clothing",
+   "armor": 1
+  },
+  {
+   "id": "cy_art_heart",
+   "name": "Имплант «Сердце феникса»",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "сердце",
+    "феникса",
+    "феникс"
+   ],
+   "genre": "cyberpunk",
+   "price": 650,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_art_chip",
+   "name": "Нейрочип «Оракул»",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "оракул"
+   ],
+   "genre": "cyberpunk",
+   "price": 600,
+   "trade": "jewelry"
+  },
+  {
+   "id": "cy_art_shield",
+   "name": "Щит «Эгида»",
+   "cat": "shield",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand2",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "эгид"
+   ],
+   "genre": "cyberpunk",
+   "price": 550,
+   "trade": "shields",
+   "armor": 3
+  }
+ ]
+}

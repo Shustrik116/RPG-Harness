@@ -1,0 +1,572 @@
+@implements IDisposable
+@inject ChatStore Store
+@inject RpgStateStore RpgStore
+@inject ChatCreationFlow CreationFlow
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+@if (_open)
+{
+    <div class="cc-backdrop" @onclick="Close">
+        <div class="cc-modal" @onclick:stopPropagation="true">
+            <div class="cc-head">
+                <span class="cc-title">@Lang.T("Создание героя", "Create a hero")</span>
+                <button class="cc-x" title="@Lang.T("Отмена", "Cancel")" @onclick="Close">✕</button>
+            </div>
+
+            <p class="cc-lead">
+                @if (Lang.IsEn)
+                {
+                    @Genre.Pick("Set the hero's basics — name, gender, race, class and ability scores. Then the master will ask what world and genre you like, create it, hand out starting gear and offer story arcs to choose from.",
+                        "Set the hero's basics — name, gender, origin, class and ability scores. Then the master will ask what city and flavor of cyberpunk you like, build it, hand out starting gear and offer story arcs to choose from.",
+                        "Set the hero's basics — name, gender, background, profession and ability scores. Then the master will ask where and when the story takes place and what genre it is, build the city and its people, hand out starting gear and offer story arcs to choose from.")
+                }
+                else if (Genre.IsModern)
+                {
+                    <text>Задайте основу героя — имя, пол, прошлое, профессию и характеристики.
+                    Потом мастер расспросит, где и когда происходит история и какой у неё жанр, соберёт город и людей,
+                    выдаст стартовое снаряжение и предложит на выбор сюжетные арки.</text>
+                }
+                else if (Genre.IsCyber)
+                {
+                    <text>Задайте основу героя — имя, пол, происхождение, класс и характеристики.
+                    Потом мастер расспросит, какой город и какой оттенок киберпанка вам по душе, соберёт его,
+                    выдаст стартовое снаряжение и предложит на выбор сюжетные арки.</text>
+                }
+                else
+                {
+                    <text>Задайте основу героя — имя, пол, расу, класс и характеристики.
+                    Потом мастер расспросит, какой мир и жанр вам по душе, сотворит его,
+                    выдаст стартовое снаряжение и предложит на выбор сюжетные арки.</text>
+                }
+            </p>
+
+            <div class="cc-body">
+                <label class="cc-field">
+                    <span>@Lang.T("Имя героя", "Hero name") <em class="cc-req">*</em></span>
+                    <input class="cc-in" placeholder="@Genre.PickT("Например: Аэлин", "Например: Ви, Джонни, Кай", "Например: Максим, Алекс, Вера", "For example: Aelin", "For example: V, Johnny, Kai", "For example: Max, Alex, Vera")" @bind="_name" @bind:event="oninput" @ref="_nameRef" />
+                </label>
+
+                <div class="cc-grid3">
+                    <label class="cc-field">
+                        <span>@Genre.PickT("Раса", "Происхождение", "Прошлое", "Race", "Origin", "Background")</span>
+                        <input class="cc-in" placeholder="@Genre.PickT("Эльф, человек, дварф…", "Уличный, корпорат, кочевник…", "Бывший военный, полицейский, студент…", "Elf, human, dwarf…", "Streetkid, corpo, nomad…", "Ex-military, police officer, student…")" list="cc-races" @bind="_race" @bind:event="oninput" />
+                    </label>
+                    <label class="cc-field">
+                        <span>@Genre.PickT("Класс", "Класс", "Профессия", "Class", "Class", "Profession")</span>
+                        <input class="cc-in" placeholder="@Genre.PickT("Следопыт, маг, воин…", "Соло, нетраннер, техник…", "Наёмник, детектив, городской маг…", "Ranger, mage, warrior…", "Solo, netrunner, techie…", "Mercenary, detective, city mage…")" list="cc-classes" @bind="_class" @bind:event="oninput" @bind:after="OnClassChanged" />
+                    </label>
+                    <div class="cc-field">
+                        <span>@Lang.T("Пол", "Gender") <em class="cc-req">*</em></span>
+                        @* Пол выбирает строку листа портретов, поэтому он обязателен. *@
+                        <div class="cc-seg">
+                            <button type="button" class="cc-mode-btn @(_gender == Male ? "is-on" : "")"
+                                    @onclick='() => SetGender(Male)'>@Male</button>
+                            <button type="button" class="cc-mode-btn @(_gender == Female ? "is-on" : "")"
+                                    @onclick='() => SetGender(Female)'>@Female</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cc-field">
+                    <span>
+                        @Lang.T("Портрет", "Portrait")
+                        <em class="cc-hint">@Lang.T("подбирается по классу и полу — можно выбрать любой", "picked by class and gender — you can choose any")</em>
+                    </span>
+                    <div class="cc-avatars">
+                        @foreach (var avatar in AvatarChoices)
+                        {
+                            <button type="button"
+                                    class="cc-avatar @(_avatar == avatar.Id ? "is-on" : "")"
+                                    title="@avatar.Title"
+                                    aria-label="@avatar.Title"
+                                    @onclick='() => PickAvatar(avatar.Id)'
+                                    style="@PortraitCatalog.Style(avatar)"></button>
+                        }
+                    </div>
+                </div>
+                <datalist id="cc-races">
+                    @foreach (var r in Races)
+                    {
+                        <option value="@r"></option>
+                    }
+                </datalist>
+                <datalist id="cc-classes">
+                    @foreach (var c in Classes)
+                    {
+                        <option value="@c"></option>
+                    }
+                </datalist>
+
+                <div class="cc-sub">
+                    @Lang.T("Характеристики", "Ability scores")
+                    <span class="cc-mode" role="tablist">
+                        <button type="button" role="tab" class="cc-mode-btn @(_rollMode ? "" : "is-on")" @onclick="PointMode"
+                                title="@Lang.T($"Все характеристики начинают с 8; {PointPool} очков распределяются между ними. 13→14 и 14→15 стоят по 2 очка.", $"All ability scores start at 8; {PointPool} points are distributed between them. 13→14 and 14→15 cost 2 points each.")">@Lang.T("Очки", "Points")</button>
+                        <button type="button" role="tab" class="cc-mode-btn @(_rollMode ? "is-on" : "")" @onclick="RollMode"
+                                disabled="@(!_rollMode && _rollAttemptsLeft <= 0)"
+                                title="@Lang.T($"Три попытки: каждая характеристика начинается с 4d6 без худшего кубика, затем результат выравнивается до суммы {RollTotal} — на 2 выше максимума режима очков.", $"Three attempts: each ability score starts with 4d6 dropping the lowest die, then the result is evened out to a total of {RollTotal} — 2 above the maximum of the point mode.")">@Lang.T("Кубики 4d6", "Dice 4d6")</button>
+                    </span>
+                </div>
+
+                @if (!_rollMode)
+                {
+                    <div class="cc-pool @(PointsLeft == 0 ? "is-done" : "")">
+                        <div class="cc-pool-head">
+                            <span>@Lang.T("Свободные очки", "Free points")</span>
+                            <b>@PointsLeft <small>@Lang.T("из", "of") @PointPool</small></b>
+                        </div>
+                        <div class="cc-pool-track"><div class="cc-pool-fill" style="width:@((PointPool - PointsLeft) * 100 / PointPool)%"></div></div>
+                        <div class="cc-pool-actions">
+                            <button type="button" class="cc-chip" title="@Lang.T("Распределить стандартный набор 15, 14, 13, 12, 10, 8 по приоритетам выбранного класса", "Distribute the standard array 15, 14, 13, 12, 10, 8 by the chosen class's priorities")" @onclick="AutomaticStats">@Lang.T("Автоматически", "Automatic")</button>
+                            <button type="button" class="cc-chip" title="@Lang.T("Все по 8, очки вернутся", "All to 8, the points are returned")" @onclick="ResetStats">@Lang.T("Сбросить", "Reset")</button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="cc-pool is-roll">
+                        <div class="cc-pool-head">
+                            <span>@Lang.T($"4d6 без худшего · сумма {RollTotal} (+2 к максимуму режима очков)", $"4d6 drop the lowest · total {RollTotal} (+2 to the point mode maximum)")</span>
+                            <button type="button" class="cc-chip" disabled="@(_rollAttemptsLeft <= 0)" @onclick="RollStats">
+                                @Lang.T("Перебросить", "Reroll") <small>(@Lang.T("осталось", "left") @_rollAttemptsLeft)</small>
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                <div class="cc-stats">
+                    @for (var i = 0; i < 6; i++)
+                    {
+                        var idx = i;
+                        <div class="cc-stat" title="@DndStatNames.Full[i]">
+                            <span class="cc-stat-name">@DndStatNames.Short[i]</span>
+                            <div class="cc-stat-stepper">
+                                @if (!_rollMode)
+                                {
+                                    <button type="button" class="cc-step" title="@Lang.T($"−1 (вернёт {RefundOf(_stats[i])} оч.)", $"−1 (returns {RefundOf(_stats[i])} pts)")" disabled="@(!CanLower(i))" @onclick="() => NudgeStat(idx, -1)">−</button>
+                                }
+                                <span class="cc-stat-val">@_stats[i]</span>
+                                @if (!_rollMode)
+                                {
+                                    <button type="button" class="cc-step" title="@Lang.T($"+1 (стоит {StepCost(_stats[i])} оч.)", $"+1 (costs {StepCost(_stats[i])} pts)")" disabled="@(!CanRaise(i))" @onclick="() => NudgeStat(idx, 1)">+</button>
+                                }
+                            </div>
+                            <span class="cc-stat-mod">@DndStatNames.ModText(_stats[i])</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="cc-auto-resources">
+                    @Lang.T("Стартовые ресурсы рассчитаны по классу и характеристикам:", "Starting resources are calculated from the class and ability scores:")
+                    <b>@StartingHp HP</b><span>·</span>
+                    <b>@StartingMana @Genre.ManaGen</b><span>·</span>
+                    <b>@Progression.StartingMoney @Genre.MoneyGen</b>
+                </div>
+
+                <label class="cc-field">
+                    <span>@Lang.T("Предыстория или другая дополнительная информация", "Backstory or other extra information") <em class="cc-hint">@Lang.T("(необязательно — мастер учтёт её в мире и сюжете)", "(optional — the master takes it into account in the world and the story)")</em></span>
+                    <textarea class="cc-in cc-area" rows="3" placeholder="@Genre.PickT("Кем был герой до приключений, чего хочет, чего боится…", "Откуда герой, на кого работал, кому должен, чего хочет от этого города…", "Кем был герой, во что вляпался, кому должен, чего хочет…", "Who the hero was before the adventures, what they want, what they fear…", "Where the hero is from, who they worked for, who they owe, what they want from this city…", "Who the hero was, what they got into, who they owe, what they want…")" @bind="_backstory" @bind:event="oninput"></textarea>
+                </label>
+
+                @if (_error is not null)
+                {
+                    <div class="cc-error">@_error</div>
+                }
+            </div>
+
+            <div class="cc-actions">
+                <button class="btn btn-outline-secondary" @onclick="Close">@Lang.T("Отмена", "Cancel")</button>
+                <button class="btn btn-primary" @onclick="Create">@Lang.T("Начать приключение", "Begin the adventure")</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    /// <summary>Открыто ли окно создания (подписка на ChatCreationFlow.Requested).</summary>
+    private bool _open;
+
+    private string _name = "";
+    private string _race = "";
+    private string _class = "";
+    private string _gender = "";
+
+    /// <summary>Выбранный портрет (id из <see cref="HeroAvatars.All"/>).</summary>
+    private string _avatar = "";
+
+    /// <summary>Игрок выбрал портрет сам — тогда подсказка по классу и полу его больше не перебивает.</summary>
+    private bool _avatarPicked;
+    private readonly int[] _stats = { 10, 10, 10, 10, 10, 10 };
+    private string _backstory = "";
+    private string? _error;
+    private bool _focusName;
+
+    private static string[] Races => Lang.IsEn ? Genre.Pick(FantasyRacesEn, CyberOriginsEn, ModernOriginsEn) : Genre.Pick(FantasyRaces, CyberOrigins, ModernOrigins);
+
+    private static string[] Classes => Lang.IsEn ? Genre.Pick(FantasyClassesEn, CyberClassesEn, ModernClassesEn) : Genre.Pick(FantasyClasses, CyberClasses, ModernClasses);
+
+    /// <summary>Пол героя — слово на языке интерфейса (по нему же подбирается портрет).</summary>
+    private static string Male => Lang.T("Мужской", "Male");
+
+    private static string Female => Lang.T("Женский", "Female");
+
+    private static readonly string[] ModernOriginsEn =
+    {
+        "Ex-military", "Ex-cop", "Streetwise", "Small-town", "Student", "Ex-convict", "From a rich family", "Immigrant", "Athlete", "Doctor",
+    };
+
+    private static readonly string[] ModernClassesEn =
+    {
+        "Mercenary", "Detective", "Medic", "Hacker", "Bodyguard", "Thief", "Driver", "Sniper", "Brawler", "Journalist",
+        "Mechanic", "Negotiator", "Hunter", "Hitman", "Techie", "City mage", "Witch", "Occultist", "Exorcist", "Medium",
+    };
+
+    private static readonly string[] CyberOriginsEn =
+    {
+        "Human", "Streetkid", "Corpo", "Nomad", "Cyborg", "Android", "Clone", "Mutant", "Lab escapee",
+    };
+
+    private static readonly string[] CyberClassesEn =
+    {
+        "Solo", "Netrunner", "Techie", "Medtech", "Runner", "Fixer", "Cop", "Nomad", "Rockerboy", "Media", "Corpo",
+        "Cyber-ninja", "Sniper", "Drone operator", "Bounty hunter",
+    };
+
+    private static readonly string[] FantasyRacesEn =
+    {
+        "Human", "Elf", "Half-elf", "Dwarf", "Halfling", "Gnome", "Orc", "Half-orc",
+        "Tiefling", "Dragonborn", "Goblin", "Beastfolk", "Undead", "Android", "Mutant",
+    };
+
+    private static readonly string[] FantasyClassesEn =
+    {
+        "Warrior", "Barbarian", "Paladin", "Ranger", "Rogue", "Monk", "Bard",
+        "Cleric", "Druid", "Mage", "Warlock", "Sorcerer", "Necromancer", "Alchemist",
+        "Monster hunter", "Mercenary", "Detective", "Pilot", "Hacker",
+    };
+
+    /// <summary>Прошлое героя современности — поле «раса» в листе.</summary>
+    private static readonly string[] ModernOrigins =
+    {
+        "Бывший военный", "Бывший полицейский", "Уличный", "Из провинции", "Студент", "Бывший заключённый",
+        "Из богатой семьи", "Эмигрант", "Спортсмен", "Врач",
+    };
+
+    private static readonly string[] ModernClasses =
+    {
+        "Наёмник", "Детектив", "Медик", "Хакер", "Телохранитель", "Вор", "Водитель", "Снайпер", "Боец", "Журналист",
+        "Механик", "Переговорщик", "Охотник", "Киллер", "Технарь", "Городской маг", "Ведьма", "Оккультист", "Экзорцист", "Медиум",
+    };
+
+    /// <summary>Происхождение героя киберпанка — поле «раса» в листе.</summary>
+    private static readonly string[] CyberOrigins =
+    {
+        "Человек", "Уличный ребёнок", "Корпорат", "Кочевник", "Киборг", "Андроид", "Клон", "Мутант", "Беглый из лаборатории",
+    };
+
+    private static readonly string[] CyberClasses =
+    {
+        "Соло", "Нетраннер", "Техник", "Медтех", "Раннер", "Фиксер", "Коп", "Кочевник", "Рокер", "Медиа", "Корпорат",
+        "Киберниндзя", "Снайпер", "Дронщик", "Охотник за головами",
+    };
+
+    private static readonly string[] FantasyRaces =
+    {
+        "Человек", "Эльф", "Полуэльф", "Дварф", "Полурослик", "Гном", "Орк", "Полуорк",
+        "Тифлинг", "Драконорождённый", "Гоблин", "Зверолюд", "Нежить", "Андроид", "Мутант",
+    };
+
+    private static readonly string[] FantasyClasses =
+    {
+        "Воин", "Варвар", "Паладин", "Следопыт", "Плут", "Монах", "Бард",
+        "Жрец", "Друид", "Маг", "Колдун", "Чародей", "Некромант", "Алхимик",
+        "Охотник на чудовищ", "Наёмник", "Детектив", "Пилот", "Хакер",
+    };
+
+    /// <summary>Ссылка на поле имени — фокус после открытия окна.</summary>
+    private ElementReference _nameRef;
+
+    protected override void OnInitialized()
+    {
+        CreationFlow.Requested += Open;
+
+    }
+
+    public void Dispose() => CreationFlow.Requested -= Open;
+
+    private void Open()
+    {
+        _open = true;
+        _name = "";
+        _race = "";
+        _class = "";
+        _gender = "";
+        _avatar = "";
+        _avatarPicked = false;
+        _rollMode = false;
+        _rollAttemptsLeft = RollAttempts;
+        for (var i = 0; i < 6; i++)
+        {
+            _stats[i] = PointMin;
+        }
+
+        _backstory = "";
+        _error = null;
+        _focusName = true;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void Close() => _open = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_open && _focusName)
+        {
+            _focusName = false;
+            try
+            {
+                await JS.InvokeVoidAsync("harness.focusEl", _nameRef);
+            }
+            catch
+            {
+                // circuit переподключается
+            }
+        }
+    }
+
+    private void OnClassChanged() => SyncAvatar();
+
+    /// <summary>Пол задаёт строку листа портретов, поэтому его обязательно выбирают при создании.</summary>
+    private void SetGender(string gender)
+    {
+        _gender = gender;
+        SyncAvatar();
+    }
+
+    /// <summary>Портрет следует за классом и полом, пока игрок не выбрал его вручную.</summary>
+    private void SyncAvatar()
+    {
+        if (!_avatarPicked)
+        {
+            _avatar = HeroAvatars.Suggest(_class, _gender);
+        }
+    }
+
+    /// <summary>
+    /// Облики на выбор: сначала шесть классических портретов героя, затем все лица из каталога
+    /// (спутники, люди из листа врагов). Облики выбранного пола — первыми.
+    /// </summary>
+    private IEnumerable<PortraitDef> AvatarChoices
+    {
+        get
+        {
+            var g = _gender.Length == 0 ? "" : HeroAvatars.RowFor(_gender) == 1 ? "f" : "m";
+            return PortraitCatalog.People
+                .OrderBy(p => p.Sheet is "hero" or "cyber_hero" or "modern_hero" ? 0 : 1)
+                .ThenBy(p => g.Length == 0 || p.Gender == g ? 0 : p.Gender.Length == 0 ? 1 : 2);
+        }
+    }
+
+    private void PickAvatar(string id)
+    {
+        _avatar = id;
+        _avatarPicked = true;
+    }
+
+    // ===== Характеристики: покупка за очки (как в D&D 5e) или бросок 4d6 =====
+
+    /// <summary>Общий запас очков на распределение.</summary>
+    private const int PointPool = 27;
+    private const int PointMin = 8;
+    private const int PointMax = 15;
+    private const int RollAttempts = 3;
+    private const int RollTotal = 77;
+
+    private bool _rollMode;
+    private int _rollAttemptsLeft = RollAttempts;
+
+    private ClassArchetype SelectedArchetype => Progression.GuessArchetype(_class);
+    private int StartingHp => Progression.HpAtLevel(SelectedArchetype, DndStatNames.Modifier(_stats[(int)DndStat.Con]), 1);
+    private int StartingMana => Progression.ManaAtLevel(
+        SelectedArchetype,
+        DndStatNames.Modifier(_stats[(int)SelectedArchetype.Priority[0]]),
+        1);
+
+    /// <summary>Сколько стоит значение характеристики: 8 — 0, дальше по 1 очку, 14 и 15 — по 2.</summary>
+    private static int CostOf(int value) => value switch
+    {
+        <= 8 => 0,
+        <= 13 => value - 8,
+        14 => 7,
+        _ => 9,
+    };
+
+    /// <summary>Цена шага +1 от текущего значения.</summary>
+    private static int StepCost(int value) => CostOf(value + 1) - CostOf(value);
+
+    private static int RefundOf(int value) => CostOf(value) - CostOf(value - 1);
+
+    private int PointsLeft => PointPool - _stats.Sum(CostOf);
+
+    private bool CanRaise(int i) => _stats[i] < PointMax && StepCost(_stats[i]) <= PointsLeft;
+
+    private bool CanLower(int i) => _stats[i] > PointMin;
+
+    private void PointMode()
+    {
+        if (!_rollMode)
+        {
+            return;
+        }
+
+        _rollMode = false;
+        ResetStats();
+    }
+
+    private void RollMode()
+    {
+        if (_rollMode)
+        {
+            return;
+        }
+
+        if (_rollAttemptsLeft <= 0)
+        {
+            return;
+        }
+
+        _rollMode = true;
+        RollStats();
+    }
+
+    private void ApplyStats(IReadOnlyList<int> values)
+    {
+        for (var i = 0; i < 6; i++)
+        {
+            SetStat(i, values[i]);
+        }
+    }
+
+    private void RollStats()
+    {
+        if (_rollAttemptsLeft <= 0)
+        {
+            return;
+        }
+
+        _rollAttemptsLeft--;
+        var rolled = new int[6];
+        for (var i = 0; i < 6; i++)
+        {
+            var dice = Enumerable.Range(0, 4).Select(_ => Random.Shared.Next(1, 7)).OrderByDescending(d => d).Take(3);
+            rolled[i] = dice.Sum();
+        }
+
+        NormalizeRolledTotal(rolled);
+        ApplyStats(rolled);
+    }
+
+    /// <summary>Сохраняет случайный профиль броска, но гарантирует обещанную суммарную силу.</summary>
+    private static void NormalizeRolledTotal(int[] rolled)
+    {
+        while (rolled.Sum() != RollTotal)
+        {
+            var grow = rolled.Sum() < RollTotal;
+            var candidates = Enumerable.Range(0, rolled.Length)
+                .Where(i => grow ? rolled[i] < 18 : rolled[i] > 3)
+                .ToArray();
+            var idx = candidates[Random.Shared.Next(candidates.Length)];
+            rolled[idx] += grow ? 1 : -1;
+        }
+    }
+
+    private void AutomaticStats()
+    {
+        var values = new[] { 15, 14, 13, 12, 10, 8 };
+        var result = new int[6];
+        var priorities = SelectedArchetype.Priority;
+        for (var i = 0; i < values.Length; i++)
+        {
+            result[(int)priorities[i]] = values[i];
+        }
+
+        ApplyStats(result);
+    }
+
+    private void ResetStats() => ApplyStats(new[] { PointMin, PointMin, PointMin, PointMin, PointMin, PointMin });
+
+    private void NudgeStat(int idx, int delta)
+    {
+        if (_rollMode || (delta > 0 && !CanRaise(idx)) || (delta < 0 && !CanLower(idx)))
+        {
+            return;
+        }
+
+        SetStat(idx, _stats[idx] + delta);
+    }
+
+    private void SetStat(int idx, int value)
+    {
+        _stats[idx] = Math.Clamp(value, 3, 18);
+    }
+
+    private void Create()
+    {
+        var name = _name.Trim();
+        if (name.Length == 0)
+        {
+            _error = Lang.T("Введите имя героя.", "Enter the hero's name.");
+            return;
+        }
+
+        if (!_rollMode && PointsLeft > 0)
+        {
+            _error = Lang.T($"Распределите оставшиеся очки характеристик: {PointsLeft}.", $"Distribute the remaining ability points: {PointsLeft}.");
+            return;
+        }
+
+        if (_gender.Length == 0)
+        {
+            _error = Lang.T("Выберите пол героя.", "Choose the hero's gender.");
+            return;
+        }
+
+        var session = Store.Create();
+        session.Title = name.Length <= 40 ? name : name[..40];
+
+        // Персонаж задаётся только здесь, при создании чата.
+        var state = RpgStore.GetOrCreate(session.Id);
+        state.GenreId = Genre.Current;
+        var c = state.Character;
+        c.Name = name;
+        c.Race = _race.Trim();
+        c.CharClass = _class.Trim();
+        c.Gender = _gender.Trim();
+        c.Avatar = _avatar.Length > 0 ? _avatar : HeroAvatars.Suggest(_class, _gender);
+        c.Level = "1";
+        c.Str = _stats[0];
+        c.Dex = _stats[1];
+        c.Con = _stats[2];
+        c.Int = _stats[3];
+        c.Wis = _stats[4];
+        c.Cha = _stats[5];
+        c.Role = SelectedArchetype.Key;
+        c.HpMax = StartingHp;
+        c.HpCurrent = StartingHp;
+        c.ManaMax = StartingMana;
+        c.ManaCurrent = StartingMana;
+        c.Gold = Progression.StartingMoney;
+        c.Notes = _backstory.Trim();
+        RpgStore.Save(session.Id, state);
+
+        Store.Persist(session);
+        Store.NotifyChanged();
+
+        // Мастер сам начнёт сессию ноль, как только откроется чат.
+        CreationFlow.MarkKickoff(session.Id);
+
+        _open = false;
+        Nav.NavigateTo($"/chat/{session.Id}");
+    }
+}

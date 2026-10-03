@@ -1,0 +1,444 @@
+@inject ItemCatalog Catalog
+@inject RpgStateStore RpgStore
+@inject PartyFlow PartyFlow
+
+@* Всплывающий инвентарь окна боя: кукла снаряжения (для героя) + сумка-сетка, с экипировкой перетягиванием. *@
+<div class="bw-inv-pop">
+ <div class="bw-inv-head">@Title</div>
+
+ @* Кукла и сетка — левый столбец; карточка предмета встаёт справа, поэтому выбор
+    предмета расширяет окно, а не удлиняет его (иначе появлялась полоса прокрутки). *@
+ <div class="bw-inv-body">
+  <div class="bw-inv-main">
+ @if (IsHero)
+ {
+  @* ===== Кукла героя (слоты экипировки) ===== *@
+  <div class="bw-equip">
+   @foreach (var (slotId, label, ghost) in EquipLayout)
+   {
+    var slot = slotId;
+    var key = slot.ToString();
+    var worn = Holder?.Equipment.GetValueOrDefault(key);
+    var mirror = slot == EquipSlot.Hand2 && worn is { TwoHanded: true };
+    var canDrop = _dragId is not null && CanDropOn(slot);
+    <div class="bw-slot a-@key.ToLowerInvariant() @(worn is null ? "empty" : "filled") @(mirror ? "mirror" : "") @(canDrop ? "can-drop" : "") @(IsSelectedSlot(slot) ? "sel" : "")"
+         title="@(worn is null ? Lang.T($"{label}: пусто — перетащите сюда предмет из сумки", $"{label}: empty — drag an item here from the bag") : $"{label}: {worn.Name}{StatSuffix(ItemStats.Describe(worn))}{NoteSuffix(worn.Note)}")"
+         draggable="@(worn is not null && !mirror ? "true" : "false")"
+         @ondragstart="() => SlotDragStart(slot)"
+         @ondragend="DragEnd"
+         @ondragover:preventDefault
+         @ondrop="() => SlotDrop(slot)"
+         @ondrop:preventDefault
+         @onclick="() => SelectSlot(slot)">
+     @if (worn is not null)
+     {
+      <span class="pix pix-@worn.Icon @IconClass(worn.Icon, SlotShape(slot))"></span>
+     }
+     else
+     {
+      <span class="bw-slot-ghost pix pix-@ghost @IconClass(ghost, SlotShape(slot))"></span>
+     }
+     <span class="bw-slot-label">@label</span>
+    </div>
+   }
+  </div>
+ }
+
+ @* ===== Сумка-сетка ===== *@
+ @if (Bag.Count == 0)
+ {
+  <div class="bw-inv-empty">@(IsHero ? Lang.T("Сумка пуста.", "The bag is empty.") : Lang.T("У спутника пока ничего нет.", "The companion has nothing yet."))</div>
+ }
+ else
+ {
+  <div class="bw-inv-grid @(Dragging ? "dragging" : "")">
+   @for (var row = 0; row < RpgState.GridRows; row++)
+   {
+    for (var col = 0; col < RpgState.GridCols; col++)
+    {
+     var c = col;
+     var r = row;
+     <div class="bw-inv-cell" @ondrop="() => CellDrop(c, r)" @ondrop:preventDefault></div>
+    }
+   }
+   @foreach (var item in Bag)
+   {
+    var it = item;
+    <button class="bw-inv-item @(it.Id == _selId ? "sel" : "") @(it.Id == _dragId ? "lifted" : "")"
+            style="@GridItemStyle(it)"
+            draggable="true"
+            @ondragstart="e => GridDragStart(e, it)"
+            @ondragend="DragEnd"
+            @onclick="() => SelectItem(it)"
+            title="@GridItemTitle(it)">
+     <span class="pix pix-@it.Icon @IconClass(it.Icon, (it.W, it.H))"></span>
+     @if (it.Quantity > 1)
+     {
+      <small>@it.Quantity</small>
+     }
+    </button>
+   }
+  </div>
+ }
+
+  </div>
+
+ @* ===== Карточка выбранного предмета ===== *@
+ @if (SelectedItem is { } sel)
+ {
+  <div class="bw-inv-card">
+   <b>@sel.Name@(sel.Quantity > 1 ? $" ×{sel.Quantity}" : "")</b>
+   <small class="bw-inv-meta">@ItemMeta(sel.Icon, sel.W, sel.H, sel.Slot, sel.TwoHanded)</small>
+   @if (ItemStats.Describe(sel).Length > 0)
+   {
+    <small class="bw-inv-stats">@ItemStats.Describe(sel)</small>
+   }
+   @if (!string.IsNullOrWhiteSpace(sel.Note))
+   {
+    <p>@sel.Note</p>
+   }
+   <div class="bw-inv-actions">
+    @if (IsHero)
+    {
+     @if (Equipable(sel))
+     {
+      <button @onclick="() => EquipItem(sel)">🛡 @Lang.T("Экипировать", "Equip")</button>
+     }
+     @if (Consumable(sel))
+     {
+      <button @onclick='() => UseItem(sel, "hero")'>✦ @Lang.T("Использовать", "Use")</button>
+     }
+     @if (_state.Party.Count > 0)
+     {
+      <span class="bw-inv-give-label">@Lang.T("Передать:", "Give to:")</span>
+      foreach (var m in _state.Party)
+      {
+       var target = m;
+       <button class="bw-inv-give" title="@(CanReceive(m, sel) ? Lang.T($"Предложить «{sel.Name}» — {m.Name} решит сам", $"Offer \"{sel.Name}\" — {m.Name} decides on their own") : Lang.T("В инвентаре спутника нет места", "No room in the companion's inventory"))" @onclick="() => UseItem(sel, m.Name)">@m.Name</button>
+      }
+     }
+     <button class="danger" @onclick="() => DropItem(sel)">🗑 @Lang.T("Выбросить", "Discard")</button>
+    }
+    else if (Member is not null)
+    {
+     <button @onclick="() => RequestFromMember(Member, sel)">↗ @Lang.T("Попросить у спутника", "Ask the companion for it")</button>
+     <small class="bw-inv-hint">@Lang.T("Вещи спутника переходят только с его согласия — решение отыграет мастер.", "A companion's items pass only with their consent — the master plays out the decision.")</small>
+    }
+   </div>
+  </div>
+ }
+ @if (SelectedWorn is { } wornSel)
+ {
+  <div class="bw-inv-card">
+   <b>@wornSel.Name</b>
+   <small class="bw-inv-meta">@Lang.T("надето", "worn") · @InventoryOps.SlotTitle(_selSlot!.Value)@(wornSel.TwoHanded ? Lang.T(" · двуручное", " · two-handed") : "")</small>
+   @if (ItemStats.Describe(wornSel).Length > 0)
+   {
+    <small class="bw-inv-stats">@ItemStats.Describe(wornSel)</small>
+   }
+   @if (!string.IsNullOrWhiteSpace(wornSel.Note))
+   {
+    <p>@wornSel.Note</p>
+   }
+   <div class="bw-inv-actions">
+    <button @onclick="() => UnequipSlot(_selSlot!.Value, false)">🎒 @Lang.T("Снять в сумку", "Unequip to the bag")</button>
+    @if (IsHero)
+    {
+     <button class="danger" @onclick="() => UnequipSlot(_selSlot!.Value, true)">🗑 @Lang.T("Выбросить", "Discard")</button>
+    }
+   </div>
+  </div>
+ }
+ </div>
+ @if (_msg.Length > 0)
+ {
+  <div class="bw-inv-msg @(_msgOk ? "ok" : "")">@_msg</div>
+ }
+</div>
+
+@code {
+ [Parameter] public RpgState? State { get; set; }
+ [Parameter] public string? ChatId { get; set; }
+ [Parameter] public bool IsHero { get; set; }
+ [Parameter] public PartyMember? Member { get; set; }
+ [Parameter] public EventCallback<string> OnMessage { get; set; }
+
+ private const int CellPx = 30;
+ private RpgState _state => State ?? RpgStore.GetOrCreate(ChatId);
+
+ private string Title => IsHero ? Lang.T("Инвентарь героя", "The hero's inventory") : Lang.T("Инвентарь · ", "Inventory · ") + Member?.Name;
+
+ private List<GridItem> Bag => IsHero ? _state.Grid : (Member?.Grid ?? new List<GridItem>());
+
+ // Экипировка берётся из героя; для спутника куклы нет.
+ private CharacterSheet? Holder => IsHero ? _state.Character : null;
+ private EquippedItem? HolderItem(string key) => Holder?.Equipment.GetValueOrDefault(key);
+
+ private string? _dragId;
+ private EquipSlot? _dragSlot;
+ private int _grabCol;
+ private int _grabRow;
+ private string? _selId;
+ private EquipSlot? _selSlot;
+ private string _msg = "";
+ private bool _msgOk;
+
+ private bool Dragging => _dragId is not null || _dragSlot is not null;
+
+ private GridItem? SelectedItem => _selId is null ? null : Bag.FirstOrDefault(i => i.Id == _selId);
+ private EquippedItem? SelectedWorn => _selSlot is { } s ? HolderItem(s.ToString()) : null;
+
+ private static (EquipSlot Slot, string Label, string Ghost)[] EquipLayout => new[]
+ {
+  (EquipSlot.Hand1, Lang.T("Оружие", "Weapon"), "sword"),
+  (EquipSlot.Cloak, Lang.T("Плащ", "Cloak"), "cloak"),
+  (EquipSlot.Helmet, Lang.T("Шлем", "Helmet"), "helmet"),
+  (EquipSlot.Amulet, Lang.T("Амулет", "Amulet"), "amulet"),
+  (EquipSlot.Hand2, Lang.T("Щит / 2-я рука", "Shield / off hand"), "shield"),
+  (EquipSlot.Gloves, Lang.T("Перчатки", "Gloves"), "gloves"),
+  (EquipSlot.Body, Lang.T("Доспех", "Armor"), "body"),
+  (EquipSlot.Ring1, Lang.T("Кольцо", "Ring"), "ring"),
+  (EquipSlot.Ring2, Lang.T("Кольцо", "Ring"), "ring2"),
+  (EquipSlot.Boots, Lang.T("Сапоги", "Boots"), "boots"),
+  (EquipSlot.Belt, Lang.T("Пояс", "Belt"), "belt"),
+ };
+
+ private static (int W, int H) SlotShape(EquipSlot slot) => slot switch
+ {
+  EquipSlot.Hand1 or EquipSlot.Hand2 => (2, 4),
+  EquipSlot.Cloak or EquipSlot.Gloves or EquipSlot.Body => (2, 3),
+  _ => (1, 1),
+ };
+
+ private string IconClass(string icon, (int W, int H) box)
+ {
+  var def = Catalog.Get(icon);
+  return def is { Diag: true } && box.H > box.W ? "diag" : "fit";
+ }
+
+ private static string StatSuffix(string stats) => stats.Length == 0 ? "" : " · " + stats;
+ private static string NoteSuffix(string? note) => string.IsNullOrWhiteSpace(note) ? "" : " — " + note;
+
+ private string ItemMeta(string icon, int w, int h, EquipSlot? slot, bool twoHanded)
+ {
+  var def = Catalog.Get(icon);
+  var home = slot ?? def?.EquipSlot;
+  var parts = new List<string> { $"{w}×{h}" };
+  if (home is { } s)
+  {
+   parts.Add(twoHanded ? Lang.T("двуручное", "two-handed") : InventoryOps.SlotTitle(s));
+  }
+  if (def is not null)
+  {
+   parts.Add(def.Name.ToLowerInvariant());
+  }
+  return string.Join(" · ", parts);
+ }
+
+ private string GridItemTitle(GridItem item) =>
+  item.Name + (item.Quantity > 1 ? $" x{item.Quantity}" : "") + $" ({item.W}×{item.H})" + StatSuffix(ItemStats.Describe(item)) + NoteSuffix(item.Note);
+
+ private string GridItemStyle(GridItem item) =>
+  $"left:calc({item.Col} * {CellPx}px + 2px); top:calc({item.Row} * {CellPx}px + 2px);" +
+  $"width:calc({item.W} * {CellPx}px - 2px); height:calc({item.H} * {CellPx}px - 2px);";
+
+ // ===== Выбор =====
+ private bool IsSelectedSlot(EquipSlot slot) =>
+  _selSlot is { } s && SelectedWorn is { } w && (s == slot || (w.TwoHanded && slot is EquipSlot.Hand1 or EquipSlot.Hand2));
+
+ private void SelectItem(GridItem item)
+ {
+  _selSlot = null;
+  _selId = _selId == item.Id ? null : item.Id;
+ }
+
+ private void SelectSlot(EquipSlot slot)
+ {
+  if (HolderItem(slot.ToString()) is null)
+  {
+   return;
+  }
+  _selId = null;
+  _selSlot = _selSlot == slot ? null : slot;
+ }
+
+ private void ClearSelection()
+ {
+  _selId = null;
+  _selSlot = null;
+ }
+
+ private void Report(bool ok, string message)
+ {
+  _msgOk = ok;
+  _msg = message;
+  _ = OnMessage.InvokeAsync(message);
+ }
+
+ // ===== Перетаскивание =====
+ private void GridDragStart(DragEventArgs e, GridItem item)
+ {
+  _dragId = item.Id;
+  _dragSlot = null;
+  _grabCol = Math.Clamp((int)(e.OffsetX / CellPx), 0, item.W - 1);
+  _grabRow = Math.Clamp((int)(e.OffsetY / CellPx), 0, item.H - 1);
+ }
+
+ private void SlotDragStart(EquipSlot slot)
+ {
+  if (HolderItem(slot.ToString()) is null)
+  {
+   return;
+  }
+  _dragSlot = slot;
+  _dragId = null;
+  _grabCol = 0;
+  _grabRow = 0;
+ }
+
+ private void DragEnd()
+ {
+  _dragId = null;
+  _dragSlot = null;
+ }
+
+ private bool CanDropOn(EquipSlot slot)
+ {
+  if (_dragId is null || Holder is null)
+  {
+   return false;
+  }
+  var item = _state.Grid.FirstOrDefault(i => i.Id == _dragId);
+  return item is not null && InventoryOps.CanGoTo(item.Slot ?? Catalog.Get(item.Icon)?.EquipSlot, item.TwoHanded, slot);
+ }
+
+ private void SlotDrop(EquipSlot slot)
+ {
+  var id = _dragId;
+  DragEnd();
+  if (id is null || Holder is null)
+  {
+   return;
+  }
+  var item = _state.Grid.FirstOrDefault(i => i.Id == id);
+  if (item is null)
+  {
+   return;
+  }
+  var ok = InventoryOps.Equip(_state, item, slot, Catalog, out var msg);
+  Report(ok, msg);
+  if (ok)
+  {
+   ClearSelection();
+   RpgStore.Save(ChatId, _state);
+  }
+ }
+
+ private void CellDrop(int col, int row)
+ {
+  var id = _dragId;
+  var fromSlot = _dragSlot;
+  var grabCol = _grabCol;
+  var grabRow = _grabRow;
+  DragEnd();
+
+  if (fromSlot is { } slot && Holder is not null)
+  {
+   // Снятие перетаскиванием: снимаем, затем пробуем поставить в выбранную клетку.
+   var before = _state.Grid.ToList();
+   if (!InventoryOps.Unequip(_state, slot, Catalog, false, out var msg))
+   {
+    Report(false, msg);
+    return;
+   }
+   var added = _state.Grid.FirstOrDefault(i => !before.Contains(i));
+   if (added is not null)
+   {
+    var c = Math.Clamp(col, 0, RpgState.GridCols - added.W);
+    var r = Math.Clamp(row, 0, RpgState.GridRows - added.H);
+    if (InventoryOps.Fits(_state.Grid, c, r, added.W, added.H, added))
+    {
+     (added.Col, added.Row) = (c, r);
+    }
+   }
+   Report(true, msg);
+   ClearSelection();
+   RpgStore.Save(ChatId, _state);
+   return;
+  }
+
+  var item = id is null ? null : _state.Grid.FirstOrDefault(i => i.Id == id);
+  if (item is null)
+  {
+   return;
+  }
+  var col0 = Math.Clamp(col - grabCol, 0, RpgState.GridCols - item.W);
+  var row0 = Math.Clamp(row - grabRow, 0, RpgState.GridRows - item.H);
+  if (InventoryOps.Fits(_state.Grid, col0, row0, item.W, item.H, item))
+  {
+   item.Col = col0;
+   item.Row = row0;
+   RpgStore.Save(ChatId, _state);
+  }
+ }
+
+ // ===== Действия =====
+ private bool Equipable(GridItem item) => (item.Slot ?? Catalog.Get(item.Icon)?.EquipSlot) is not null;
+ private bool Consumable(GridItem item) => item.Consumable || Catalog.Get(item.Icon)?.Cat is "potion" or "food" or "scroll" or "book";
+ private bool HasRoom(List<GridItem> bag, GridItem item) => bag.Any(i => InventoryOps.CanStack(i, item)) || InventoryOps.FindFree(bag, item.W, item.H) is not null;
+ private bool CanReceive(PartyMember member, GridItem item) => HasRoom(member.Grid, item);
+
+ private void EquipItem(GridItem item)
+ {
+  var ok = InventoryOps.Equip(_state, item, null, Catalog, out var msg);
+  Report(ok, msg);
+  if (ok)
+  {
+   _selId = null;
+   RpgStore.Save(ChatId, _state);
+  }
+ }
+
+ private void UnequipSlot(EquipSlot slot, bool drop)
+ {
+  var ok = InventoryOps.Unequip(_state, slot, Catalog, drop, out var msg);
+  Report(ok, msg);
+  if (ok)
+  {
+   ClearSelection();
+   RpgStore.Save(ChatId, _state);
+  }
+ }
+
+ private void UseItem(GridItem item, string member)
+ {
+  if (ChatId is null) return;
+  if (member != "hero" && _state.Party.FirstOrDefault(p => p.Name == member) is { } receiver && !CanReceive(receiver, item))
+  {
+   Report(false, Lang.T($"У {member} нет места для «{item.Name}».", $"{member} has no room for \"{item.Name}\"."));
+   return;
+  }
+  PartyFlow.RequestItemAction(new PartyItemRequest(ChatId, member == "hero" ? "use" : "give", member, item.Id, item.Name, 1, member == "hero" ? "hero" : member));
+  Report(true, member == "hero" ? Lang.T($"«{item.Name}» отправлено мастеру — эффект отыграет рассказчик.", $"\"{item.Name}\" is sent to the master — the narrator plays out the effect.") : Lang.T($"«{item.Name}» предложено {member} — согласие отыграет мастер.", $"\"{item.Name}\" is offered to {member} — the master plays out the consent."));
+ }
+
+ private void RequestFromMember(PartyMember member, GridItem item)
+ {
+  if (ChatId is null) return;
+  if (!HasRoom(_state.Grid, item))
+  {
+   Report(false, Lang.T($"В сумке героя нет места для «{item.Name}» ({item.W}×{item.H}).", $"No room in the hero's bag for \"{item.Name}\" ({item.W}×{item.H})."));
+   return;
+  }
+  PartyFlow.RequestItemAction(new PartyItemRequest(ChatId, "request", member.Name, item.Id, item.Name, 1, member.Name));
+  Report(true, Lang.T($"Просьба отправлена мастеру: попросить у {member.Name} «{item.Name}».", $"The request is sent to the master: ask {member.Name} for \"{item.Name}\"."));
+ }
+
+ private void DropItem(GridItem item)
+ {
+  _state.Grid.Remove(item);
+  Report(true, Lang.T($"«{item.Name}» выброшен.", $"\"{item.Name}\" discarded."));
+  _selId = null;
+  RpgStore.Save(ChatId, _state);
+ }
+}

@@ -1,0 +1,1562 @@
+@implements IDisposable
+@inject RpgStateStore RpgStore
+@inject ChatStore Store
+@inject SettingsService SettingsSvc
+@inject FileTools Tools
+@inject ItemCatalog Catalog
+@inject TradeFlow Trade
+@inject GuildFlow Guild
+@inject PartyFlow PartyFlow
+@inject TalkFlow Talk
+
+<div class="rp">
+    <div class="rp-head">
+        <span class="rp-title">@Genre.PickT("Книга героя", "Досье", "Личное дело", "Hero book", "Dossier", "Personal file")</span>
+        <button class="rp-close" title="@Lang.T("Скрыть панель", "Hide the panel")" @onclick="RpgStore.TogglePanel">✕</button>
+    </div>
+
+    <div class="rp-body">
+        @if (!string.IsNullOrWhiteSpace(ChatId) && Genre.Of(_state) != Genre.Current)
+        {
+            <div class="rp-empty">
+                <svg class="rp-empty-ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.5 28 9.5v13L16 29.5 4 22.5v-13Z M16 2.5 10 20h12Z M4 9.5 10 20 M28 9.5 22 20 M10 20 16 29.5 22 20" fill="none" stroke="currentColor" stroke-width="1" /></svg>
+                @Lang.T($"Кампания сеттинга «{Genre.Title(Genre.Of(_state))}».", $"A campaign of the \"{Genre.Title(Genre.Of(_state))}\" setting.")<br />@Lang.T("Её книга героя откроется после смены темы.", "Its hero book opens after switching the theme.")
+            </div>
+        }
+        else if (string.IsNullOrWhiteSpace(ChatId))
+        {
+            <div class="rp-empty">
+                <svg class="rp-empty-ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.5 28 9.5v13L16 29.5 4 22.5v-13Z M16 2.5 10 20h12Z M4 9.5 10 20 M28 9.5 22 20 M10 20 16 29.5 22 20" fill="none" stroke="currentColor" stroke-width="1" /></svg>
+                @Lang.T("Откройте чат слева или создайте нового героя —", "Open a chat on the left or create a new hero —")<br />@Genre.PickT("здесь появится книга вашей кампании.", "здесь появится досье вашей кампании.", "здесь появится личное дело вашей кампании.", "your campaign's book will appear here.", "your campaign's dossier will appear here.", "your campaign's personal file will appear here.")
+            </div>
+        }
+        else
+        {
+            @* ===== Персонаж ===== *@
+            <section class="rp-sec">
+                <button class="rp-sec-head" @onclick="() => _openCharacter = !_openCharacter">
+                    <span class="rp-chevron @(_openCharacter ? "open" : "")">▸</span>
+                    @Lang.T("Персонаж", "Character")
+                </button>
+                @if (_openCharacter)
+                {
+                    <div class="rp-sec-body">
+                        <div class="rp-hero">
+                            <div class="rp-avatar" style="@AvatarStyle" role="img" aria-label="@(Lang.T("Портрет героя: ", "Hero portrait: ") + HeroName)"></div>
+                            <div class="rp-hero-info">
+                                <div class="rp-name" title="@Lang.T("Имя задаётся при создании героя", "The name is set when the hero is created")">@HeroName</div>
+                                <div class="rp-row rp-tags">
+                                    <span class="rp-tag">@TagOr(_state.Character.Race, Lang.T("раса не задана", "no race set"))</span>
+                                    <span class="rp-tag">@TagOr(_state.Character.CharClass, Lang.T("класс не задан", "no class set"))</span>
+                                    @if (!string.IsNullOrWhiteSpace(_state.Character.Gender))
+                                    {
+                                        <span class="rp-tag">@_state.Character.Gender</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        @* HP / мана *@
+                        <div class="rp-bars">
+                            <div class="rp-bar @FlashClass("hp")">
+                                <div class="rp-bar-label">
+                                    HP <span>@_state.Character.HpCurrent/@_state.Character.HpMax</span>@Floats("hp")
+                                </div>
+                                <div class="rp-track">
+                                <div @key="(_state.Character.HpCurrent, _state.Character.HpMax, _state.Character.Shield)" class="rp-fill hp" style="@Css.Percent(_state.Character.HpCurrent, _state.Character.HpMax)"></div>
+                                @if (_state.Character.Shield > 0) { <div class="rp-fill shield" style="@Css.Percent(Math.Min(_state.Character.Shield, _state.Character.HpMax), _state.Character.HpMax)"></div> }
+                            </div>
+                            </div>
+                            @if (_state.Character.ManaMax > 0)
+                            {
+                                <div class="rp-bar">
+                                    <div class="rp-bar-label">
+                                        @Genre.PickT("Мана", "ОЗУ", "Концентрация", "Mana", "RAM", "Focus") <span>@_state.Character.ManaCurrent/@_state.Character.ManaMax</span>@Floats("mana")
+                                    </div>
+                                    <div class="rp-track">
+                                        <div class="rp-fill mana" style="@Css.Percent(_state.Character.ManaCurrent, _state.Character.ManaMax)"></div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="rp-hint">@Genre.PickT("Класс без маны", "Без деки и ОЗУ", "Без запаса концентрации", "A class without mana", "No deck and no RAM", "No focus reserve")</div>
+                            }
+                        </div>
+
+                        <div class="rp-row">
+                            <div class="rp-pill rp-pill-level" title="@Lang.T("Уровень повышает только мастер игры — когда герой заслужил опыт (или правкой Hero.md)", "Only the game master raises the level — when the hero has earned the XP (or by editing Hero.md)")"><small>@Lang.T("ур.", "lvl")</small> @LevelText@Floats("level")</div>
+                            <div class="rp-pill rp-pill-gold" title="@Genre.PickT("Золото", "Эдди", "Деньги", "Gold", "Eddies", "Money")"><i class="rp-coin" aria-hidden="true"></i>@_state.Character.Gold@Floats("gold")</div>
+                            <div class="rp-pill" title="@(Lang.T("Опыт: до следующего уровня нужно ", "XP: the next level needs ") + Progression.XpFor(Progression.ParseLevel(_state.Character.Level) + 1))">@_state.Character.Xp<small>/@Progression.XpFor(Progression.ParseLevel(_state.Character.Level) + 1) XP</small>@Floats("xp")</div>
+                            <div class="rp-pill" title="@Genre.PickT("Репутация гильдии приключенцев", "Уличная репутация у фиксеров", "Репутация в узких кругах", "Adventurers' guild reputation", "Street reputation with fixers", "Reputation in certain circles")">@Genre.Pick("⚜", "◈", "☎") @GuildRanks.TitleFor(_state.Character.GuildReputation) · @_state.Character.GuildReputation</div>
+                        </div>
+
+                        <div class="rp-subtitle">@Lang.T("Навыки", "Skills") <span class="rp-count">@_state.Character.Skills.Count/8</span></div>
+                        <div class="rp-skill-grid">
+                            @foreach (var skill in _state.Character.Skills) { <div class="rp-skill" title="@skill.Description"><span class="rp-skill-icon" style="@SkillIconStyle(skill)"></span><b>@skill.Name</b><small>@skill.Category · @Lang.T("ур.", "t.") @skill.Rank@(skill.ManaCost > 0 ? $" · {skill.ManaCost} {Genre.ManaGen}" : "")</small></div> }
+                            @if (_state.Character.Skills.Count == 0) { <div class="rp-hint">@Lang.T("Навыки ещё не изучены.", "No skills learned yet.")</div> }
+                        </div>
+
+                        <details class="rp-char-details">
+                        <summary>@Lang.T("Характеристики, КБ и описание", "Ability scores, AC and description")</summary>
+                        @* Характеристики *@
+                        <div class="rp-stats">
+                            @for (var i = 0; i < 6; i++)
+                            {
+                                var stat = (DndStat)i;
+                                var eff = ItemStats.Effective(_state.Character, stat);
+                                var gear = eff - _state.Character.Stat(stat);
+                                var statTitle = DndStatNames.Full[i] + (gear != 0 ? Lang.T($": база {_state.Character.Stat(stat)}, {Signed(gear)} от вещей", $": base {_state.Character.Stat(stat)}, {Signed(gear)} from items") : "") + Lang.T(" — базу меняет мастер игры", " — the game master changes the base");
+                                <div class="rp-stat @(gear > 0 ? "buffed" : gear < 0 ? "nerfed" : "")"
+                                     title="@statTitle">
+                                    <span class="rp-stat-name">@DndStatNames.Short[i]</span>
+                                    <span class="rp-stat-val">@eff</span>
+                                    <span class="rp-stat-mod">@DndStatNames.ModText(eff)</span>
+                                    @if (gear != 0)
+                                    {
+                                        <span class="rp-stat-gear">@Signed(gear)</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        @* Боевые показатели с учётом экипировки *@
+                        <div class="rp-combat">
+                            <div class="rp-combat-ac" title="@Lang.T("Класс брони: 10 + ЛОВ (средний доспех — не больше +2, тяжёлый — без ЛОВ) + броня вещей + бонусы", "Armor class: 10 + DEX (medium armor — no more than +2, heavy — no DEX) + item armor + bonuses")">
+                                <span class="rp-combat-num">@ItemStats.ArmorClass(_state.Character)</span>
+                                <small>@Lang.T("КБ", "AC")</small>
+                            </div>
+                            <div class="rp-combat-atk" title="@(Lang.T("Бонус атаки и урон основным оружием (мастерство +", "Attack bonus and damage with the main weapon (proficiency +") + ItemStats.Proficiency(_state.Character) + ")")">
+                                @ItemStats.AttackLine(_state.Character)
+                            </div>
+                        </div>
+                        @{ var activeEffects = ItemStats.ActiveEffects(_state.Character); }
+                        @if (activeEffects.Count > 0)
+                        {
+                            <div class="rp-effects">
+                                @foreach (var (source, effect) in activeEffects)
+                                {
+                                    <span class="rp-effect" title="@source">✦ @effect</span>
+                                }
+                            </div>
+                        }
+
+                        @* Состояния *@
+                        @if (_state.Character.Status.Count > 0)
+                        {
+                            <div class="rp-status-list">
+                                @foreach (var s in _state.Character.Status.ToList())
+                                {
+                                    var item = s;
+                                    <button class="rp-status" title="@Lang.T("Снять состояние", "Remove the condition")" @onclick="() => RemoveStatus(item)">@item ✕</button>
+                                }
+                            </div>
+                        }
+
+                        <textarea class="rp-in rp-area" rows="3" placeholder="@Lang.T("Предыстория и заметки о персонаже…", "Backstory and notes about the character…")"
+                                  @bind="_state.Character.Notes" @bind:event="oninput" @bind:after="Save"></textarea>
+                        </details>
+                    </div>
+                }
+            </section>
+
+            <section class="rp-menu-block">
+                @* Счётчик контекста: сколько окна модели занято сейчас и где порог автосокращения истории. *@
+                @if (Context is { } ctx)
+                {
+                    <div class="rp-ctx @CtxClass(ctx)" title="@CtxTitle(ctx)">
+                        <div class="rp-ctx-top">
+                            <span class="rp-ctx-label">@Lang.T("Контекст", "Context")</span>
+                            <span class="rp-ctx-num">@Short(ctx.UsedTokens) / @Short(ctx.LimitTokens)</span>
+                            <span class="rp-ctx-pct">@ctx.Percent%</span>
+                        </div>
+                        <div class="rp-ctx-track">
+                            <div class="rp-ctx-fill" style="width:@Math.Clamp(ctx.Percent, 0, 100)%"></div>
+                            @if (ctx.CompressPercent is > 0 and < 100)
+                            {
+                                <span class="rp-ctx-mark" style="left:@ctx.CompressPercent%"></span>
+                            }
+                        </div>
+                    </div>
+                }
+                <div class="rp-menu-title">@Lang.T("Основное", "Main")</div>
+                <div class="rp-menu-grid">
+                    @MenuButton("inventory", Lang.T("Инвентарь", "Inventory"), 0, UsedCells.ToString())
+                    @MenuButton("party", Genre.PickT("Группа", "Команда", "Команда", "Party", "Crew", "Team"), 1, PartyMenuCount)
+                    @MenuButton("nearby", Lang.T("Взаимодействия неподалёку", "Nearby interactions"), 2, _state.NearbyHere().Count().ToString())
+                    @MenuButton("quests", Genre.PickT("Задания", "Заказы", "Задания", "Quests", "Gigs", "Jobs"), 3, _state.Quests.Count(q=>q.State=="accepted").ToString())
+                    @MenuButton("arc", Lang.T("Сюжетная арка", "Story arc"), 4, _state.StoryArcs.Any(a=>a.State=="active")?"1":"0")
+                </div>
+                <div class="rp-menu-title secondary">@Lang.T("Дополнительное", "More")</div>
+                <div class="rp-menu-grid">
+                    @MenuButton("important", Lang.T("Важные персонажи", "Important characters"), 5, _state.ImportantCharacters.Count(n=>n.Category!="nearby").ToString())
+                    @MenuButton("cities", Genre.PickT("Города и поселения", "Районы и города", "Города и районы", "Towns and settlements", "Districts and cities", "Cities and districts"), 6, _state.Cities.Count.ToString())
+                    @MenuButton("world", Genre.PickT("Мир", "Город и сеть", "Обстановка", "World", "City and net", "Situation"), 7, (_state.WorldEvents.Count + _state.Clocks.Count(c => !c.Secret && !c.Done)).ToString())
+                </div>
+            </section>
+            @if(_modal is not null){<div class="rp-modal-backdrop" @onclick="CloseModal"></div>}
+
+            @* ===== Экипировка + сумка-тетрис ===== *@
+            <section class="rp-sec rp-modal-section @ModalClass("inventory")">
+                <button class="rp-sec-head" @onclick="CloseModal">
+                    @Lang.T("Инвентарь и снаряжение", "Inventory and gear")
+                    <span class="rp-count" title="@Lang.T("Занято клеток сумки", "Bag cells used")">@UsedCells/@(RpgState.GridCols * RpgState.GridRows)</span>
+                    <span class="rp-modal-x">✕</span>
+                </button>
+                @if (_openInventory)
+                {
+                    <div class="rp-sec-body">
+                        @* Кукла героя *@
+                        <div class="rp-doll">
+                            @foreach (var (slotId, label, ghost) in _equipLayout)
+                            {
+                                var slot = slotId;
+                                var key = slot.ToString();
+                                var worn = _state.Character.Equipment.GetValueOrDefault(key);
+                                var mirror = slot == EquipSlot.Hand2 && worn is { TwoHanded: true };
+                                var canDrop = CanDropOn(slot);
+                                <div class="rp-slot a-@key.ToLowerInvariant() @(worn is null ? "empty" : "filled") @(mirror ? "mirror" : "") @(canDrop ? "can-drop" : "") @(IsSelectedSlot(slot) ? "sel" : "")"
+                                     title="@(worn is null ? Lang.T($"{label}: пусто — перетащите сюда предмет из сумки", $"{label}: empty — drag an item here from the bag") : $"{label}: {worn.Name}{StatSuffix(ItemStats.Describe(worn))}{NoteSuffix(worn.Note)}")"
+                                     draggable="@(worn is not null && !mirror ? "true" : "false")"
+                                     @ondragstart="() => SlotDragStart(slot)"
+                                     @ondragend="DragEnd"
+                                     @ondragover:preventDefault
+                                     @ondrop="() => SlotDrop(slot)"
+                                     @ondrop:preventDefault
+                                     @onclick="() => SelectSlot(slot)">
+                                    @if (worn is not null)
+                                    {
+                                        <span class="pix pix-@worn.Icon @IconClass(worn.Icon, SlotShape(slot))"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rp-slot-ghost pix pix-@ghost @IconClass(ghost, SlotShape(slot))"></span>
+                                    }
+                                    <span class="rp-slot-label">@label</span>
+                                </div>
+                            }
+                        </div>
+
+                        @* Сумка *@
+                        <div class="rp-grid @(_dragId is not null || _dragSlot is not null ? "dragging" : "")"
+                             @ondragover:preventDefault
+                             @ondrop:preventDefault>
+                            @for (var row = 0; row < RpgState.GridRows; row++)
+                            {
+                                for (var col = 0; col < RpgState.GridCols; col++)
+                                {
+                                    var c = col;
+                                    var r = row;
+                                    <div class="rp-cell" @ondrop="() => CellDrop(c, r)" @ondrop:preventDefault></div>
+                                }
+                            }
+
+                            @foreach (var item in _state.Grid.ToList())
+                            {
+                                var it = item;
+                                <div class="rp-grid-item @(it.TwoHanded ? "twohanded" : "") @(it.Id == _selId ? "sel" : "") @(it.Id == _dragId ? "lifted" : "")"
+                                     style="@GridItemStyle(it)"
+                                     draggable="true"
+                                     @ondragstart="e => GridDragStart(e, it)"
+                                     @ondragend="DragEnd"
+                                     @onclick="() => SelectItem(it)"
+                                     @ondblclick="() => QuickEquip(it)"
+                                     title="@GridItemTitle(it)">
+                                    <span class="pix pix-@it.Icon @IconClass(it.Icon, (it.W, it.H))"></span>
+                                    @if (it.Quantity > 1)
+                                    {
+                                        <span class="rp-item-qty">@it.Quantity</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(_invMsg))
+                        {
+                            <div class="rp-inv-msg @(_invMsgOk ? "ok" : "")">@_invMsg</div>
+                        }
+
+                        @* Карточка выбранного предмета *@
+                        @if (SelectedItem is { } sel)
+                        {
+                            <div class="rp-item-card">
+                                <div class="rp-ic-head">
+                                    <span class="rp-ic-icon"><span class="pix pix-@sel.Icon"></span></span>
+                                    <div class="rp-ic-title">
+                                        <input class="rp-in rp-ic-name" @bind="sel.Name" @bind:after="Save" title="@Lang.T("Название", "Name")" />
+                                        <span class="rp-ic-meta">@ItemMeta(sel.Icon, sel.W, sel.H, sel.Slot, sel.TwoHanded)</span>
+                                    </div>
+                                    <button class="rp-del" title="@Lang.T("Закрыть", "Close")" @onclick="ClearSelection">✕</button>
+                                </div>
+                                @StatBlock(sel.Damage, sel.Armor, sel.Bonuses, sel.Effects, sel.Rarity)
+                                <textarea class="rp-in rp-area" rows="2" placeholder="@Lang.T("Описание, история, заметка…", "Description, history, a note…")"
+                                          @bind="sel.Note" @bind:event="oninput" @bind:after="Save"></textarea>
+                                <div class="rp-ic-actions">
+                                    <label class="rp-ic-qty" title="@Lang.T("Количество", "Quantity")">
+                                        x <input class="rp-in rp-tiny" type="number" min="1" @bind="sel.Quantity" @bind:after="Save" />
+                                    </label>
+                                    @if ((sel.Slot ?? Catalog.Get(sel.Icon)?.EquipSlot) is not null)
+                                    {
+                                        <button class="rp-btn" @onclick="() => QuickEquip(sel)">🛡 @Lang.T("Надеть", "Equip")</button>
+                                    }
+                                    @if (IsConsumable(sel))
+                                    {
+                                        <button class="rp-btn" @onclick='() => StartItemAction("use", sel)'>✦ @Lang.T("Использовать", "Use")</button>
+                                    }
+                                    @if (_state.Party.Count > 0)
+                                    {
+                                        <button class="rp-btn" @onclick='() => StartItemAction("give", sel)'>↗ @Lang.T("Отдать", "Give")</button>
+                                    }
+                                    <button class="rp-btn danger" @onclick="() => DropItem(sel)">🗑 @Lang.T("Выбросить", "Discard")</button>
+                                </div>
+                            </div>
+                        }
+                        else if (SelectedWorn is { } worn)
+                        {
+                            <div class="rp-item-card">
+                                <div class="rp-ic-head">
+                                    <span class="rp-ic-icon"><span class="pix pix-@worn.Icon"></span></span>
+                                    <div class="rp-ic-title">
+                                        <input class="rp-in rp-ic-name" @bind="worn.Name" @bind:after="Save" title="@Lang.T("Название", "Name")" />
+                                        <span class="rp-ic-meta">@Lang.T("надето", "worn") · @InventoryOps.SlotTitle(_selSlot!.Value)@(worn.TwoHanded ? Lang.T(" · двуручное", " · two-handed") : "")</span>
+                                    </div>
+                                    <button class="rp-del" title="@Lang.T("Закрыть", "Close")" @onclick="ClearSelection">✕</button>
+                                </div>
+                                @StatBlock(worn.Damage, worn.Armor, worn.Bonuses, worn.Effects, worn.Rarity)
+                                <textarea class="rp-in rp-area" rows="2" placeholder="@Lang.T("Описание, история, заметка…", "Description, history, a note…")"
+                                          @bind="worn.Note" @bind:event="oninput" @bind:after="Save"></textarea>
+                                <div class="rp-ic-actions">
+                                    <button class="rp-btn" @onclick="() => UnequipSlot(_selSlot!.Value, false)">🎒 @Lang.T("Снять в сумку", "Unequip to the bag")</button>
+                                    <button class="rp-btn danger" @onclick="() => UnequipSlot(_selSlot!.Value, true)">🗑 @Lang.T("Выбросить", "Discard")</button>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="rp-row">
+                            <input class="rp-in" placeholder="@Genre.PickT("Новый предмет: «длинный меч», «зелье лечения»…", "Новый предмет: «пистолет», «медстим»…", "Новый предмет: «пистолет», «аптечка»…", "New item: \"long sword\", \"healing potion\"…", "New item: \"pistol\", \"medstim\"…", "New item: \"pistol\", \"first aid kit\"…")"
+                                   title="@Lang.T("Введите название и нажмите Enter — иконка и размер подберутся по названию", "Type a name and press Enter — the icon and size are picked by the name")"
+                                   @bind="_newGridName" @bind:event="oninput"
+                                   @onkeydown="GridNameKeyDown" />
+                            <button class="rp-add rp-add-inline" title="@Lang.T("Добавить в первую свободную клетку (иконка и размер — по названию)", "Add to the first free cell (icon and size — by the name)")"
+                                    @onclick="AddGridItem">＋</button>
+                        </div>
+                        <div class="rp-hint">@Lang.T("Перетаскивайте вещи между сумкой и слотами. Двойной клик — надеть, клик — подробности.", "Drag items between the bag and the slots. Double-click — equip, click — details.")</div>
+                    </div>
+                }
+            </section>
+
+            @* ===== Группа и персонажи ===== *@
+            <section class="rp-sec rp-modal-section @ModalClass("party")">
+                <button class="rp-sec-head" @onclick="CloseModal">
+                    @(_state.Party.ElementAtOrDefault(_partyTab)?.Name ?? Genre.PickT("Группа", "Команда", "Команда", "Party", "Crew", "Team")) <span class="rp-count">@_state.Party.Count/3</span><span class="rp-modal-x">✕</span>
+                </button>
+                @if (_openParty)
+                {
+                    <div class="rp-sec-body">
+                        <div class="rp-party-tabs">
+                            @for(var tab=0;tab<_state.Party.Count;tab++){var ti=tab;var tm=_state.Party[tab];<button class="@(ti==_partyTab?"active":"")" @onclick="()=>_partyTab=ti"><span class="rp-party-tab-face" style="@PartyPortraitStyle(tm)"></span>@tm.Name</button>}
+                        </div>
+                        @if (_state.Party.ElementAtOrDefault(_partyTab) is { } member)
+                        {
+                            <div class="rp-card rp-party-card">
+                                <div class="rp-party-head"><div class="rp-party-portrait" style="@PartyPortraitStyle(member)" role="img" aria-label="@(Lang.T("Портрет ", "Portrait of ") + member.Name)"></div><div><div class="rp-info-row"><span class="rp-info-name">@member.Name</span><span class="rp-chip">@Lang.T("ур.", "lvl") @member.Level</span></div><div class="rp-info-text">@member.Gender · @member.Race · @member.CharClass</div><div class="rp-info-text muted">@Progression.ArchetypeOf(member).Emoji @Progression.ArchetypeOf(member).Title · @Lang.T("КБ", "AC") @ItemStats.ArmorClass(member) · @MemberAttack(member)</div></div></div>
+                                <div class="rp-bar"><div class="rp-bar-label">HP <span>@member.HpCurrent/@member.HpMax</span>@if(member.Shield>0){<text> · @Lang.T("щит", "shield") @member.Shield</text>}</div><div class="rp-track"><div class="rp-fill hp" style="@Css.Percent(member.HpCurrent, member.HpMax)"></div>@if(member.Shield>0){<div class="rp-fill shield" style="@Css.Percent(Math.Min(member.Shield,member.HpMax),member.HpMax)"></div>}</div></div>
+                                <div class="rp-bar"><div class="rp-bar-label">@Genre.PickT("Мана", "ОЗУ", "Концентрация", "Mana", "RAM", "Focus") <span>@member.ManaCurrent/@member.ManaMax</span></div><div class="rp-track"><div class="rp-fill mana" style="@Css.Percent(member.ManaCurrent,member.ManaMax)"></div></div></div>
+                                <details><summary>@Lang.T("Характеристики и сведения", "Ability scores and details")</summary><div class="rp-info-text muted">@DndStatNames.Short[0] @member.Str · @DndStatNames.Short[1] @member.Dex · @DndStatNames.Short[2] @member.Con · @DndStatNames.Short[3] @member.Int · @DndStatNames.Short[4] @member.Wis · @DndStatNames.Short[5] @member.Cha</div>@if (!string.IsNullOrWhiteSpace(member.Note)) { <div class="rp-info-text muted">@member.Note</div> }</details>
+                                @if (ItemStats.Worn(member).Any())
+                                {
+                                    <div class="rp-subtitle">@Lang.T("Снаряжение", "Gear")</div>
+                                    <div class="rp-party-gear">
+                                        @foreach (var (_, worn) in ItemStats.Worn(member))
+                                        {
+                                            <div class="rp-party-gear-item rar-@ItemEconomy.RarityKey(worn.Rarity)" title="@ItemStats.Describe(worn)"><span class="pix pix-@worn.Icon"></span><span>@worn.Name</span></div>
+                                        }
+                                    </div>
+                                }
+                                <div class="rp-subtitle">@Lang.T("Навыки", "Skills") @member.LearnedSkills.Count/8</div><div class="rp-skill-grid">@foreach(var skill in member.LearnedSkills){<div class="rp-skill" title="@Progression.ExplainPowerDice(skill.Description, Progression.ParseLevel(member.Level))"><span class="rp-skill-icon" style="@SkillIconStyle(skill)"></span><b>@skill.Name</b><small>@skill.Category · @Lang.T("ур.", "t.") @skill.Rank</small></div>}</div>
+                                <div class="rp-subtitle">@Lang.T("Инвентарь", "Inventory") · @RpgState.GridCols×@RpgState.GridRows</div>
+                                <div class="rp-party-inventory">
+                                    @for(var row=0;row<RpgState.GridRows;row++){for(var col=0;col<RpgState.GridCols;col++){<div class="rp-party-cell"></div>}}
+                                    @foreach(var item in member.Grid){var pi=item;<button class="rp-party-item @(pi.Id==_partyItemId?"sel":"")" style="@PartyItemStyle(pi)" title="@pi.Name" @onclick="()=>SelectPartyItem(pi)"><span class="pix pix-@pi.Icon"></span>@if(pi.Quantity>1){<small>@pi.Quantity</small>}</button>}
+                                </div>
+                                @if(member.Grid.FirstOrDefault(i=>i.Id==_partyItemId) is { } partyItem)
+                                {
+                                    <div class="rp-party-item-card"><b>@partyItem.Name</b><span>@(partyItem.Quantity>1?$" ×{partyItem.Quantity}":"") · @partyItem.W×@partyItem.H</span>@if(!string.IsNullOrWhiteSpace(partyItem.Note)){<p>@partyItem.Note</p>}<button class="rp-btn" @onclick="()=>StartPartyRequest(member,partyItem)">@Lang.T("Попросить у спутника", "Ask the companion for it")</button></div>
+                                }
+                                @if(!string.IsNullOrWhiteSpace(_partyMsg)){<div class="rp-inv-msg">@_partyMsg</div>}
+                                @if(member.Inventory.Count>0){<div class="rp-info-text muted">@Lang.T("Старые записи:", "Old records:") @string.Join(", ",member.Inventory.Select(i=>i.Name+(i.Quantity>1?$" ×{i.Quantity}":"")))</div>}
+                                <button class="rp-btn danger rp-party-leave" @onclick="()=>AskLeave(member)">@Lang.T("Исключить из группы", "Remove from the party")</button>
+                            </div>
+                        }
+                        @if (_state.Party.Count == 0) { <div class="rp-hint">@Lang.T("Герой пока путешествует без компаньонов.", "The hero travels without companions for now.")</div> }
+                        @if (OpenCandidates.Any())
+                        {
+                            <div class="rp-subtitle rp-candidates-title">@Lang.T("Возможные спутники", "Possible companions")</div>
+                            <div class="rp-candidate-list">
+                                @foreach (var candidate in OpenCandidates)
+                                {
+                                    <div class="rp-card rp-candidate-card stage-@candidate.Stage">
+                                        <div class="rp-info-row"><span class="rp-info-name">@candidate.Name</span><span class="rp-chip">@CandidateStageTitle(candidate)</span></div>
+                                        @if (!string.IsNullOrWhiteSpace(candidate.Concept)) { <div class="rp-info-text">@candidate.Concept</div> }
+                                        @if (!string.IsNullOrWhiteSpace(candidate.PlayerHint)) { <div class="rp-candidate-hook">@candidate.PlayerHint</div> }
+                                        <div class="rp-candidate-progress" aria-label="@Lang.T("Прогресс знакомства", "Acquaintance progress")"><span class="done">@Lang.T("знакомство", "meeting")</span><i>›</i><span class="@(candidate.SharedTrials > 0 ? "done" : "")">@Lang.T("общее дело", "shared deed")</span><i>›</i><span class="@(candidate.Stage == "ready" ? "done" : "")">@Lang.T("решение", "decision")</span></div>
+                                        @if (!string.IsNullOrWhiteSpace(candidate.Arc)) { <div class="rp-info-text muted">@Lang.T("Связь:", "Link:") @candidate.Arc</div> }
+                                    </div>
+                                }
+                            </div>
+                            <div class="rp-hint">@Lang.T("Это ещё не члены группы. Продолжайте общение и пройдите вместе значимую сцену; вступление останется добровольным.", "They are not party members yet. Keep talking and go through a meaningful scene together; joining stays voluntary.")</div>
+                        }
+                        <div class="rp-hint">@Lang.T("Спутники действуют самостоятельно. Попросить применить навык можно, но решение остаётся за ними; вещи передаются только с их согласия.", "Companions act on their own. You can ask them to use a skill, but the decision is theirs; items are passed only with their consent.")</div>
+                    </div>
+                }
+            </section>
+
+            <section class="rp-sec rp-modal-section @((_modal is "important" or "nearby") ? "is-open" : "")">
+                <button class="rp-sec-head" @onclick="CloseModal">
+                    @(_modal=="nearby" ? Lang.T("Взаимодействия неподалёку", "Nearby interactions") : Lang.T("Важные персонажи", "Important characters"))
+                    <span class="rp-modal-x">✕</span>
+                </button>
+                @if (_openNpcs)
+                {
+                    <div class="rp-sec-body">
+                        @if(_modal=="important")
+                        {
+                        @foreach (var npc in _state.ImportantCharacters.Where(n => n.Category != "nearby"))
+                        {
+                            <div class="rp-card">
+                                <div class="rp-info-row">
+                                    <span class="rp-info-name">@npc.Name</span>
+                                    @if (!string.IsNullOrWhiteSpace(npc.Attitude))
+                                    {
+                                        <span class="rp-chip" title="@Lang.T("Отношение к герою", "Attitude to the hero")">@npc.Attitude</span>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(npc.Level))
+                                    {
+                                        <span class="rp-chip" title="@Lang.T("Уровень / мощь", "Level / power")">@Lang.T("ур.", "lvl") @npc.Level</span>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(npc.Role) || !string.IsNullOrWhiteSpace(npc.Location))
+                                {
+                                    <div class="rp-info-text">
+                                        @npc.Role@(!string.IsNullOrWhiteSpace(npc.Role) && !string.IsNullOrWhiteSpace(npc.Location) ? " · " : "")@(string.IsNullOrWhiteSpace(npc.Location) ? "" : $"📍 {npc.Location}")
+                                    </div>
+                                }
+                                @if (npc.Shop is { } npcShop)
+                                {
+                                    var merchant = npc.Name;
+                                    <div class="rp-shop-row">
+                                        <span class="rp-info-text muted">🏪 @ItemEconomy.Merchant(npcShop.Kind).Title · @Lang.T("товаров", "goods") @npcShop.Items.Count · 🪙 @npcShop.Gold</span>
+                                        <button class="rp-btn" title="@Lang.T("Открыть окно торговли", "Open the trade window")" @onclick="() => OpenShop(merchant)">@Lang.T("Торговать", "Trade")</button>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(npc.Abilities))
+                                {
+                                    <div class="rp-info-text">@npc.Abilities</div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(npc.Note))
+                                {
+                                    <div class="rp-info-text muted">@npc.Note</div>
+                                }
+                            </div>
+                        }
+                        @if (!_state.ImportantCharacters.Any(n => n.Category != "nearby"))
+                        {
+                            <div class="rp-hint">@Lang.T("Здесь будут компаньоны, друзья и доверенные люди.", "Companions, friends and trusted people will be here.")</div>
+                        }
+                        }
+                        @if(_modal=="nearby")
+                        {
+                        @foreach (var npc in _state.NearbyHere())
+                        {
+                            <div class="rp-card">
+                                <div class="rp-info-row"><span class="rp-info-name">@npc.Name</span>@if (!string.IsNullOrWhiteSpace(npc.Role)) { <span class="rp-chip">@npc.Role</span> }</div>
+                                @if (!string.IsNullOrWhiteSpace(npc.Location)) { <div class="rp-info-text">📍 @npc.Location</div> }
+                                @if (npc.Shop is { } nearbyShop)
+                                {
+                                    var merchant = npc.Name;
+                                    <div class="rp-shop-row"><span class="rp-info-text muted">🏪 @ItemEconomy.Merchant(nearbyShop.Kind).Title · @Lang.T("товаров", "goods") @nearbyShop.Items.Count</span><button class="rp-btn" @onclick="() => OpenShop(merchant)">@Lang.T("Торговать", "Trade")</button></div>
+                                }
+                                else
+                                {
+                                    <div class="rp-shop-row">
+                                        <span class="rp-info-text muted">💬 @Lang.T("готов вступить в разговор", "ready to talk")</span>
+                                        <button class="rp-btn" title="@Lang.T("Мастер сам решит, чем начнётся встреча: слухи, квест или разовая сделка", "The master decides how the encounter begins: rumors, a quest or a one-off deal")" @onclick="() => TalkTo(npc.Name)">@Lang.T("Начать разговор", "Start a conversation")</button>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(npc.Note)) { <div class="rp-info-text muted">@npc.Note</div> }
+                            </div>
+                        }
+                        @if (!_state.NearbyHere().Any()) { <div class="rp-hint">@Lang.T("Сейчас рядом не с кем взаимодействовать.", "There is no one nearby to interact with right now.")</div> }
+                        }
+
+                        @if (_modal=="important" && _state.Notables.Count > 0)
+                        {
+                            <div class="rp-subtitle">@Lang.T("Не забыть", "Don't forget")</div>
+                            @foreach (var npc in _state.Notables)
+                            {
+                                <div class="rp-card"><div class="rp-info-row"><span class="rp-info-name">@npc.Name</span></div><div class="rp-info-text">@npc.Note</div>@if (!string.IsNullOrWhiteSpace(npc.Location)) { <div class="rp-info-text muted">📍 @npc.Location</div> }</div>
+                            }
+                        }
+                    </div>
+                }
+            </section>
+
+            @* ===== Города ===== *@
+            <section class="rp-sec rp-modal-section @ModalClass("cities")">
+                <button class="rp-sec-head" @onclick="CloseModal">
+                    @Genre.PickT("Города и поселения", "Районы и города", "Города и районы", "Towns and settlements", "Districts and cities", "Cities and districts")
+                    @if (_state.Cities.Count > 0)
+                    {
+                        <span class="rp-count">@_state.Cities.Count</span>
+                    }
+                    <span class="rp-modal-x">✕</span>
+                </button>
+                @if (_openCities)
+                {
+                    <div class="rp-sec-body">
+                        @foreach (var city in _state.Cities)
+                        {
+                            <div class="rp-card">
+                                <div class="rp-info-row"><span class="rp-info-name">@city.Name</span>@if(city.AdventureGuild is not null){var cityName=city.Name;<button class="rp-btn" @onclick="() => Guild.Open(ChatId!, cityName)">@Genre.PickT("Гильдия", "Фиксер", "Посредник", "Guild", "Fixer", "Middleman")</button>}</div>
+                                @if (!string.IsNullOrWhiteSpace(city.Description))
+                                {
+                                    <div class="rp-info-text">@city.Description</div>
+                                }
+                                @if (city.Points.Any(p => !string.IsNullOrWhiteSpace(p.Name)))
+                                {
+                                    <div class="rp-poi-list">
+                                        @foreach (var point in city.Points.Where(p => !string.IsNullOrWhiteSpace(p.Name)))
+                                        {
+                                            <div class="rp-poi-line">
+                                                <span class="rp-poi-type" title="@point.Type">@PoiIcon(point.Type)</span>
+                                                <span class="rp-poi-name">@point.Name</span>
+                                                @if (!string.IsNullOrWhiteSpace(point.Note))
+                                                {
+                                                    <span class="rp-poi-note-text"> — @point.Note</span>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                @if (city.Acquaintances.Count > 0)
+                                {
+                                    <div class="rp-info-text muted">@Lang.T("Знакомые:", "Acquaintances:") @string.Join(", ", city.Acquaintances.Select(a => a.Name + (string.IsNullOrWhiteSpace(a.Role) ? "" : $" ({a.Role})")))</div>
+                                }
+                            </div>
+                        }
+                        @if (_state.Cities.Count == 0)
+                        {
+                            <div class="rp-hint">@Lang.T("Города и поселения пока не описаны — мастер добавит их, когда герой куда-то придёт.", "No towns or settlements are described yet — the master adds them when the hero arrives somewhere.")</div>
+                        }
+                    </div>
+                }
+            </section>
+
+            @* ===== Задания ===== *@
+            <section class="rp-sec rp-modal-section @ModalClass("quests")">
+                <button class="rp-sec-head" @onclick="CloseModal">
+                    @Genre.PickT("Задания", "Заказы", "Задания", "Quests", "Gigs", "Jobs")
+                    @if (_state.Quests.Count(q => q.State == "accepted") > 0)
+                    {
+                        <span class="rp-count">@_state.Quests.Count(q => q.State == "accepted")</span>
+                    }
+                    <span class="rp-modal-x">✕</span>
+                </button>
+                @if (_openQuests)
+                {
+                    <div class="rp-sec-body">
+                        @foreach (var quest in _state.Quests.ToList())
+                        {
+                            var q = quest;
+                            <div class="rp-card @(_questStateClass(q.State))">
+                                <div class="rp-info-row">
+                                    <span class="rp-info-name">@q.Name</span>
+                                    <span class="rp-chip" title="@_questStateTitle(q.State)">@_questStateIcon(q.State)</span>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(q.Description))
+                                {
+                                    <div class="rp-info-text">@q.Description</div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(q.Giver) || !string.IsNullOrWhiteSpace(q.Reward))
+                                {
+                                    <div class="rp-info-text muted">
+                                        @(string.Join(" · ", new[] { TagOr(Lang.T("Выдал: ", "Given by: ") + q.Giver, null), TagOr(Lang.T("Награда: ", "Reward: ") + q.Reward, null) }.Where(s => !string.IsNullOrEmpty(s))))
+                                    </div>
+                                }
+                            </div>
+                        }
+                        @if (_state.Quests.Count == 0)
+                        {
+                            <div class="rp-hint">@Genre.PickT("Заданий нет — их выдают NPC и гильдии по ходу игры.", "Заказов нет — их подкидывают NPC и фиксеры по ходу игры.", "Заданий нет — их подкидывают знакомые и посредники по ходу игры.", "No quests — NPCs and guilds give them out as the game goes on.", "No gigs — NPCs and fixers toss them in as the game goes on.", "No jobs — acquaintances and middlemen toss them in as the game goes on.")</div>
+                        }
+                    </div>
+                }
+            </section>
+
+            @* ===== Сюжетная арка ===== *@
+            <section class="rp-sec rp-modal-section @ModalClass("arc")">
+                <button class="rp-sec-head" @onclick="CloseModal">
+                    @Lang.T("Сюжетная арка", "Story arc")
+                    @if (_state.StoryArcs.Any(a => a.State == "active"))
+                    {
+                        <span class="rp-count arc">🎯</span>
+                    }
+                    <span class="rp-modal-x">✕</span>
+                </button>
+                @if (_openArc)
+                {
+                    <div class="rp-sec-body">
+                        @foreach (var arc in _state.StoryArcs.ToList())
+                        {
+                            var a = arc;
+                            var active = a.State == "active";
+                            <div class="rp-card @(active ? "rp-card-active" : "")">
+                                <div class="rp-info-row">
+                                    <span class="rp-info-name">@a.Name</span>
+                                    <span class="rp-chip" title="@_arcStateTitle(a.State)">@_arcStateIcon(a.State)</span>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(a.Premise))
+                                {
+                                    <div class="rp-info-text">@a.Premise</div>
+                                }
+                                @if (a.Events.Count > 0)
+                                {
+                                    <div class="rp-info-label">@Lang.T("Что произошло", "What happened")</div>
+                                    <ol class="rp-beats">
+                                        @foreach (var happened in a.Events)
+                                        {
+                                            <li>@happened</li>
+                                        }
+                                    </ol>
+                                }
+                            </div>
+                        }
+                        @if (_state.StoryArcs.Count == 0)
+                        {
+                            <div class="rp-hint">@Lang.T("Арки пока нет — мастер предложит её в первых сценах.", "No arc yet — the master will offer one in the first scenes.")</div>
+                        }
+                    </div>
+                }
+            </section>
+
+            @* ===== Мир ===== *@
+            <section class="rp-sec rp-modal-section @ModalClass("world")">
+                <button class="rp-sec-head" @onclick="CloseModal">
+                    @Genre.PickT("Мир", "Город и сеть", "Обстановка", "World", "City and net", "Situation")
+                    @if (_state.WorldEvents.Count > 0)
+                    {
+                        <span class="rp-count">@_state.WorldEvents.Count</span>
+                    }
+                    <span class="rp-modal-x">✕</span>
+                </button>
+                @if (_openWorld)
+                {
+                    <div class="rp-sec-body">
+                        @if (!string.IsNullOrWhiteSpace(_state.WorldState))
+                        {
+                            <div class="rp-info-text rp-world-state">@_state.WorldState</div>
+                        }
+                        else
+                        {
+                            <div class="rp-hint">@Lang.T("Место и время пока не зафиксированы — мастер задаст их в первой сцене.", "Place and time are not set yet — the master will set them in the first scene.")</div>
+                        }
+                        <div class="rp-info-row rp-time-row">
+                            <span class="rp-info-name">🕰 @(char.ToUpperInvariant(FileTools.TimeText(_state)[0]) + FileTools.TimeText(_state)[1..])</span>
+                            <span class="rp-chip" title="@Lang.T("Короткие привалы с последнего ночлега", "Short halts since the last night's rest")">@Lang.T("привалов", "halts") @_state.ShortRests/2</span>
+                        </div>
+                        @* Тайные часы угрозы игрок не видит — только открытые (дело героя, соперник, объявленная угроза). *@
+                        @foreach (var clock in _state.Clocks.Where(c => !c.Secret).ToList())
+                        {
+                            <div class="rp-card rp-clock @(clock.Kind == "threat" ? "is-threat" : clock.Kind == "rival" ? "is-rival" : "is-progress")">
+                                <div class="rp-info-row">
+                                    <span class="rp-info-name">@clock.Name</span>
+                                    <span class="rp-chip">@(clock.Done ? Lang.T("свершилось", "happened") : $"{clock.Filled}/{clock.Segments}")</span>
+                                </div>
+                                <div class="rp-clock-pips" aria-label="@($"{clock.Filled} {Lang.T("из", "of")} {clock.Segments}")">
+                                    @for (var i = 0; i < clock.Segments; i++)
+                                    {
+                                        <i class="@(i < clock.Filled ? "on" : "")"></i>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(clock.OnFill))
+                                {
+                                    <div class="rp-info-text muted">@clock.OnFill</div>
+                                }
+                            </div>
+                        }
+                        @if (_state.Factions.Count > 0)
+                        {
+                            <div class="rp-factions">
+                                @foreach (var f in _state.Factions.OrderByDescending(f => f.Standing).ToList())
+                                {
+                                    <div class="rp-faction" title="@string.Join("\n", f.History)">
+                                        <span class="rp-info-name">@f.Name</span>
+                                        <span class="rp-faction-bar"><i style="@Css.Percent(f.Standing + 100, 200)" class="@(f.Standing < -19 ? "bad" : f.Standing > 19 ? "good" : "")"></i></span>
+                                        <span class="rp-chip">@FactionStanding.Label(f.Standing)</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        @foreach (var ev in _state.WorldEvents.ToList())
+                        {
+                            <div class="rp-card">
+                                <div class="rp-info-row">
+                                    <span class="rp-info-name">@ev.Name</span>
+                                    <span class="rp-chip">@(ev.State switch { "ongoing" => Lang.T("идёт", "ongoing"), "upcoming" => Lang.T("скоро", "upcoming"), _ => Lang.T("кончилось", "ended") })</span>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(ev.Description))
+                                {
+                                    <div class="rp-info-text">@ev.Description</div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(ev.Impact))
+                                {
+                                    <div class="rp-info-text muted">@Lang.T("Влияние на героя:", "Effect on the hero:") @ev.Impact</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </section>
+                }
+    </div>
+
+    @if (_leaveMember is not null)
+    {
+        <div class="rp-leave-backdrop" @onclick="CancelLeave">
+            <div class="rp-leave-modal" @onclick:stopPropagation="true">
+                <h3>@Lang.T($"Попросить {_leaveMember} покинуть группу", $"Ask {_leaveMember} to leave the party")</h3>
+                <p>@Lang.T("Опишите причину своими словами. ГМ получит её как реплику игрока и отыграет реакцию спутника; исключение не произойдёт автоматически.", "Describe the reason in your own words. The GM receives it as the player's line and plays out the companion's reaction; the removal does not happen automatically.")</p>
+                <textarea class="rp-in rp-area" rows="5" @bind="_leaveReason" placeholder="@Lang.T("Почему вы хотите расстаться со спутником?", "Why do you want to part with the companion?")"></textarea>
+                <div class="rp-row"><button class="rp-btn" @onclick="CancelLeave">@Lang.T("Отмена", "Cancel")</button><button class="rp-btn danger" disabled="@string.IsNullOrWhiteSpace(_leaveReason)" @onclick="SubmitLeave">@Lang.T("Начать разговор", "Start a conversation")</button></div>
+            </div>
+        </div>
+    }
+
+    @if (_itemAction is not null && ActionItem is { } actionItem)
+    {
+        <div class="rp-leave-backdrop" @onclick="CancelItemAction">
+            <div class="rp-leave-modal rp-item-action-modal" @onclick:stopPropagation="true">
+                <h3>@ItemActionTitle(actionItem)</h3>
+                <p>@ItemActionHint</p>
+                @if (_itemAction is "give" or "request" && actionItem.Quantity > 1)
+                {
+                    <label>@Lang.T("Количество", "Quantity") <input class="rp-in rp-tiny" type="number" min="1" max="@actionItem.Quantity" @bind="_itemActionQty" /></label>
+                }
+                <div class="rp-item-targets">
+                    @if (_itemAction == "give")
+                    {
+                        @foreach(var member in _state.Party){var can=CanReceive(member,actionItem);<button class="rp-btn" disabled="@(!can)" title="@(can ? Lang.T("Предложить предмет", "Offer the item") : Lang.T("В инвентаре спутника нет места", "No room in the companion's inventory"))" @onclick="()=>SubmitItemAction(member.Name,member.Name)">@member.Name @if(!can){<text> · @Lang.T("нет места", "no room")</text>}</button>}
+                    }
+                    else if (_itemAction == "request")
+                    {
+                        var can=CanHeroReceive(actionItem);<button class="rp-btn" disabled="@(!can)" @onclick="()=>SubmitItemAction(_itemMember,_itemMember)">@Lang.T("Попросить у ", "Ask ")@_itemMember@if(!can){<text> · @Lang.T("в сумке героя нет места", "no room in the hero's bag")</text>}</button>
+                    }
+                    else
+                    {
+                        <button class="rp-btn" @onclick='()=>SubmitItemAction("hero","hero")'>@Lang.T("Использовать на герое", "Use on the hero")</button>
+                        @foreach(var member in _state.Party){<button class="rp-btn" @onclick="()=>SubmitItemAction(member.Name,member.Name)">@Lang.T("Использовать на ", "Use on ")@member.Name</button>}
+                    }
+                </div>
+                <button class="rp-btn" @onclick="CancelItemAction">@Lang.T("Отмена", "Cancel")</button>
+            </div>
+        </div>
+    }
+
+    <div class="rp-foot">
+        @if (RpgStore.LastError is not null)
+        {
+            <span class="rp-storage rp-warn" title="@RpgStore.LastError">⚠ @Lang.T("не сохраняется:", "not saved:") @RpgStore.LastError</span>
+        }
+        else if (Store.StorageDirectory is null)
+        {
+            <span class="rp-storage rp-warn">💾 @Lang.T("только в памяти — выберите директорию в настройках", "in memory only — choose a directory in the settings")</span>
+        }
+        else if (RpgStore.CampaignDirectory(ChatId) is { } campaignDir)
+        {
+            <span class="rp-storage" title="@campaignDir&#10;Hero.md · Inventory.md · World.md · Rules.md · Journal.md · Characters/ · Quests.md · Story_Arc.md · Worldstate.md">💾 кампания: @System.IO.Path.GetFileName(campaignDir)</span>
+        }
+        else
+        {
+            <span class="rp-storage" title="@Store.StorageDirectory">💾 @Store.StorageDirectory</span>
+        }
+    </div>
+</div>
+
+@code {
+    private static string PartyPortraitStyle(PartyMember p) => PortraitCatalog.MemberStyle(p);
+    private static string MemberAttack(PartyMember p) { var a = ItemStats.BestAttack(p); return $"{a.Title}: {a.Attack:+#;-#;+0}, {a.DamageText}"; }
+    private static string SkillIconStyle(SkillRecord s) => SkillIcons.Style(s);
+    [Parameter] public string? ChatId { get; set; }
+
+    private string? _modal;
+    private int _partyTab;
+    private string? _leaveMember;
+    private string _leaveReason = "";
+    private string? _partyItemId;
+    private string _partyMsg = "";
+    private string? _itemAction;
+    private string _itemActionId = "";
+    private string _itemMember = "";
+    private int _itemActionQty = 1;
+
+    private string ModalClass(string key) => _modal == key ? "is-open" : "";
+    private void OpenModal(string key) { _modal = key; if(key=="party") _partyTab=Math.Clamp(_partyTab,0,Math.Max(0,_state.Party.Count-1)); }
+    private void CloseModal() { _modal = null; ClearSelection(); _partyItemId=null; _partyMsg=""; }
+    private static string MenuIconStyle(int index) => $"background-image:url('/sprites/{Genre.Pick("hero-book-menu.png", "cyber-book-menu.png", "modern-book-menu.png")}');background-size:300% 300%;{(Genre.IsFantasy ? "" : "image-rendering:pixelated;")}background-position:{index%3*50}% {index/3*50}%";
+    private RenderFragment MenuButton(string key,string title,int icon,string count)=>b=>
+    {
+        b.OpenElement(0,"button");b.AddAttribute(1,"class","rp-menu-btn");b.AddAttribute(2,"onclick",EventCallback.Factory.Create(this,()=>OpenModal(key)));
+        b.OpenElement(3,"span");b.AddAttribute(4,"class","rp-menu-icon");b.AddAttribute(5,"style",MenuIconStyle(icon));b.CloseElement();
+        b.OpenElement(6,"span");b.AddContent(7,title);b.CloseElement();b.OpenElement(8,"small");b.AddContent(9,count);b.CloseElement();b.CloseElement();
+    };
+    private static string PartyItemStyle(GridItem item)=>$"left:{item.Col*30}px;top:{item.Row*30}px;width:{item.W*30}px;height:{item.H*30}px";
+    private IEnumerable<CompanionCandidate> OpenCandidates => _state.CompanionCandidates.Where(c => c.Stage is "introduced" or "proven" or "ready");
+    private string PartyMenuCount => OpenCandidates.Count() is var count && count > 0 ? $"{_state.Party.Count}/3 · +{count}" : $"{_state.Party.Count}/3";
+    private static string CandidateStageTitle(CompanionCandidate c) => c.Stage switch { "ready" => Lang.T("готов поговорить", "ready to talk"), "proven" => Lang.T("доверие растёт", "trust is growing"), _ => Lang.T("новое знакомство", "new acquaintance") };
+    private void AskLeave(PartyMember member){_leaveMember=member.Name;_leaveReason="";}
+    private void CancelLeave(){_leaveMember=null;_leaveReason="";}
+    private void SubmitLeave()
+    {
+        if(ChatId is null||_leaveMember is null||string.IsNullOrWhiteSpace(_leaveReason))return;
+        PartyFlow.RequestLeave(ChatId,_leaveMember,_leaveReason.Trim());CancelLeave();CloseModal();
+    }
+
+    private GridItem? ActionItem => _itemAction == "request"
+        ? _state.Party.FirstOrDefault(p=>p.Name==_itemMember)?.Grid.FirstOrDefault(i=>i.Id==_itemActionId)
+        : _state.Grid.FirstOrDefault(i=>i.Id==_itemActionId);
+    private bool IsConsumable(GridItem item) => item.Consumable || Catalog.Get(item.Icon)?.Cat is "potion" or "food" or "scroll" or "book";
+    private void SelectPartyItem(GridItem item){_partyItemId=_partyItemId==item.Id?null:item.Id;_partyMsg="";}
+    private void StartItemAction(string action,GridItem item){_itemAction=action;_itemActionId=item.Id;_itemMember="";_itemActionQty=1;}
+    private void StartPartyRequest(PartyMember member,GridItem item){_itemAction="request";_itemActionId=item.Id;_itemMember=member.Name;_itemActionQty=1;}
+    private void CancelItemAction(){_itemAction=null;_itemActionId="";_itemMember="";_itemActionQty=1;}
+    private bool HasRoom(List<GridItem> bag,GridItem item)=>bag.Any(i=>InventoryOps.CanStack(i,item))||InventoryOps.FindFree(bag,item.W,item.H) is not null;
+    private bool CanReceive(PartyMember member,GridItem item)=>HasRoom(member.Grid,item);
+    private bool CanHeroReceive(GridItem item)=>HasRoom(_state.Grid,item);
+    private string ItemActionTitle(GridItem item)=>_itemAction switch{"give"=>Lang.T($"Отдать «{item.Name}»", $"Give \"{item.Name}\""),"request"=>Lang.T($"Попросить «{item.Name}»", $"Ask for \"{item.Name}\""),_=>Lang.T($"Использовать «{item.Name}»", $"Use \"{item.Name}\"")};
+    private string ItemActionHint=>_itemAction switch{"give"=>Lang.T("Выберите спутника. Он самостоятельно решит, согласен ли принять предмет.", "Choose a companion. They decide on their own whether to accept the item."),"request"=>Lang.T("ГМ отыграет просьбу и решение спутника. Предмет перейдёт только после его согласия.", "The GM plays out the request and the companion's decision. The item passes only after their consent."),_=>Lang.T("Выберите цель. ГМ применит эффект расходника и только затем спишет одну единицу.", "Choose a target. The GM applies the consumable's effect and only then deducts one unit.")};
+    private void SubmitItemAction(string member,string target)
+    {
+        if(ChatId is null||ActionItem is not { } item)return;
+        var qty=_itemAction=="use"?1:Math.Clamp(_itemActionQty,1,Math.Max(1,item.Quantity));
+        if(_itemAction=="give"&&_state.Party.FirstOrDefault(p=>p.Name==member) is { } receiver&&!CanReceive(receiver,item)){Report(false,Lang.T($"У {member} нет места для «{item.Name}».", $"{member} has no room for \"{item.Name}\"."));return;}
+        if(_itemAction=="request"&&!CanHeroReceive(item)){_partyMsg=Lang.T($"В сумке героя нет места для «{item.Name}» ({item.W}×{item.H}).", $"No room in the hero's bag for \"{item.Name}\" ({item.W}×{item.H}).");CancelItemAction();return;}
+        PartyFlow.RequestItemAction(new PartyItemRequest(ChatId,_itemAction!,member,item.Id,item.Name,qty,target));
+        CancelItemAction();CloseModal();
+    }
+
+    private bool _openCharacter = true;
+    private bool _openInventory = true;
+    private bool _openParty = true;
+    private bool _openNpcs = true;
+    private bool _openCities = true;
+    private bool _openQuests = true;
+    private bool _openArc = true;
+    private bool _openWorld = true;
+
+    /// <summary>Шаг сетки в пикселях (совпадает с --cell в RpgPanel.razor.css).</summary>
+    private const int CellPx = 34;
+
+    /// <summary>Слоты куклы: (слот, подпись, иконка-подсказка для пустого слота). Расположение задаёт CSS (grid-area).</summary>
+    private static (EquipSlot Slot, string Label, string Ghost)[] _equipLayout => new[]
+    {
+        (EquipSlot.Hand1, Lang.T("Оружие", "Weapon"), "sword"),
+        (EquipSlot.Cloak, Lang.T("Плащ", "Cloak"), "cloak"),
+        (EquipSlot.Helmet, Lang.T("Шлем", "Helmet"), "helmet"),
+        (EquipSlot.Amulet, Lang.T("Амулет", "Amulet"), "amulet"),
+        (EquipSlot.Hand2, Lang.T("Щит / 2-я рука", "Shield / off hand"), "shield"),
+        (EquipSlot.Gloves, Lang.T("Перчатки", "Gloves"), "gloves"),
+        (EquipSlot.Body, Lang.T("Доспех", "Armor"), "body"),
+        (EquipSlot.Ring1, Lang.T("Кольцо", "Ring"), "ring"),
+        (EquipSlot.Ring2, Lang.T("Кольцо", "Ring"), "ring2"),
+        (EquipSlot.Boots, Lang.T("Сапоги", "Boots"), "boots"),
+        (EquipSlot.Belt, Lang.T("Пояс", "Belt"), "belt"),
+    };
+
+    private RpgState _state = new();
+    private string? _subscribedId;
+
+    // ===== Счётчик контекста (рядом с оглавлением книги героя) =====
+
+    private ContextUsage? _ctx;
+    private DateTime _ctxAt;
+    private int _toolsChars = -1;
+
+    /// <summary>
+    /// Заполнение контекстного окна. Пересчитывается не чаще раза в секунду: RpgStore шлёт StateChanged
+    /// на каждое нажатие клавиши в полях книги, а сборка сводки читает Journal.md с диска.
+    /// </summary>
+    private ContextUsage? Context
+    {
+        get
+        {
+            if (_ctx is not null && DateTime.UtcNow - _ctxAt < TimeSpan.FromSeconds(1))
+            {
+                return _ctx;
+            }
+
+            _ctxAt = DateTime.UtcNow;
+            _ctx = ComputeContext();
+            return _ctx;
+        }
+    }
+
+    /// <summary>
+    /// Считает заполнение так же, как это делает отправка запроса в Chat.razor: тот же системный промпт,
+    /// та же сводка книги героя, те же описания инструментов и та же укладка истории в лимит.
+    /// </summary>
+    private ContextUsage? ComputeContext()
+    {
+        if (string.IsNullOrWhiteSpace(ChatId))
+        {
+            return null;
+        }
+
+        var session = Store.Get(ChatId);
+        if (session is null)
+        {
+            return null;
+        }
+
+        var settings = SettingsSvc.Current;
+
+        // Активный инстанс ведёт свою историю — считаем её, а не основной чат.
+        var source = _state.ActiveInstance is { Active: true } instance
+            ? instance.Messages.ToList()
+            : session.Messages.Where(m => string.IsNullOrEmpty(m.InstanceId)).ToList();
+
+        var history = LlmClient.TrimHistory(source, settings.HistoryLimit, out _);
+        _toolsChars = _toolsChars >= 0 ? _toolsChars : Tools.DefinitionsChars;
+        var stateNote = Tools.BuildStateNote(ChatId, RpgStore.ReadJournalTail(ChatId, 2500));
+        return LlmClient.MeasureContext(settings, LlmClient.ReservedChars(settings, stateNote, _toolsChars), history);
+    }
+
+    /// <summary>Компактная запись числа: 98 400 → «98k», 128 000 → «128k», 950 → «950».</summary>
+    private static string Short(long tokens) => tokens >= 1000 ? $"{tokens / 1000}k" : tokens.ToString();
+
+    private static string CtxClass(ContextUsage ctx) => ctx.Percent >= 100
+        ? "is-full"
+        : ctx.OverCompress ? "is-warn" : "is-ok";
+
+    private static string CtxTitle(ContextUsage ctx)
+    {
+        var compress = ctx.CompressPercent >= 100
+            ? Lang.T("автосокращение истории выключено", "history auto-compression is off")
+            : Lang.T($"при {ctx.CompressPercent}% история начнёт сокращаться", $"at {ctx.CompressPercent}% the history starts to be compressed");
+        return Lang.T($"Занято {ctx.UsedTokens:N0} токенов из {ctx.LimitTokens:N0} — {ctx.Percent}%. " +
+               $"Учитываются системный промпт, сводка книги героя, описания инструментов и история чата; {compress}.",
+               $"{ctx.UsedTokens:N0} of {ctx.LimitTokens:N0} tokens used — {ctx.Percent}%. " +
+               $"The system prompt, the hero book summary, tool descriptions and the chat history are counted; {compress}.");
+    }
+
+    // Перетаскивание: предмет сумки или надетый предмет + клетка, за которую его взяли.
+    private string? _dragId;
+    private EquipSlot? _dragSlot;
+    private int _grabCol;
+    private int _grabRow;
+
+    // Выбранный предмет (карточка под сумкой).
+    private string? _selId;
+    private EquipSlot? _selSlot;
+
+    private string _newGridName = "";
+    private string? _invMsg;
+    private bool _invMsgOk;
+
+    protected override void OnInitialized()
+    {
+        RpgStore.StateChanged += OnStateChanged;
+        // История чата растёт без изменений книги героя — счётчику контекста нужно и это событие.
+        Store.Changed += OnChatChanged;
+    }
+
+    protected override void OnParametersSet()
+    {
+        _state = RpgStore.GetOrCreate(ChatId);
+        if (_subscribedId != ChatId)
+        {
+            _subscribedId = ChatId;
+            ClearSelection();
+            _invMsg = null;
+            _floats.Clear();
+            _flash.Clear();
+        }
+
+        DiffVitals();
+    }
+
+    /// <summary>Мастер (или другая вкладка) изменил состояние — перерисовываемся.</summary>
+    private void OnStateChanged(string sessionId)
+    {
+        if (sessionId != ChatId)
+        {
+            return;
+        }
+
+        _ = InvokeAsync(() =>
+        {
+            _state = RpgStore.GetOrCreate(ChatId);
+            DiffVitals();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        RpgStore.StateChanged -= OnStateChanged;
+        Store.Changed -= OnChatChanged;
+        _disposed = true;
+    }
+
+    /// <summary>Чат изменился (новое сообщение, ответ мастера) — обновляем счётчик контекста.</summary>
+    private void OnChatChanged() => _ = InvokeAsync(StateHasChanged);
+
+    // ===== Всплывающие изменения: −3 HP, +12 золота… =====
+
+    private sealed record FloatNote(int Id, string Stat, string Text, bool Up);
+
+    private readonly List<FloatNote> _floats = new();
+    private readonly HashSet<string> _flash = new();
+    private Dictionary<string, int>? _vitals;
+    private string? _vitalsChat;
+    private int _floatSeq;
+    private bool _disposed;
+
+    private Dictionary<string, int> CurrentVitals() => new()
+    {
+        ["hp"] = _state.Character.HpCurrent,
+        ["mana"] = _state.Character.ManaCurrent,
+        ["gold"] = _state.Character.Gold,
+        ["xp"] = _state.Character.Xp,
+        ["level"] = int.TryParse(LevelText, out var lv) ? lv : 0,
+    };
+
+    /// <summary>Сравнивает показатели с прошлыми и запускает всплывающие цифры.</summary>
+    private void DiffVitals()
+    {
+        var now = CurrentVitals();
+        if (_vitals is null || _vitalsChat != ChatId)
+        {
+            _vitals = now;
+            _vitalsChat = ChatId;
+            return;
+        }
+
+        foreach (var (stat, value) in now)
+        {
+            var delta = value - _vitals[stat];
+            if (delta == 0)
+            {
+                continue;
+            }
+
+            var note = new FloatNote(++_floatSeq, stat, (delta > 0 ? "+" : "−") + Math.Abs(delta), delta > 0);
+            _floats.Add(note);
+            if (stat == "hp" && delta < 0)
+            {
+                _flash.Add("hp");
+            }
+
+            _ = ExpireAsync(note);
+        }
+
+        _vitals = now;
+    }
+
+    private async Task ExpireAsync(FloatNote note)
+    {
+        await Task.Delay(1800);
+        if (_disposed)
+        {
+            return;
+        }
+
+        await InvokeAsync(() =>
+        {
+            _floats.Remove(note);
+            if (!_floats.Any(f => f.Stat == "hp" && !f.Up))
+            {
+                _flash.Remove("hp");
+            }
+
+            StateHasChanged();
+        });
+    }
+
+    private string FlashClass(string stat) => _flash.Contains(stat) ? "is-hit" : "";
+
+    private RenderFragment Floats(string stat) => builder =>
+    {
+        foreach (var f in _floats.Where(f => f.Stat == stat))
+        {
+            builder.OpenElement(0, "span");
+            builder.SetKey(f.Id);
+            builder.AddAttribute(1, "class", $"rp-float {(f.Up ? "up" : "down")}");
+            builder.AddAttribute(2, "aria-hidden", "true");
+            builder.AddContent(3, f.Text);
+            builder.CloseElement();
+        }
+    };
+
+    private void Save() => RpgStore.Save(ChatId, _state);
+
+    private void OpenShop(string npcName)
+    {
+        if (ChatId is not null)
+        {
+            Trade.Open(ChatId, npcName);
+        }
+    }
+
+    /// <summary>«Начать разговор»: ход в чат, где ГМ сам придумает встречу (слухи, квест или разовую сделку).</summary>
+    private void TalkTo(string npcName)
+    {
+        if (ChatId is not null)
+        {
+            Talk.Request(ChatId, npcName);
+        }
+    }
+
+    /// <summary>Имя героя или заглушка (задаётся при создании чата).</summary>
+    private string HeroName =>
+        string.IsNullOrWhiteSpace(_state.Character.Name) ? Lang.T("Безымянный герой", "Nameless hero") : _state.Character.Name.Trim();
+
+    /// <summary>Уровень (меняет только мастер игры).</summary>
+    private string LevelText =>
+        string.IsNullOrWhiteSpace(_state.Character.Level) ? "1" : _state.Character.Level.Trim();
+
+    /// <summary>Портрет героя из общего листа <c>hero-avatars.png</c> (см. <see cref="HeroAvatars"/>).</summary>
+    private string AvatarStyle =>
+        HeroAvatars.Style(_state.Character.Avatar, _state.Character.CharClass, _state.Character.Gender);
+
+    /// <summary>Значение или подпись-заглушка (для read-only полей).</summary>
+    private static string? TagOr(string? value, string? alt)
+    {
+        var v = (value ?? "").Trim();
+        if (v.Length > 0)
+        {
+            return v;
+        }
+
+        return string.IsNullOrEmpty(alt) ? "" : alt;
+    }
+
+    private static string NoteSuffix(string? note) => string.IsNullOrWhiteSpace(note) ? "" : " — " + note;
+
+    private static string Signed(int v) => v >= 0 ? $"+{v}" : $"−{-v}";
+
+    private static string StatSuffix(string stats) => stats.Length == 0 ? "" : " · " + stats;
+
+    /// <summary>Характеристики предмета в карточке: урон, броня, бонусы, особые свойства и бюджет редкости.</summary>
+    private static RenderFragment StatBlock(string damage, int armor, Dictionary<string, int> bonuses, List<string> effects, string rarity) => __builder =>
+    {
+        var spent = ItemStats.Spent(bonuses);
+        var budget = ItemStats.Budget(rarity);
+        var key = ItemEconomy.RarityKey(rarity);
+        <div class="rp-ic-stats rar-@key">
+            <div class="rp-ic-rarity">
+                <span>@ItemEconomy.RarityTitle(rarity)</span>
+                @if (budget > 0)
+                {
+                    <small title="@(Lang.T("Очки бонусов по редкости: +1 к характеристике/атаке/урону = 1, +1 КБ = 2, +5 HP/", "Bonus points by rarity: +1 to an ability/attack/damage = 1, +1 AC = 2, +5 HP/") + Genre.ManaGen + " = 1")">@Lang.T("бонусы", "bonuses") @spent/@budget</small>
+                }
+            </div>
+            @if (damage.Length > 0 || armor > 0)
+            {
+                <div class="rp-ic-base">
+                    @if (damage.Length > 0)
+                    {
+                        <span><small>@Lang.T("урон", "damage")</small> @damage</span>
+                    }
+                    @if (armor > 0)
+                    {
+                        <span><small>@Lang.T("броня", "armor")</small> @Lang.T("КБ", "AC") +@armor</span>
+                    }
+                </div>
+            }
+            @if (bonuses.Count > 0)
+            {
+                <div class="rp-ic-bonuses">
+                    @foreach (var k in ItemStats.Keys.Where(bonuses.ContainsKey))
+                    {
+                        var v = bonuses[k];
+                        <span class="rp-ic-bonus @(v < 0 ? "neg" : "")">@ItemStats.KeyTitle(k) @Signed(v)</span>
+                    }
+                </div>
+            }
+            @foreach (var e in effects)
+            {
+                <div class="rp-ic-effect">✦ @e</div>
+            }
+            @if (damage.Length == 0 && armor == 0 && bonuses.Count == 0 && effects.Count == 0)
+            {
+                <div class="rp-ic-none">@Lang.T("Без особых характеристик", "No special stats")</div>
+            }
+        </div>
+    };
+
+
+    private int UsedCells => _state.Grid.Sum(i => i.W * i.H);
+
+    // ===== Иконки =====
+
+    /// <summary>Пропорции области слота куклы (в условных клетках) — чтобы выбрать поворот иконки.</summary>
+    private static (int W, int H) SlotShape(EquipSlot slot) => slot switch
+    {
+        EquipSlot.Hand1 or EquipSlot.Hand2 => (2, 4),
+        EquipSlot.Cloak or EquipSlot.Gloves or EquipSlot.Body => (2, 3),
+        _ => (1, 1),
+    };
+
+    /// <summary>
+    /// Спрайты оружия нарисованы по диагонали; в вытянутой вверх области их поворачиваем на −45°,
+    /// чтобы клинок встал вертикально и занял всю высоту — как в Diablo.
+    /// </summary>
+    private string IconClass(string icon, (int W, int H) box)
+    {
+        var def = Catalog.Get(icon);
+        return def is { Diag: true } && box.H > box.W ? "diag" : "fit";
+    }
+
+    private string ItemMeta(string icon, int w, int h, EquipSlot? slot, bool twoHanded)
+    {
+        var def = Catalog.Get(icon);
+        var home = slot ?? def?.EquipSlot;
+        var parts = new List<string> { $"{w}×{h}" };
+        if (home is { } s)
+        {
+            parts.Add(twoHanded ? Lang.T("двуручное", "two-handed") : InventoryOps.SlotTitle(s));
+        }
+
+        if (def is not null)
+        {
+            parts.Add(def.Name.ToLowerInvariant());
+        }
+
+        return string.Join(" · ", parts);
+    }
+
+    // ===== Выбор =====
+
+    private GridItem? SelectedItem => _selId is null ? null : _state.Grid.FirstOrDefault(i => i.Id == _selId);
+
+    private EquippedItem? SelectedWorn =>
+        _selSlot is { } s ? _state.Character.Equipment.GetValueOrDefault(s.ToString()) : null;
+
+    private bool IsSelectedSlot(EquipSlot slot) =>
+        _selSlot is { } s && SelectedWorn is { } w &&
+        (s == slot || (w.TwoHanded && slot is EquipSlot.Hand1 or EquipSlot.Hand2));
+
+    private void SelectItem(GridItem item)
+    {
+        _selSlot = null;
+        _selId = _selId == item.Id ? null : item.Id;
+    }
+
+    private void SelectSlot(EquipSlot slot)
+    {
+        if (!_state.Character.Equipment.ContainsKey(slot.ToString()))
+        {
+            return;
+        }
+
+        _selId = null;
+        _selSlot = _selSlot == slot ? null : slot;
+    }
+
+    private void ClearSelection()
+    {
+        _selId = null;
+        _selSlot = null;
+    }
+
+    private void Report(bool ok, string message)
+    {
+        _invMsgOk = ok;
+        _invMsg = message;
+    }
+
+    // ===== Экипировка =====
+
+    private bool CanDropOn(EquipSlot slot)
+    {
+        if (_dragId is null)
+        {
+            return false;
+        }
+
+        var item = _state.Grid.FirstOrDefault(i => i.Id == _dragId);
+        return item is not null &&
+               InventoryOps.CanGoTo(item.Slot ?? Catalog.Get(item.Icon)?.EquipSlot, item.TwoHanded, slot);
+    }
+
+    private void QuickEquip(GridItem item)
+    {
+        var ok = InventoryOps.Equip(_state, item, null, Catalog, out var msg);
+        Report(ok, msg);
+        if (ok)
+        {
+            ClearSelection();
+            Save();
+        }
+    }
+
+    private void UnequipSlot(EquipSlot slot, bool drop)
+    {
+        var ok = InventoryOps.Unequip(_state, slot, Catalog, drop, out var msg);
+        Report(ok, msg);
+        if (ok)
+        {
+            ClearSelection();
+            Save();
+        }
+    }
+
+    private void DropItem(GridItem item)
+    {
+        _state.Grid.Remove(item);
+        Report(true, Lang.T($"«{item.Name}» выброшен.", $"\"{item.Name}\" discarded."));
+        ClearSelection();
+        Save();
+    }
+
+    // ===== Перетаскивание =====
+
+    private string GridItemStyle(GridItem item) =>
+        $"left:calc({item.Col} * var(--cell) + 2px); top:calc({item.Row} * var(--cell) + 2px);" +
+        $"width:calc({item.W} * var(--cell) - 2px); height:calc({item.H} * var(--cell) - 2px);";
+
+    private static string GridItemTitle(GridItem item) =>
+        item.Name + (item.Quantity > 1 ? $" x{item.Quantity}" : "") + $" ({item.W}×{item.H})" + StatSuffix(ItemStats.Describe(item)) + NoteSuffix(item.Note);
+
+    private void GridDragStart(DragEventArgs e, GridItem item)
+    {
+        _dragId = item.Id;
+        _dragSlot = null;
+        // Клетка внутри предмета, за которую его взяли: при сбросе она окажется под курсором.
+        _grabCol = Math.Clamp((int)(e.OffsetX / CellPx), 0, item.W - 1);
+        _grabRow = Math.Clamp((int)(e.OffsetY / CellPx), 0, item.H - 1);
+    }
+
+    private void SlotDragStart(EquipSlot slot)
+    {
+        if (!_state.Character.Equipment.ContainsKey(slot.ToString()))
+        {
+            return;
+        }
+
+        _dragSlot = slot;
+        _dragId = null;
+        _grabCol = 0;
+        _grabRow = 0;
+    }
+
+    private void DragEnd()
+    {
+        _dragId = null;
+        _dragSlot = null;
+    }
+
+    private void SlotDrop(EquipSlot slot)
+    {
+        var id = _dragId;
+        DragEnd();
+        if (id is null)
+        {
+            return;
+        }
+
+        var item = _state.Grid.FirstOrDefault(i => i.Id == id);
+        if (item is null)
+        {
+            return;
+        }
+
+        var ok = InventoryOps.Equip(_state, item, slot, Catalog, out var msg);
+        Report(ok, msg);
+        if (ok)
+        {
+            ClearSelection();
+            Save();
+        }
+    }
+
+    private void CellDrop(int col, int row)
+    {
+        var id = _dragId;
+        var fromSlot = _dragSlot;
+        var grabCol = _grabCol;
+        var grabRow = _grabRow;
+        DragEnd();
+
+        if (fromSlot is { } slot)
+        {
+            // Снятие перетаскиванием: кладём в сумку, затем пробуем поставить в выбранную клетку.
+            var before = _state.Grid.ToList();
+            if (!InventoryOps.Unequip(_state, slot, Catalog, false, out var msg))
+            {
+                Report(false, msg);
+                return;
+            }
+
+            var added = _state.Grid.FirstOrDefault(i => !before.Contains(i));
+            if (added is not null)
+            {
+                var c = Math.Clamp(col, 0, RpgState.GridCols - added.W);
+                var r = Math.Clamp(row, 0, RpgState.GridRows - added.H);
+                if (InventoryOps.Fits(_state.Grid, c, r, added.W, added.H, added))
+                {
+                    (added.Col, added.Row) = (c, r);
+                }
+            }
+
+            Report(true, msg);
+            ClearSelection();
+            Save();
+            return;
+        }
+
+        var item = id is null ? null : _state.Grid.FirstOrDefault(i => i.Id == id);
+        if (item is null)
+        {
+            return;
+        }
+
+        var col0 = Math.Clamp(col - grabCol, 0, RpgState.GridCols - item.W);
+        var row0 = Math.Clamp(row - grabRow, 0, RpgState.GridRows - item.H);
+        if (InventoryOps.Fits(_state.Grid, col0, row0, item.W, item.H, item))
+        {
+            item.Col = col0;
+            item.Row = row0;
+            Save();
+        }
+    }
+
+    // ===== Добавление вручную =====
+
+    private void GridNameKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            AddGridItem();
+        }
+    }
+
+    private void AddGridItem()
+    {
+        var name = _newGridName.Trim();
+        if (name.Length == 0)
+        {
+            return;
+        }
+
+        var def = Catalog.Guess(name);
+        var w = def?.W ?? 1;
+        var h = def?.H ?? 1;
+        var spot = InventoryOps.FindFree(_state.Grid, w, h);
+        if (spot is null)
+        {
+            Report(false, Lang.T($"В сумке нет места {w}×{h} для «{name}».", $"No {w}×{h} room in the bag for \"{name}\"."));
+            return;
+        }
+
+        var item = new GridItem
+        {
+            Name = name,
+            Icon = def?.Id ?? "sack",
+            Col = spot.Value.Col,
+            Row = spot.Value.Row,
+            W = w,
+            H = h,
+            Slot = def?.EquipSlot,
+            TwoHanded = def?.TwoHanded ?? false,
+        };
+        _state.Grid.Add(item);
+        _newGridName = "";
+        _selSlot = null;
+        _selId = item.Id;
+        Report(true, Lang.T($"Добавлено: «{name}» ({w}×{h}).", $"Added: \"{name}\" ({w}×{h})."));
+        Save();
+    }
+
+    // ===== Персонаж =====
+
+    private void NudgeHp(int delta)
+    {
+        _state.Character.HpCurrent = Math.Clamp(_state.Character.HpCurrent + delta, 0, Math.Max(_state.Character.HpMax, _state.Character.HpCurrent));
+        Save();
+    }
+
+    private void NudgeMana(int delta)
+    {
+        _state.Character.ManaCurrent = Math.Clamp(_state.Character.ManaCurrent + delta, 0, Math.Max(_state.Character.ManaMax, _state.Character.ManaCurrent));
+        Save();
+    }
+
+    private void AddMana()
+    {
+        _state.Character.ManaMax = Math.Max(_state.Character.ManaMax, 10);
+        _state.Character.ManaCurrent = Math.Max(_state.Character.ManaCurrent, _state.Character.ManaMax);
+        Save();
+    }
+
+    private void RemoveStatus(string status)
+    {
+        _state.Character.Status.Remove(status);
+        Save();
+    }
+
+    // ===== Задания / арки / события мира =====
+
+    private string _questStateClass(string state) => state switch
+    {
+        "done" => "rp-card-done",
+        "failed" => "rp-card-dead",
+        _ => "",
+    };
+
+    private string _questStateIcon(string state) => state switch
+    {
+        "done" => "✅",
+        "failed" => "❌",
+        _ => "⚔",
+    };
+
+    private string _questStateTitle(string state) => state switch
+    {
+        "done" => Lang.T("Выполнено", "Done"),
+        "failed" => Lang.T("Провалено", "Failed"),
+        _ => Lang.T("Принято", "Accepted"),
+    };
+
+    private string _arcStateIcon(string state) => state switch
+    {
+        "active" => "🎯",
+        "done" => "✅",
+        _ => "🚫",
+    };
+
+    private string _arcStateTitle(string state) => state switch
+    {
+        "active" => Lang.T("Активная арка", "Active arc"),
+        "done" => Lang.T("Завершена", "Completed"),
+        _ => Lang.T("Оставлена", "Abandoned"),
+    };
+
+    private static string PoiIcon(string? type) => (type ?? "").Trim().ToLowerInvariant() switch
+    {
+        "таверна" or "постоялый двор" or "бар" or "клуб" or "tavern" or "inn" or "bar" or "club" => "🍺",
+        "клиника" or "риппердок" or "больница" or "clinic" or "ripperdoc" or "hospital" => "✚",
+        "фиксер" or "fixer" or "middleman" => "◈",
+        "оружейная" or "оружейник" or "armory" or "gunsmith" or "gun store" => "🔫",
+        "участок" or "полиция" or "precinct" or "police" or "police station" => "🚓",
+        "корпоративная башня" or "башня" or "офис" or "corporate tower" or "tower" or "office" => "🏢",
+        "логово" or "логово банды" or "lair" or "gang hideout" or "hideout" => "☠",
+        "храм" or "церковь" or "temple" or "church" => "⛪",
+        "рынок" or "базар" or "лавка" or "магазин" or "market" or "bazaar" or "shop" or "store" => "🏺",
+        "гильдия" or "guild" or "adventurers' guild" => "⚔",
+        "кузница" or "forge" or "smithy" => "🔨",
+        "стража" or "гарнизон" or "тюрьма" or "guard" or "garrison" or "prison" or "jail" => "🛡",
+        "замок" or "ратуша" or "castle" or "town hall" => "🏰",
+        _ => "📍",
+    };
+}

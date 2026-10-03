@@ -1,0 +1,417 @@
+/* ===== Окно торговли ===== */
+.tw-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: rgba(8, 6, 5, .62);
+}
+
+.tw-modal {
+    --cell: 34px;
+    width: min(880px, 100%);
+    max-height: calc(100vh - 24px);
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px 16px;
+    border: 1px solid rgba(212, 154, 74, .32);
+    border-radius: 18px;
+    background: linear-gradient(160deg, rgba(30, 26, 22, .97), rgba(17, 15, 12, .98));
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .55), 0 0 0 1px rgba(212, 154, 74, .06);
+    color: var(--rh-text);
+    font-family: var(--rh-font);
+}
+
+.tw-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.tw-title {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.tw-title-main {
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: #ecd39a;
+}
+
+.tw-title-sub {
+    font-size: .8rem;
+    color: var(--rh-text-3);
+}
+
+.tw-x {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    border: 1px solid var(--rh-border);
+    background: transparent;
+    color: var(--rh-text-2);
+    cursor: pointer;
+}
+
+.tw-x:hover {
+    border-color: var(--rh-border-strong);
+    color: var(--rh-text);
+}
+
+.tw-terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    font-size: .76rem;
+    color: var(--rh-text-2);
+}
+
+.tw-terms b {
+    color: var(--rh-text);
+    font-weight: 600;
+}
+
+.tw-cha {
+    color: var(--rh-warning);
+}
+
+.tw-cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.tw-side {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.tw-side-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--rh-text-2);
+}
+
+.tw-gold {
+    color: #ecd39a;
+    font-variant-numeric: tabular-nums;
+}
+
+.tw-hint {
+    font-size: .68rem;
+    color: var(--rh-text-3);
+    max-width: calc(11 * var(--cell) + 6px);
+}
+
+/* ===== Сетки ===== */
+.tw-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), var(--cell));
+    grid-auto-rows: var(--cell);
+    width: max-content;
+    max-width: 100%;
+    padding: 2px;
+    border: 1px solid var(--rh-border-strong);
+    border-radius: 8px;
+    background: rgba(10, 8, 6, .5);
+    box-shadow: inset 0 0 16px rgba(0, 0, 0, .4);
+    overflow: hidden;
+}
+
+.tw-grid.shop {
+    border-color: rgba(212, 154, 74, .3);
+    background: rgba(24, 16, 3, .35);
+}
+
+.tw-grid.drop-target {
+    box-shadow: inset 0 0 16px rgba(0, 0, 0, .4), 0 0 0 2px rgba(143, 174, 106, .45);
+}
+
+.tw-cell {
+    box-sizing: border-box;
+    border: 1px solid rgba(235, 226, 211, .07);
+    background: rgba(235, 226, 211, .015);
+}
+
+.tw-grid.dragging .tw-cell:hover {
+    background: rgba(var(--rh-accent-rgb), .18);
+}
+
+.tw-item {
+    position: absolute;
+    z-index: 2;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    container-type: size;
+    border: 1px solid rgba(var(--rh-accent-rgb), .32);
+    border-radius: 6px;
+    background: radial-gradient(circle at 50% 45%, rgba(var(--rh-accent-rgb), .12), rgba(26, 23, 20, .78) 80%);
+    cursor: grab;
+    transition: border-color .12s ease, box-shadow .12s ease, opacity .12s ease;
+}
+
+.tw-item:hover {
+    border-color: rgba(var(--rh-accent-rgb), .8);
+    box-shadow: 0 0 12px rgba(var(--rh-accent-rgb), .3);
+}
+
+.tw-grid.dragging .tw-item {
+    pointer-events: none;
+}
+
+.tw-item.lifted {
+    opacity: .35;
+}
+
+.tw-item.sel {
+    border-color: #d9b25e;
+    box-shadow: 0 0 0 1px #d9b25e, 0 0 14px rgba(212, 154, 74, .35);
+}
+
+.tw-item.refused {
+    opacity: .5;
+    filter: grayscale(.7);
+}
+
+/* Редкость — цвет рамки, как в Diablo */
+.tw-item.rar-uncommon { border-color: rgba(74, 222, 128, .55); background: radial-gradient(circle at 50% 45%, rgba(74, 222, 128, .14), rgba(26, 23, 20, .8) 80%); }
+.tw-item.rar-rare { border-color: rgba(95, 139, 192, .65); background: radial-gradient(circle at 50% 45%, rgba(95, 139, 192, .18), rgba(20, 20, 26, .8) 80%); }
+.tw-item.rar-epic { border-color: rgba(192, 132, 252, .7); background: radial-gradient(circle at 50% 45%, rgba(192, 132, 252, .2), rgba(20, 10, 34, .8) 80%); }
+.tw-item.rar-legendary { border-color: rgba(251, 146, 60, .85); background: radial-gradient(circle at 50% 45%, rgba(251, 146, 60, .24), rgba(34, 16, 6, .82) 80%); box-shadow: 0 0 10px rgba(251, 146, 60, .35); }
+
+.rar-text-uncommon { color: #b9cf9a; }
+.rar-text-rare { color: #9fb8d8; }
+.rar-text-epic { color: #d8b4fe; }
+.rar-text-legendary { color: #fdba74; }
+
+.tw-item .pix {
+    flex: none;
+    width: min(80cqw, 80cqh);
+    height: min(80cqw, 80cqh);
+    pointer-events: none;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .55));
+}
+
+.tw-item .pix.diag {
+    width: min(58cqh, 170cqw);
+    height: min(58cqh, 170cqw);
+    transform: rotate(-45deg);
+}
+
+.tw-qty {
+    position: absolute;
+    top: 0;
+    left: 3px;
+    font-size: .6rem;
+    font-weight: 700;
+    color: #f3ead9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .9);
+    pointer-events: none;
+}
+
+.tw-price {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    padding: 0 3px;
+    border-radius: 4px;
+    font-size: .58rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #1d1403;
+    background: rgba(253, 230, 138, .9);
+    pointer-events: none;
+    font-variant-numeric: tabular-nums;
+}
+
+.tw-item.refused .tw-price {
+    background: rgba(201, 97, 74, .85);
+    color: #fff;
+}
+
+/* ===== Сообщения, карточка, итог ===== */
+.tw-msg {
+    font-size: .78rem;
+    padding: 6px 10px;
+    border-radius: 8px;
+    color: #f0c4b8;
+    background: rgba(201, 97, 74, .1);
+    border: 1px solid rgba(201, 97, 74, .3);
+}
+
+.tw-msg.ok {
+    color: #b9cf9a;
+    background: rgba(143, 174, 106, .08);
+    border-color: rgba(143, 174, 106, .28);
+}
+
+.tw-card {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 154, 74, .3);
+    background: rgba(212, 154, 74, .05);
+}
+
+.tw-card-icon {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid var(--rh-border-strong);
+    background: rgba(14, 12, 10, .6);
+}
+
+.tw-card-icon .pix {
+    width: 38px;
+    height: 38px;
+}
+
+.tw-card-body {
+    flex: 1;
+    min-width: 180px;
+}
+
+.tw-card-name {
+    font-weight: 600;
+}
+
+.tw-card-meta,
+.tw-card-note {
+    font-size: .74rem;
+    color: var(--rh-text-3);
+}
+
+.tw-card-note {
+    color: var(--rh-text-2);
+}
+
+.tw-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.tw-refuse {
+    font-size: .78rem;
+    color: #e7a391;
+}
+
+.tw-btn {
+    padding: 6px 12px;
+    border-radius: var(--rh-radius-btn);
+    border: 1px solid var(--rh-border-strong);
+    background: rgba(14, 12, 10, .55);
+    color: var(--rh-text);
+    font: inherit;
+    font-size: .82rem;
+    cursor: pointer;
+}
+
+.tw-btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.tw-btn.buy {
+    border-color: rgba(212, 154, 74, .5);
+    color: #ecd39a;
+}
+
+.tw-btn.sell {
+    border-color: rgba(143, 174, 106, .5);
+    color: #b9cf9a;
+}
+
+.tw-btn.done {
+    flex: none;
+    border: none;
+    background: var(--rh-gradient);
+    color: #1b1509;
+    font-weight: 700;
+}
+
+.tw-btn:not(:disabled):hover {
+    filter: brightness(1.12);
+}
+
+.tw-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 6px;
+    border-top: 1px solid var(--rh-border);
+}
+
+.tw-log {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: .76rem;
+    color: var(--rh-text-2);
+}
+
+.tw-log-empty {
+    color: var(--rh-text-3);
+}
+
+.tw-log-gold {
+    color: #ecd39a;
+}
+
+@media (max-width: 520px) {
+    .tw-modal {
+        --cell: 28px;
+        padding: 12px 10px;
+    }
+
+    .tw-foot {
+        flex-wrap: wrap;
+    }
+}
+
+
+/* Гримуар: плоская модалка с мягким появлением */
+.tw-backdrop { animation: rh-fade .2s ease both; }
+.tw-modal {
+    border-radius: var(--rh-radius-panel);
+    background: var(--rh-surface);
+    box-shadow: var(--rh-shadow-pop);
+    animation: rh-pop .28s var(--rh-ease) both;
+}
+
+.tw-card-stats {
+    font-size: .74rem;
+    color: #b9cf9a;
+    font-family: var(--rh-mono, monospace);
+}

@@ -1,0 +1,4652 @@
+{
+ "cols": 16,
+ "rows": 23,
+ "items": [
+  {
+   "id": "dagger",
+   "name": "Кинжал",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "кинжал",
+    "нож"
+   ]
+  },
+  {
+   "id": "athame",
+   "name": "Ритуальный кинжал",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "атам",
+    "ритуальн",
+    "жертвен"
+   ]
+  },
+  {
+   "id": "short_sword",
+   "name": "Короткий меч",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "короткий",
+    "меч",
+    "гладиус"
+   ]
+  },
+  {
+   "id": "sword",
+   "name": "Меч",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "меч",
+    "клинок"
+   ]
+  },
+  {
+   "id": "long_sword",
+   "name": "Длинный меч",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "длинный",
+    "меч",
+    "полуторн",
+    "бастард"
+   ]
+  },
+  {
+   "id": "rapier",
+   "name": "Рапира",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "рапира",
+    "шпага",
+    "эсток"
+   ]
+  },
+  {
+   "id": "scimitar",
+   "name": "Скимитар",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "скимитар",
+    "сабл",
+    "ятаган",
+    "шамшир"
+   ]
+  },
+  {
+   "id": "falchion",
+   "name": "Фальшион",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "фальшион",
+    "тесак",
+    "мачете"
+   ]
+  },
+  {
+   "id": "hand_axe",
+   "name": "Топорик",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "топорик",
+    "томагавк"
+   ]
+  },
+  {
+   "id": "axe",
+   "name": "Топор",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "топор"
+   ]
+  },
+  {
+   "id": "war_axe",
+   "name": "Боевой топор",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "боевой",
+    "топор",
+    "секир"
+   ]
+  },
+  {
+   "id": "club",
+   "name": "Дубина",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "дубин",
+    "палиц"
+   ]
+  },
+  {
+   "id": "mace",
+   "name": "Булава",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "булава",
+    "шестопёр",
+    "пернач"
+   ]
+  },
+  {
+   "id": "morningstar",
+   "name": "Моргенштерн",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "моргенштерн",
+    "шипастая"
+   ]
+  },
+  {
+   "id": "flail",
+   "name": "Кистень",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "кистень",
+    "цеп"
+   ]
+  },
+  {
+   "id": "hammer",
+   "name": "Боевой молот",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "молот",
+    "молоток",
+    "клевец"
+   ]
+  },
+  {
+   "id": "whip",
+   "name": "Кнут",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "kw": [
+    "кнут",
+    "плеть",
+    "хлыст"
+   ]
+  },
+  {
+   "id": "demon_blade",
+   "name": "Демонический клинок",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "демонич",
+    "проклят"
+   ]
+  },
+  {
+   "id": "wand",
+   "name": "Волшебная палочка",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "палочк",
+    "жезл"
+   ]
+  },
+  {
+   "id": "rod",
+   "name": "Скипетр",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "скипетр"
+   ]
+  },
+  {
+   "id": "greatsword",
+   "name": "Двуручный меч",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "двуручн",
+    "меч",
+    "эспадон",
+    "клеймор"
+   ]
+  },
+  {
+   "id": "battle_axe",
+   "name": "Секира",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "двуручн",
+    "топор",
+    "секира"
+   ]
+  },
+  {
+   "id": "executioner_axe",
+   "name": "Топор палача",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "палач"
+   ]
+  },
+  {
+   "id": "great_mace",
+   "name": "Тяжёлая булава",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "тяжёл",
+    "булава",
+    "кувалд"
+   ]
+  },
+  {
+   "id": "staff",
+   "name": "Посох",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "посох"
+   ]
+  },
+  {
+   "id": "quarterstaff",
+   "name": "Боевой шест",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "шест",
+    "боевой",
+    "посох"
+   ]
+  },
+  {
+   "id": "mage_staff",
+   "name": "Посох мага",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "посох",
+    "мага",
+    "волшебн",
+    "посох"
+   ]
+  },
+  {
+   "id": "elder_staff",
+   "name": "Древний посох",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "древн",
+    "посох",
+    "архимаг"
+   ]
+  },
+  {
+   "id": "spear",
+   "name": "Копьё",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "копь",
+    "пик",
+    "рогатин"
+   ]
+  },
+  {
+   "id": "trident",
+   "name": "Трезубец",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "трезуб",
+    "острог"
+   ]
+  },
+  {
+   "id": "halberd",
+   "name": "Алебарда",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "алебард",
+    "бердыш"
+   ]
+  },
+  {
+   "id": "glaive",
+   "name": "Глефа",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "глеф",
+    "нагинат"
+   ]
+  },
+  {
+   "id": "scythe",
+   "name": "Коса",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "коса",
+    "серп"
+   ]
+  },
+  {
+   "id": "bow",
+   "name": "Лук",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "лук"
+   ]
+  },
+  {
+   "id": "shortbow",
+   "name": "Короткий лук",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "короткий",
+    "лук"
+   ]
+  },
+  {
+   "id": "longbow",
+   "name": "Длинный лук",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "длинный",
+    "лук"
+   ]
+  },
+  {
+   "id": "crossbow",
+   "name": "Арбалет",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "kw": [
+    "арбалет",
+    "самострел"
+   ]
+  },
+  {
+   "id": "sling",
+   "name": "Праща",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "kw": [
+    "праща"
+   ]
+  },
+  {
+   "id": "hand_cannon",
+   "name": "Ручная пищаль",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "kw": [
+    "пищаль",
+    "мушкет",
+    "пистол",
+    "ружь",
+    "аркебуз"
+   ]
+  },
+  {
+   "id": "javelin",
+   "name": "Дротики",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "diag": true,
+   "kw": [
+    "дротик",
+    "метательн",
+    "копь",
+    "сулиц"
+   ]
+  },
+  {
+   "id": "arrows",
+   "name": "Стрелы",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "diag": true,
+   "kw": [
+    "стрел",
+    "колчан"
+   ]
+  },
+  {
+   "id": "bolts",
+   "name": "Арбалетные болты",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "diag": true,
+   "kw": [
+    "болт"
+   ]
+  },
+  {
+   "id": "darts",
+   "name": "Метательные ножи",
+   "cat": "weapon",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "метательн",
+    "нож",
+    "сюрикен"
+   ]
+  },
+  {
+   "id": "boomerang",
+   "name": "Бумеранг",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "бумеранг"
+   ]
+  },
+  {
+   "id": "net",
+   "name": "Сеть",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "сеть",
+    "сетк"
+   ]
+  },
+  {
+   "id": "buckler",
+   "name": "Баклер",
+   "cat": "shield",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand2",
+   "kw": [
+    "баклер",
+    "кулачн",
+    "щит"
+   ]
+  },
+  {
+   "id": "shield",
+   "name": "Щит",
+   "cat": "shield",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand2",
+   "kw": [
+    "щит"
+   ]
+  },
+  {
+   "id": "kite_shield",
+   "name": "Каплевидный щит",
+   "cat": "shield",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand2",
+   "kw": [
+    "каплевидн",
+    "рыцарск",
+    "щит"
+   ]
+  },
+  {
+   "id": "tower_shield",
+   "name": "Ростовой щит",
+   "cat": "shield",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand2",
+   "kw": [
+    "ростов",
+    "башенн",
+    "павез",
+    "щит"
+   ]
+  },
+  {
+   "id": "focus_orb",
+   "name": "Сфера-фокус",
+   "cat": "shield",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand2",
+   "kw": [
+    "фокус",
+    "сфера"
+   ]
+  },
+  {
+   "id": "body",
+   "name": "Доспех",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "доспех",
+    "броня",
+    "кирас"
+   ]
+  },
+  {
+   "id": "robe",
+   "name": "Мантия",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "мантия",
+    "ряса",
+    "роба",
+    "балахон",
+    "одеян"
+   ]
+  },
+  {
+   "id": "mage_robe",
+   "name": "Расшитая мантия",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "расшит",
+    "мантия",
+    "чародей"
+   ]
+  },
+  {
+   "id": "leather_armour",
+   "name": "Кожаный доспех",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "кожан",
+    "доспех",
+    "куртк",
+    "стёган"
+   ]
+  },
+  {
+   "id": "animal_skin",
+   "name": "Звериная шкура",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "шкур",
+    "мех"
+   ]
+  },
+  {
+   "id": "ring_mail",
+   "name": "Кольчужная рубаха",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "кольчужн",
+    "рубах"
+   ]
+  },
+  {
+   "id": "chain_mail",
+   "name": "Кольчуга",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "кольчуг",
+    "хауберк"
+   ]
+  },
+  {
+   "id": "scale_mail",
+   "name": "Чешуйчатый доспех",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "чешуйчат",
+    "бригантин",
+    "ламелляр"
+   ]
+  },
+  {
+   "id": "plate",
+   "name": "Латы",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "лат",
+    "латн"
+   ]
+  },
+  {
+   "id": "dragon_armour",
+   "name": "Драконья чешуя",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "драконь"
+   ]
+  },
+  {
+   "id": "cloak",
+   "name": "Плащ",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "kw": [
+    "плащ"
+   ]
+  },
+  {
+   "id": "leather_cloak",
+   "name": "Кожаный плащ",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "kw": [
+    "кожан",
+    "плащ"
+   ]
+  },
+  {
+   "id": "fine_cloak",
+   "name": "Дорожный плащ",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "kw": [
+    "дорожн",
+    "накидк",
+    "пелерин"
+   ]
+  },
+  {
+   "id": "scarf",
+   "name": "Шарф",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Cloak",
+   "kw": [
+    "шарф",
+    "палантин"
+   ]
+  },
+  {
+   "id": "helmet",
+   "name": "Шлем",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "шлем"
+   ]
+  },
+  {
+   "id": "leather_helm",
+   "name": "Кожаный шлем",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "кожан",
+    "шлем",
+    "капюшон"
+   ]
+  },
+  {
+   "id": "great_helm",
+   "name": "Топфхельм",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "топфхельм",
+    "закрыт",
+    "шлем",
+    "бацинет"
+   ]
+  },
+  {
+   "id": "horned_helm",
+   "name": "Рогатый шлем",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "рогат",
+    "шлем"
+   ]
+  },
+  {
+   "id": "wizard_hat",
+   "name": "Колпак мага",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "колпак",
+    "остроконечн",
+    "шляп"
+   ]
+  },
+  {
+   "id": "hat",
+   "name": "Шляпа",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "шляп"
+   ]
+  },
+  {
+   "id": "archer_hat",
+   "name": "Шляпа с пером",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "перо",
+    "берет"
+   ]
+  },
+  {
+   "id": "gloves",
+   "name": "Перчатки",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Gloves",
+   "kw": [
+    "перчатк",
+    "рукавиц"
+   ]
+  },
+  {
+   "id": "gauntlets",
+   "name": "Латные рукавицы",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Gloves",
+   "kw": [
+    "латн",
+    "рукавиц",
+    "наруч"
+   ]
+  },
+  {
+   "id": "fine_gloves",
+   "name": "Тонкие перчатки",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Gloves",
+   "kw": [
+    "тонк",
+    "перчатк"
+   ]
+  },
+  {
+   "id": "boots",
+   "name": "Сапоги",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "kw": [
+    "сапог",
+    "ботинк"
+   ]
+  },
+  {
+   "id": "heavy_boots",
+   "name": "Тяжёлые сапоги",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "kw": [
+    "тяжёл",
+    "сапог",
+    "поножи"
+   ]
+  },
+  {
+   "id": "fine_boots",
+   "name": "Мягкие сапоги",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "kw": [
+    "мягк",
+    "сапог",
+    "туфл"
+   ]
+  },
+  {
+   "id": "belt",
+   "name": "Пояс",
+   "cat": "armor",
+   "w": 2,
+   "h": 1,
+   "slot": "Belt",
+   "kw": [
+    "пояс",
+    "ремень",
+    "кушак"
+   ]
+  },
+  {
+   "id": "amulet",
+   "name": "Амулет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "амулет"
+   ]
+  },
+  {
+   "id": "amulet_ruby",
+   "name": "Рубиновый амулет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "рубинов",
+    "амулет"
+   ]
+  },
+  {
+   "id": "amulet_silver",
+   "name": "Серебряный медальон",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "медальон",
+    "серебрян"
+   ]
+  },
+  {
+   "id": "amulet_bone",
+   "name": "Костяной оберег",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "оберег",
+    "костян"
+   ]
+  },
+  {
+   "id": "amulet_skull",
+   "name": "Амулет-череп",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "череп",
+    "некро"
+   ]
+  },
+  {
+   "id": "amulet_sun",
+   "name": "Солнечный амулет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "солнечн",
+    "святой",
+    "символ"
+   ]
+  },
+  {
+   "id": "amulet_scarab",
+   "name": "Скарабей",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "скараб"
+   ]
+  },
+  {
+   "id": "ring",
+   "name": "Кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "кольц",
+    "перстень"
+   ]
+  },
+  {
+   "id": "ring2",
+   "name": "Перстень",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "перстень"
+   ]
+  },
+  {
+   "id": "ring_gold",
+   "name": "Золотое кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "золот",
+    "кольц"
+   ]
+  },
+  {
+   "id": "ring_silver",
+   "name": "Серебряное кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "серебрян",
+    "кольц"
+   ]
+  },
+  {
+   "id": "ring_iron",
+   "name": "Железное кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "железн",
+    "кольц"
+   ]
+  },
+  {
+   "id": "ring_ruby",
+   "name": "Рубиновый перстень",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "рубин"
+   ]
+  },
+  {
+   "id": "ring_emerald",
+   "name": "Изумрудный перстень",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "изумруд"
+   ]
+  },
+  {
+   "id": "ring_snake",
+   "name": "Кольцо-змея",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "змеин"
+   ]
+  },
+  {
+   "id": "ring_eye",
+   "name": "Кольцо с оком",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "око",
+    "глаз"
+   ]
+  },
+  {
+   "id": "potion_red",
+   "name": "Красное зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "лечен",
+    "исцелен",
+    "красн",
+    "зель"
+   ]
+  },
+  {
+   "id": "potion_amber",
+   "name": "Янтарное зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "янтарн"
+   ]
+  },
+  {
+   "id": "potion_cyan",
+   "name": "Голубое зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "ман",
+    "голуб"
+   ]
+  },
+  {
+   "id": "potion_emerald",
+   "name": "Зелёное зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "зелён",
+    "противояд"
+   ]
+  },
+  {
+   "id": "potion_smoky",
+   "name": "Дымчатое зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "дымчат"
+   ]
+  },
+  {
+   "id": "potion_blue",
+   "name": "Синее зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "син",
+    "зель"
+   ]
+  },
+  {
+   "id": "potion_golden",
+   "name": "Золотое зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "золот",
+    "зель",
+    "эликсир"
+   ]
+  },
+  {
+   "id": "potion_pink",
+   "name": "Розовое зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "розов",
+    "любовн"
+   ]
+  },
+  {
+   "id": "potion_black",
+   "name": "Чёрное зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "чёрн",
+    "яд"
+   ]
+  },
+  {
+   "id": "potion_white",
+   "name": "Белое зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "бел",
+    "молок"
+   ]
+  },
+  {
+   "id": "potion_bubbly",
+   "name": "Шипучее зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "шипуч",
+    "пузыр"
+   ]
+  },
+  {
+   "id": "potion_murky",
+   "name": "Мутное зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "мутн",
+    "отвар"
+   ]
+  },
+  {
+   "id": "potion_magenta",
+   "name": "Пурпурное зелье",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "пурпурн",
+    "фиолет"
+   ]
+  },
+  {
+   "id": "phial",
+   "name": "Флакон",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "флакон",
+    "склянк"
+   ]
+  },
+  {
+   "id": "bottle",
+   "name": "Бутыль",
+   "cat": "potion",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "бутыл",
+    "вин",
+    "эль"
+   ]
+  },
+  {
+   "id": "scroll",
+   "name": "Свиток",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "свиток"
+   ]
+  },
+  {
+   "id": "scroll_red",
+   "name": "Свиток с красной печатью",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "печат",
+    "указ"
+   ]
+  },
+  {
+   "id": "scroll_blue",
+   "name": "Синий свиток",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "син",
+    "свиток"
+   ]
+  },
+  {
+   "id": "scroll_green",
+   "name": "Зелёный свиток",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "зелён",
+    "свиток"
+   ]
+  },
+  {
+   "id": "parchment",
+   "name": "Пергамент",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "пергамент",
+    "письм",
+    "записк"
+   ]
+  },
+  {
+   "id": "map",
+   "name": "Карта",
+   "cat": "scroll",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "карт"
+   ]
+  },
+  {
+   "id": "book",
+   "name": "Книга",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "книг",
+    "том"
+   ]
+  },
+  {
+   "id": "book_red",
+   "name": "Красный фолиант",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "фолиант"
+   ]
+  },
+  {
+   "id": "book_green",
+   "name": "Зелёный гримуар",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "гримуар"
+   ]
+  },
+  {
+   "id": "book_blue",
+   "name": "Окованная книга",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "окован"
+   ]
+  },
+  {
+   "id": "book_gold",
+   "name": "Золочёная книга",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "золочён",
+    "священн",
+    "писан",
+    "молитвенн"
+   ]
+  },
+  {
+   "id": "book_dead",
+   "name": "Книга мёртвых",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "мёртв",
+    "некроном"
+   ]
+  },
+  {
+   "id": "manual",
+   "name": "Учебник",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "учебник",
+    "руководств",
+    "дневник",
+    "журнал"
+   ]
+  },
+  {
+   "id": "bread",
+   "name": "Хлеб",
+   "cat": "food",
+   "w": 2,
+   "h": 1,
+   "kw": [
+    "хлеб",
+    "лепёшк"
+   ]
+  },
+  {
+   "id": "meat",
+   "name": "Мясо",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "мяс",
+    "жарк",
+    "окорок"
+   ]
+  },
+  {
+   "id": "jerky",
+   "name": "Вяленое мясо",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "вялен",
+    "солонин",
+    "сухпа",
+    "паёк"
+   ]
+  },
+  {
+   "id": "sausage",
+   "name": "Колбаса",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "колбас"
+   ]
+  },
+  {
+   "id": "cheese",
+   "name": "Сыр",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "сыр"
+   ]
+  },
+  {
+   "id": "apple",
+   "name": "Яблоко",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "яблок"
+   ]
+  },
+  {
+   "id": "pear",
+   "name": "Груша",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "груш"
+   ]
+  },
+  {
+   "id": "orange",
+   "name": "Апельсин",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "апельсин"
+   ]
+  },
+  {
+   "id": "grapes",
+   "name": "Виноград",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "виноград",
+    "ягод"
+   ]
+  },
+  {
+   "id": "strawberry",
+   "name": "Земляника",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "земляник",
+    "клубник"
+   ]
+  },
+  {
+   "id": "honeycomb",
+   "name": "Соты",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "сот",
+    "мёд"
+   ]
+  },
+  {
+   "id": "coins",
+   "name": "Монеты",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "монет",
+    "золот",
+    "серебр",
+    "медяк"
+   ]
+  },
+  {
+   "id": "gold_pile",
+   "name": "Горсть золота",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "горст",
+    "куча",
+    "золот"
+   ]
+  },
+  {
+   "id": "gem",
+   "name": "Самоцвет",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "самоцвет",
+    "драгоцен",
+    "камен"
+   ]
+  },
+  {
+   "id": "gem_red",
+   "name": "Красный самоцвет",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "рубин",
+    "красн",
+    "камен"
+   ]
+  },
+  {
+   "id": "gem_green",
+   "name": "Зелёный самоцвет",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "изумруд",
+    "зелён",
+    "камен"
+   ]
+  },
+  {
+   "id": "gem_blue",
+   "name": "Синий самоцвет",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "сапфир",
+    "син",
+    "камен"
+   ]
+  },
+  {
+   "id": "gem_violet",
+   "name": "Фиолетовый самоцвет",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "аметист",
+    "фиолет"
+   ]
+  },
+  {
+   "id": "gem_yellow",
+   "name": "Жёлтый самоцвет",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "топаз",
+    "цитрин",
+    "жёлт",
+    "камен"
+   ]
+  },
+  {
+   "id": "rune",
+   "name": "Руна",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "рун"
+   ]
+  },
+  {
+   "id": "talisman_dragon",
+   "name": "Драконий талисман",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "талисман",
+    "драко"
+   ]
+  },
+  {
+   "id": "talisman_spider",
+   "name": "Паучий талисман",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "паук"
+   ]
+  },
+  {
+   "id": "idol",
+   "name": "Статуэтка",
+   "cat": "valuable",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "статуэтк",
+    "идол",
+    "фигурк"
+   ]
+  },
+  {
+   "id": "key",
+   "name": "Ключ",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "ключ"
+   ]
+  },
+  {
+   "id": "lamp",
+   "name": "Масляная лампа",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "ламп"
+   ]
+  },
+  {
+   "id": "lantern",
+   "name": "Фонарь",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "фонар",
+    "факел"
+   ]
+  },
+  {
+   "id": "sack",
+   "name": "Мешок",
+   "cat": "tool",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "мешок",
+    "сумк",
+    "котомк",
+    "рюкзак"
+   ]
+  },
+  {
+   "id": "horn",
+   "name": "Рог",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "рог",
+    "горн"
+   ]
+  },
+  {
+   "id": "tambourine",
+   "name": "Бубен",
+   "cat": "tool",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "бубен",
+    "барабан",
+    "музыкальн",
+    "лютн"
+   ]
+  },
+  {
+   "id": "fan",
+   "name": "Веер",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "веер"
+   ]
+  },
+  {
+   "id": "mirror",
+   "name": "Зеркало",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "зеркал"
+   ]
+  },
+  {
+   "id": "box",
+   "name": "Шкатулка",
+   "cat": "tool",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "шкатулк",
+    "ларец",
+    "сундучок",
+    "короб"
+   ]
+  },
+  {
+   "id": "lightning_rod",
+   "name": "Громовой жезл",
+   "cat": "tool",
+   "w": 1,
+   "h": 3,
+   "diag": true,
+   "kw": [
+    "громов",
+    "молни"
+   ]
+  },
+  {
+   "id": "vane",
+   "name": "Флюгер",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "флюгер",
+    "компас"
+   ]
+  },
+  {
+   "id": "gizmo",
+   "name": "Механизм",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "механизм",
+    "шестерн",
+    "устройств",
+    "прибор"
+   ]
+  },
+  {
+   "id": "torch",
+   "name": "Факел",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "факел"
+   ]
+  },
+  {
+   "id": "pickaxe",
+   "name": "Кирка",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "кирк",
+    "кайл",
+    "лопат"
+   ]
+  },
+  {
+   "id": "lens",
+   "name": "Лупа",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "лупа",
+    "линз",
+    "увеличит"
+   ]
+  },
+  {
+   "id": "compass",
+   "name": "Компас",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "компас"
+   ]
+  },
+  {
+   "id": "skull_lantern",
+   "name": "Череп-светильник",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "череп",
+    "светильн"
+   ]
+  },
+  {
+   "id": "drum",
+   "name": "Барабан",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "барабан",
+    "бочонок"
+   ]
+  },
+  {
+   "id": "voucher",
+   "name": "Билет",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "билет",
+    "пропуск",
+    "грамот",
+    "векс"
+   ]
+  },
+  {
+   "id": "glass_orb",
+   "name": "Хрустальный шар",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "стеклянн",
+    "шар",
+    "хрустальн",
+    "кристалл"
+   ]
+  },
+  {
+   "id": "orb",
+   "name": "Сфера",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "сфера",
+    "орб",
+    "шар"
+   ]
+  },
+  {
+   "id": "stone",
+   "name": "Камень",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "камень",
+    "булыжник"
+   ]
+  },
+  {
+   "id": "bone",
+   "name": "Кость",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "кост"
+   ]
+  },
+  {
+   "id": "skull",
+   "name": "Череп",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "череп"
+   ]
+  },
+  {
+   "id": "avatar",
+   "name": "Силуэт героя",
+   "cat": "misc",
+   "w": 1,
+   "h": 1
+  },
+  {
+   "id": "fang",
+   "name": "Клык",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "клык",
+    "коготь",
+    "зуб",
+    "бивень"
+   ]
+  },
+  {
+   "id": "horned_skull",
+   "name": "Рогатый череп",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "рогат",
+    "череп",
+    "рога",
+    "трофей"
+   ]
+  },
+  {
+   "id": "scales",
+   "name": "Чешуя",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "чешу",
+    "панцир"
+   ]
+  },
+  {
+   "id": "herbs",
+   "name": "Лечебные травы",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "трав",
+    "корен",
+    "цвет",
+    "лист",
+    "зверобой",
+    "шалфей"
+   ]
+  },
+  {
+   "id": "mushroom",
+   "name": "Гриб",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "гриб",
+    "спор",
+    "мухомор",
+    "трюфел"
+   ]
+  },
+  {
+   "id": "ingot",
+   "name": "Слиток",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "слиток",
+    "металл",
+    "руда",
+    "желез",
+    "сталь",
+    "серебр",
+    "мифрил"
+   ]
+  },
+  {
+   "id": "fur",
+   "name": "Мех",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "мех",
+    "шерст",
+    "перья",
+    "перо",
+    "пух"
+   ]
+  },
+  {
+   "id": "leather",
+   "name": "Выделанная кожа",
+   "cat": "material",
+   "w": 2,
+   "h": 1,
+   "kw": [
+    "кож",
+    "шкур",
+    "выделан"
+   ]
+  },
+  {
+   "id": "rope",
+   "name": "Верёвка",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "верёв",
+    "верев",
+    "канат",
+    "аркан"
+   ]
+  },
+  {
+   "id": "crystals",
+   "name": "Кристаллы",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "кристал",
+    "осколк",
+    "друз",
+    "эссенц"
+   ]
+  },
+  {
+   "id": "sword_singing",
+   "name": "Поющий меч",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "поющ",
+    "меч",
+    "золот",
+    "клинок"
+   ]
+  },
+  {
+   "id": "sword_power",
+   "name": "Меч могущества",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "могуществ",
+    "меч",
+    "красн",
+    "клинок"
+   ]
+  },
+  {
+   "id": "katana",
+   "name": "Катана",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "катан",
+    "тати",
+    "вакидзаси"
+   ]
+  },
+  {
+   "id": "sword_blood",
+   "name": "Кровавый клинок",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "кровав",
+    "клинок"
+   ]
+  },
+  {
+   "id": "sword_flame",
+   "name": "Пылающий клинок",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "пылающ",
+    "огнен",
+    "меч",
+    "пламен",
+    "клинок"
+   ]
+  },
+  {
+   "id": "axe_frost",
+   "name": "Ледяная секира",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "ледян",
+    "топор",
+    "ледян",
+    "секир",
+    "морозн"
+   ]
+  },
+  {
+   "id": "mace_holy",
+   "name": "Булава охотника на нежить",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "свят",
+    "булав",
+    "серебрян",
+    "булав",
+    "охотник",
+    "на",
+    "нежить"
+   ]
+  },
+  {
+   "id": "lance_wyrm",
+   "name": "Драконоборец",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "драконобор",
+    "копьё",
+    "драконоборц"
+   ]
+  },
+  {
+   "id": "bow_storm",
+   "name": "Штормовой лук",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "штормов",
+    "лук",
+    "грозов",
+    "лук"
+   ]
+  },
+  {
+   "id": "maul_skull",
+   "name": "Черепокол",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "черепокол",
+    "череполом"
+   ]
+  },
+  {
+   "id": "dagger_vampire",
+   "name": "Клык вампира",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "вампир",
+    "кинжал",
+    "клык",
+    "вампира"
+   ]
+  },
+  {
+   "id": "spear_crystal",
+   "name": "Хрустальное копьё",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "хрустал",
+    "копь"
+   ]
+  },
+  {
+   "id": "sword_arc",
+   "name": "Грозовой клинок",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "грозов",
+    "клинок",
+    "молни",
+    "меч"
+   ]
+  },
+  {
+   "id": "axe_holy",
+   "name": "Святая секира",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "свят",
+    "секир",
+    "золот",
+    "секир"
+   ]
+  },
+  {
+   "id": "axe_demon",
+   "name": "Демоническая секира",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "демонич",
+    "секир"
+   ]
+  },
+  {
+   "id": "staff_venom",
+   "name": "Посох яда",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "посох",
+    "яда",
+    "ядовит",
+    "посох"
+   ]
+  },
+  {
+   "id": "maul_dark",
+   "name": "Тёмная кувалда",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "тёмн",
+    "кувалд",
+    "тёмн",
+    "молот"
+   ]
+  },
+  {
+   "id": "dagger_precise",
+   "name": "Нож меткости",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "нож",
+    "меткост"
+   ]
+  },
+  {
+   "id": "crossbow_sniper",
+   "name": "Снайперский арбалет",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": true,
+   "kw": [
+    "снайпер",
+    "арбалет"
+   ]
+  },
+  {
+   "id": "staff_elements",
+   "name": "Посох стихий",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "посох",
+    "стихий",
+    "стихийн",
+    "посох"
+   ]
+  },
+  {
+   "id": "staff_fire",
+   "name": "Посох пламени",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "посох",
+    "пламен",
+    "огнен",
+    "посох"
+   ]
+  },
+  {
+   "id": "wand_winter",
+   "name": "Жезл вечной зимы",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "жезл",
+    "зимы",
+    "ледян",
+    "жезл"
+   ]
+  },
+  {
+   "id": "staff_battle",
+   "name": "Боевой посох чародея",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "боев",
+    "посох",
+    "чародея"
+   ]
+  },
+  {
+   "id": "whip_spell",
+   "name": "Плеть-заклинательница",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "art": true,
+   "kw": [
+    "заклинательн",
+    "плеть"
+   ]
+  },
+  {
+   "id": "cutlass",
+   "name": "Абордажная сабля",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "абордаж",
+    "сабл",
+    "кортик"
+   ]
+  },
+  {
+   "id": "scimitar_bloom",
+   "name": "Цветущий ятаган",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "цветущ",
+    "ятаган"
+   ]
+  },
+  {
+   "id": "sword_leech",
+   "name": "Клинок-пиявка",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "пиявк",
+    "клинок",
+    "волнист"
+   ]
+  },
+  {
+   "id": "sabre_crimson",
+   "name": "Багровая сабля",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "багров",
+    "сабл"
+   ]
+  },
+  {
+   "id": "scythe_curse",
+   "name": "Проклятая коса",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "проклят",
+    "кос"
+   ]
+  },
+  {
+   "id": "sceptre_torment",
+   "name": "Скипетр мучений",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "скипетр",
+    "мучен"
+   ]
+  },
+  {
+   "id": "lance_order",
+   "name": "Копьё порядка",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "копьё",
+    "порядк",
+    "рыцарск",
+    "копь"
+   ]
+  },
+  {
+   "id": "lance_force",
+   "name": "Силовое копьё",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "силов",
+    "копь"
+   ]
+  },
+  {
+   "id": "helm_dragon",
+   "name": "Драконья маска",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "art": true,
+   "kw": [
+    "драконь",
+    "маск"
+   ]
+  },
+  {
+   "id": "crown",
+   "name": "Корона",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "art": true,
+   "kw": [
+    "корон",
+    "диадем",
+    "венец"
+   ]
+  },
+  {
+   "id": "gloves_power",
+   "name": "Перчатки мощи",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Gloves",
+   "art": true,
+   "kw": [
+    "перчатки",
+    "мощи"
+   ]
+  },
+  {
+   "id": "gauntlets_war",
+   "name": "Рукавицы войны",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Gloves",
+   "art": true,
+   "kw": [
+    "рукавицы",
+    "войны"
+   ]
+  },
+  {
+   "id": "boots_seven",
+   "name": "Семимильные сапоги",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "art": true,
+   "kw": [
+    "семимильн",
+    "сапог",
+    "скороход"
+   ]
+  },
+  {
+   "id": "cloak_night",
+   "name": "Плащ ночи",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "art": true,
+   "kw": [
+    "плащ",
+    "ночи",
+    "ночн",
+    "плащ"
+   ]
+  },
+  {
+   "id": "cloak_starlight",
+   "name": "Звёздный плащ",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "art": true,
+   "kw": [
+    "звёздн",
+    "плащ",
+    "звездн",
+    "плащ"
+   ]
+  },
+  {
+   "id": "hat_bear",
+   "name": "Медвежья шапка",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "art": true,
+   "kw": [
+    "медвеж",
+    "шапк"
+   ]
+  },
+  {
+   "id": "cloak_rat",
+   "name": "Плащ из крысиных шкур",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "art": true,
+   "kw": [
+    "крысин",
+    "плащ"
+   ]
+  },
+  {
+   "id": "mail_salamander",
+   "name": "Саламандровая кольчуга",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "art": true,
+   "kw": [
+    "саламандр",
+    "кольчуг"
+   ]
+  },
+  {
+   "id": "plate_orange",
+   "name": "Янтарные латы",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "art": true,
+   "kw": [
+    "янтарн",
+    "лат"
+   ]
+  },
+  {
+   "id": "scale_dragonking",
+   "name": "Чешуя драконьего короля",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "art": true,
+   "kw": [
+    "драконьего",
+    "короля",
+    "чешуя"
+   ]
+  },
+  {
+   "id": "cloak_thief",
+   "name": "Плащ вора",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "art": true,
+   "kw": [
+    "плащ",
+    "вора",
+    "воровск",
+    "плащ"
+   ]
+  },
+  {
+   "id": "hat_council",
+   "name": "Колпак верховного совета",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "art": true,
+   "kw": [
+    "колпак",
+    "совета",
+    "зелён",
+    "колпак"
+   ]
+  },
+  {
+   "id": "armor_justicar",
+   "name": "Регалии юстициара",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "art": true,
+   "kw": [
+    "юстициар",
+    "регали",
+    "паладинск",
+    "лат"
+   ]
+  },
+  {
+   "id": "robe_vines",
+   "name": "Одеяние лоз",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "art": true,
+   "kw": [
+    "лоз",
+    "одеяни",
+    "друидск",
+    "мантия"
+   ]
+  },
+  {
+   "id": "boots_spider",
+   "name": "Паучьи сапоги",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "art": true,
+   "kw": [
+    "паучь",
+    "сапог"
+   ]
+  },
+  {
+   "id": "skull_cursed",
+   "name": "Проклятый череп",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "art": true,
+   "kw": [
+    "проклят",
+    "череп"
+   ]
+  },
+  {
+   "id": "shield_storm",
+   "name": "Щит королевы бурь",
+   "cat": "shield",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand2",
+   "art": true,
+   "kw": [
+    "щит",
+    "бурь",
+    "грозов",
+    "щит"
+   ]
+  },
+  {
+   "id": "shield_gong",
+   "name": "Щит-гонг",
+   "cat": "shield",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand2",
+   "art": true,
+   "kw": [
+    "гонг",
+    "бронзов",
+    "щит"
+   ]
+  },
+  {
+   "id": "boots_mountain",
+   "name": "Горные сапоги",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "art": true,
+   "kw": [
+    "горн",
+    "сапог"
+   ]
+  },
+  {
+   "id": "armor_bone",
+   "name": "Костяная броня",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "art": true,
+   "kw": [
+    "костян",
+    "брон",
+    "костян",
+    "доспех"
+   ]
+  },
+  {
+   "id": "slippers",
+   "name": "Туфли танцора",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "art": true,
+   "kw": [
+    "туфл",
+    "танцор",
+    "башмак"
+   ]
+  },
+  {
+   "id": "plate_crystal",
+   "name": "Кристальные латы",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "art": true,
+   "kw": [
+    "кристал",
+    "лат"
+   ]
+  },
+  {
+   "id": "dragon_storm_armour",
+   "name": "Доспех грозового дракона",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "грозов",
+    "дракон",
+    "доспех",
+    "син",
+    "дракон"
+   ]
+  },
+  {
+   "id": "dragon_ice_armour",
+   "name": "Доспех ледяного дракона",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "ледян",
+    "дракон",
+    "бел",
+    "дракон"
+   ]
+  },
+  {
+   "id": "dragon_shadow_armour",
+   "name": "Доспех теневого дракона",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "тенев",
+    "дракон",
+    "чёрн",
+    "дракон"
+   ]
+  },
+  {
+   "id": "dragon_gold_armour",
+   "name": "Доспех золотого дракона",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "золот",
+    "дракон"
+   ]
+  },
+  {
+   "id": "dragon_acid_armour",
+   "name": "Доспех кислотного дракона",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "кислот",
+    "дракон",
+    "жёлт",
+    "дракон"
+   ]
+  },
+  {
+   "id": "dragon_swamp_armour",
+   "name": "Доспех болотного дракона",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "болотн",
+    "дракон",
+    "зелён",
+    "дракон"
+   ]
+  },
+  {
+   "id": "dragon_pearl_armour",
+   "name": "Доспех жемчужного дракона",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "жемчужн",
+    "дракон"
+   ]
+  },
+  {
+   "id": "troll_hide",
+   "name": "Доспех из шкуры тролля",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "тролл",
+    "шкур",
+    "доспех",
+    "из",
+    "шкуры"
+   ]
+  },
+  {
+   "id": "plate_dark",
+   "name": "Воронёные латы",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "воронён",
+    "лат",
+    "чёрн",
+    "лат"
+   ]
+  },
+  {
+   "id": "brigandine",
+   "name": "Бригантина",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "бригантин",
+    "куяк"
+   ]
+  },
+  {
+   "id": "robe_teal",
+   "name": "Бирюзовая мантия",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "бирюзов",
+    "мантия"
+   ]
+  },
+  {
+   "id": "robe_ornate",
+   "name": "Расшитое одеяние",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "kw": [
+    "расшит",
+    "одеяни",
+    "парадн",
+    "мантия"
+   ]
+  },
+  {
+   "id": "cloak_grey",
+   "name": "Серый плащ",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "kw": [
+    "сер",
+    "плащ"
+   ]
+  },
+  {
+   "id": "cloak_royal",
+   "name": "Пурпурный плащ",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "kw": [
+    "пурпурн",
+    "плащ",
+    "королевск",
+    "мантия"
+   ]
+  },
+  {
+   "id": "gauntlets_ornate",
+   "name": "Узорные рукавицы",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Gloves",
+   "kw": [
+    "узорн",
+    "рукавиц"
+   ]
+  },
+  {
+   "id": "boots_elven",
+   "name": "Эльфийские сапоги",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "kw": [
+    "эльфийск",
+    "сапог"
+   ]
+  },
+  {
+   "id": "helm_ornate",
+   "name": "Узорный шлем",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "узорн",
+    "шлем"
+   ]
+  },
+  {
+   "id": "helm_plumed",
+   "name": "Шлем с плюмажем",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "плюмаж",
+    "гребен",
+    "шлем"
+   ]
+  },
+  {
+   "id": "hat_explorer",
+   "name": "Шляпа путешественника",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "шляп",
+    "путешественник",
+    "широкопол"
+   ]
+  },
+  {
+   "id": "cap_jester",
+   "name": "Колпак шута",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "шут",
+    "колпак"
+   ]
+  },
+  {
+   "id": "helm_barbute",
+   "name": "Барбют",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "kw": [
+    "барбют",
+    "стальн",
+    "шлем"
+   ]
+  },
+  {
+   "id": "shield_heraldic",
+   "name": "Геральдический щит",
+   "cat": "shield",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand2",
+   "kw": [
+    "геральд",
+    "герб",
+    "щит"
+   ]
+  },
+  {
+   "id": "tower_shield_dark",
+   "name": "Тёмный ростовой щит",
+   "cat": "shield",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand2",
+   "kw": [
+    "тёмн",
+    "ростов",
+    "щит"
+   ]
+  },
+  {
+   "id": "buckler_bronze",
+   "name": "Бронзовый баклер",
+   "cat": "shield",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand2",
+   "kw": [
+    "бронзов",
+    "баклер",
+    "кругл",
+    "щит"
+   ]
+  },
+  {
+   "id": "orb_chaos",
+   "name": "Сфера хаоса",
+   "cat": "shield",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand2",
+   "art": true,
+   "kw": [
+    "сфера",
+    "хаоса"
+   ]
+  },
+  {
+   "id": "bardiche",
+   "name": "Бердыш",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "бердыш"
+   ]
+  },
+  {
+   "id": "broad_axe",
+   "name": "Широкий топор",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "широк",
+    "топор"
+   ]
+  },
+  {
+   "id": "dire_flail",
+   "name": "Тяжёлый цеп",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "тяжёл",
+    "цеп",
+    "молотил"
+   ]
+  },
+  {
+   "id": "double_sword",
+   "name": "Парный клинок",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "парн",
+    "клинок",
+    "двойн",
+    "меч"
+   ]
+  },
+  {
+   "id": "eveningstar",
+   "name": "Шипастая звезда",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "шипаст",
+    "звезд"
+   ]
+  },
+  {
+   "id": "giant_club",
+   "name": "Огромная дубина",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "огромн",
+    "дубин",
+    "дубина",
+    "великана"
+   ]
+  },
+  {
+   "id": "spiked_club",
+   "name": "Шипастая дубина",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "шипаст",
+    "дубин"
+   ]
+  },
+  {
+   "id": "blessed_blade",
+   "name": "Благословенный клинок",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "art": true,
+   "kw": [
+    "благословен",
+    "клинок",
+    "свят",
+    "меч"
+   ]
+  },
+  {
+   "id": "demon_trident",
+   "name": "Демонический трезубец",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "демонич",
+    "трезуб"
+   ]
+  },
+  {
+   "id": "demon_whip",
+   "name": "Демоническая плеть",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "art": true,
+   "kw": [
+    "демонич",
+    "плеть"
+   ]
+  },
+  {
+   "id": "lajatang",
+   "name": "Двулезвийный посох",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "двулезвийн",
+    "посох"
+   ]
+  },
+  {
+   "id": "quickblade",
+   "name": "Стремительный клинок",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "стремител",
+    "клинок"
+   ]
+  },
+  {
+   "id": "triple_sword",
+   "name": "Трёхклинковый меч",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "трёхклинк",
+    "меч"
+   ]
+  },
+  {
+   "id": "partisan",
+   "name": "Протазан",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "протазан"
+   ]
+  },
+  {
+   "id": "sacred_scourge",
+   "name": "Священная плеть",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "art": true,
+   "kw": [
+    "священн",
+    "плеть"
+   ]
+  },
+  {
+   "id": "trishula",
+   "name": "Тришула",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "тришул",
+    "золот",
+    "трезуб"
+   ]
+  },
+  {
+   "id": "staff_crook",
+   "name": "Посох фараона",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "art": true,
+   "kw": [
+    "посох",
+    "фараона",
+    "жезл-крюк"
+   ]
+  },
+  {
+   "id": "long_sword_steel",
+   "name": "Меч из синей стали",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "син",
+    "стал",
+    "меч"
+   ]
+  },
+  {
+   "id": "dagger_steel",
+   "name": "Стилет",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "стилет",
+    "мизерикорд"
+   ]
+  },
+  {
+   "id": "mace_flanged",
+   "name": "Пернач",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "пернач"
+   ]
+  },
+  {
+   "id": "orcbow",
+   "name": "Орочий лук",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "орочий",
+    "лук",
+    "орочь",
+    "лук"
+   ]
+  },
+  {
+   "id": "blowgun",
+   "name": "Духовая трубка",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "духов",
+    "трубк"
+   ]
+  },
+  {
+   "id": "silver_arrows",
+   "name": "Серебряные стрелы",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "diag": true,
+   "kw": [
+    "серебрян",
+    "стрел"
+   ]
+  },
+  {
+   "id": "sling_bullets",
+   "name": "Свинцовые пули",
+   "cat": "weapon",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "пул",
+    "свинцов"
+   ]
+  },
+  {
+   "id": "rock",
+   "name": "Булыжник",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "булыжн",
+    "глыб"
+   ]
+  },
+  {
+   "id": "triple_crossbow",
+   "name": "Многозарядный арбалет",
+   "cat": "weapon",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "kw": [
+    "многозаряд",
+    "арбалет"
+   ]
+  },
+  {
+   "id": "staff_bone",
+   "name": "Костяной посох",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "костян",
+    "посох"
+   ]
+  },
+  {
+   "id": "staff_gold",
+   "name": "Золотой посох",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "золот",
+    "посох"
+   ]
+  },
+  {
+   "id": "staff_blood",
+   "name": "Кровавый посох",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "кровав",
+    "посох"
+   ]
+  },
+  {
+   "id": "staff_sun",
+   "name": "Посох солнца",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "посох",
+    "солнца",
+    "солнечн",
+    "посох"
+   ]
+  },
+  {
+   "id": "staff_ember",
+   "name": "Посох углей",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "посох",
+    "угл"
+   ]
+  },
+  {
+   "id": "staff_orb",
+   "name": "Посох со сферой",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "посох",
+    "со",
+    "сферой"
+   ]
+  },
+  {
+   "id": "staff_spiral",
+   "name": "Спиральный посох",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "спирал",
+    "посох"
+   ]
+  },
+  {
+   "id": "staff_arcane",
+   "name": "Посох тайн",
+   "cat": "weapon",
+   "w": 1,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "diag": true,
+   "kw": [
+    "посох",
+    "тайн",
+    "арканн",
+    "посох"
+   ]
+  },
+  {
+   "id": "wand_bone",
+   "name": "Костяная палочка",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "костян",
+    "палочк"
+   ]
+  },
+  {
+   "id": "wand_fire",
+   "name": "Огненный жезл",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "огнен",
+    "жезл",
+    "огнен",
+    "палочк"
+   ]
+  },
+  {
+   "id": "wand_void",
+   "name": "Жезл пустоты",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "жезл",
+    "пустот"
+   ]
+  },
+  {
+   "id": "wand_frost",
+   "name": "Ледяной жезл",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "ледян",
+    "жезл",
+    "ледян",
+    "палочк"
+   ]
+  },
+  {
+   "id": "wand_storm",
+   "name": "Грозовой жезл",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "грозов",
+    "жезл"
+   ]
+  },
+  {
+   "id": "wand_charm",
+   "name": "Жезл очарования",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "жезл",
+    "очарован"
+   ]
+  },
+  {
+   "id": "rod_blood",
+   "name": "Кровавый скипетр",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "кровав",
+    "скипетр"
+   ]
+  },
+  {
+   "id": "rod_royal",
+   "name": "Королевский скипетр",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "королевск",
+    "скипетр"
+   ]
+  },
+  {
+   "id": "rod_shadow",
+   "name": "Тёмный скипетр",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "diag": true,
+   "kw": [
+    "тёмн",
+    "скипетр"
+   ]
+  },
+  {
+   "id": "amulet_amethyst",
+   "name": "Аметистовый амулет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "аметист"
+   ]
+  },
+  {
+   "id": "amulet_jade",
+   "name": "Нефритовый амулет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "нефрит",
+    "амулет"
+   ]
+  },
+  {
+   "id": "amulet_pearl",
+   "name": "Жемчужный амулет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "жемчуж",
+    "амулет",
+    "ожерель"
+   ]
+  },
+  {
+   "id": "amulet_garnet",
+   "name": "Гранатовый амулет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "гранат"
+   ]
+  },
+  {
+   "id": "amulet_gold",
+   "name": "Золотой медальон",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "золот",
+    "медальон"
+   ]
+  },
+  {
+   "id": "amulet_platinum",
+   "name": "Платиновый амулет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "платин"
+   ]
+  },
+  {
+   "id": "amulet_cameo",
+   "name": "Камея",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "каме"
+   ]
+  },
+  {
+   "id": "amulet_filigree",
+   "name": "Филигранный амулет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "kw": [
+    "филигран"
+   ]
+  },
+  {
+   "id": "ring_jade",
+   "name": "Нефритовое кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "нефрит",
+    "кольц"
+   ]
+  },
+  {
+   "id": "ring_opal",
+   "name": "Опаловое кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "опал"
+   ]
+  },
+  {
+   "id": "ring_coral",
+   "name": "Коралловое кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "коралл"
+   ]
+  },
+  {
+   "id": "ring_moonstone",
+   "name": "Кольцо с лунным камнем",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "лунн",
+    "камен"
+   ]
+  },
+  {
+   "id": "ring_tiger",
+   "name": "Кольцо с тигровым глазом",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "тигров",
+    "глаз"
+   ]
+  },
+  {
+   "id": "ring_diamond",
+   "name": "Кольцо с бриллиантом",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "бриллиант",
+    "кольц"
+   ]
+  },
+  {
+   "id": "ring_wood",
+   "name": "Деревянное кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "деревян",
+    "кольц"
+   ]
+  },
+  {
+   "id": "ring_fire",
+   "name": "Пламенное кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "пламен",
+    "кольц",
+    "огнен",
+    "кольц"
+   ]
+  },
+  {
+   "id": "ring_ice",
+   "name": "Ледяное кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "ледян",
+    "кольц"
+   ]
+  },
+  {
+   "id": "ring_blood",
+   "name": "Кровавое кольцо",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "кровав",
+    "кольц"
+   ]
+  },
+  {
+   "id": "ring_void",
+   "name": "Кольцо пустоты",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "kw": [
+    "кольцо",
+    "пустот",
+    "тёмн",
+    "кольц"
+   ]
+  },
+  {
+   "id": "talisman_maw",
+   "name": "Талисман пасти",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "пасть"
+   ]
+  },
+  {
+   "id": "talisman_wolf",
+   "name": "Волчий талисман",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "волч",
+    "талисман"
+   ]
+  },
+  {
+   "id": "talisman_frost",
+   "name": "Инеистый рог-талисман",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "инеист",
+    "рог"
+   ]
+  },
+  {
+   "id": "talisman_medusa",
+   "name": "Талисман горгоны",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "горгон",
+    "медуз"
+   ]
+  },
+  {
+   "id": "talisman_bat",
+   "name": "Талисман нетопыря",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "нетопыр",
+    "летуч",
+    "мыш"
+   ]
+  },
+  {
+   "id": "talisman_storm",
+   "name": "Штормовой талисман",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "штормов",
+    "талисман"
+   ]
+  },
+  {
+   "id": "talisman_sphinx",
+   "name": "Талисман сфинкса",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "сфинкс"
+   ]
+  },
+  {
+   "id": "talisman_fortress",
+   "name": "Талисман крепости",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "крепост"
+   ]
+  },
+  {
+   "id": "talisman_death",
+   "name": "Талисман смерти",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "талисман",
+    "смерти"
+   ]
+  },
+  {
+   "id": "talisman_blade",
+   "name": "Талисман клинков",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "талисман",
+    "клинк"
+   ]
+  },
+  {
+   "id": "talisman_quill",
+   "name": "Игольчатый талисман",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "игл",
+    "дикобраз"
+   ]
+  },
+  {
+   "id": "talisman_hive",
+   "name": "Талисман улья",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "улей",
+    "рой"
+   ]
+  },
+  {
+   "id": "war_horn",
+   "name": "Боевой рог",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "боев",
+    "рог"
+   ]
+  },
+  {
+   "id": "phantom_mirror",
+   "name": "Призрачное зеркало",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "призрачн",
+    "зеркал"
+   ]
+  },
+  {
+   "id": "ornate_flask",
+   "name": "Узорная фляга",
+   "cat": "tool",
+   "w": 1,
+   "h": 2,
+   "kw": [
+    "фляг",
+    "узорн",
+    "бутыл"
+   ]
+  },
+  {
+   "id": "void_sigil",
+   "name": "Печать бездны",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "печать",
+    "бездны"
+   ]
+  },
+  {
+   "id": "golden_ziggurat",
+   "name": "Золотой зиккурат",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "зиккурат",
+    "пирамид"
+   ]
+  },
+  {
+   "id": "crystal_ball",
+   "name": "Хрустальный шар прорицателя",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "прорицат",
+    "шар"
+   ]
+  },
+  {
+   "id": "rune_abyss",
+   "name": "Руна бездны",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "руна",
+    "бездны"
+   ]
+  },
+  {
+   "id": "rune_elven",
+   "name": "Эльфийская руна",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "эльфийск",
+    "рун"
+   ]
+  },
+  {
+   "id": "raw_meat",
+   "name": "Сырое мясо",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "сыр",
+    "мяс",
+    "туш",
+    "вырезк"
+   ]
+  },
+  {
+   "id": "meat_ration",
+   "name": "Мясной паёк",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "мясн",
+    "паёк"
+   ]
+  },
+  {
+   "id": "ration",
+   "name": "Походный паёк",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "паёк",
+    "провиз",
+    "сухар"
+   ]
+  },
+  {
+   "id": "banana",
+   "name": "Банан",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "банан"
+   ]
+  },
+  {
+   "id": "lemon",
+   "name": "Лимон",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "лимон"
+   ]
+  },
+  {
+   "id": "apricot",
+   "name": "Абрикос",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "абрикос",
+    "персик"
+   ]
+  },
+  {
+   "id": "bones",
+   "name": "Кости",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "кости",
+    "скелет",
+    "останк"
+   ]
+  },
+  {
+   "id": "book_purple",
+   "name": "Гримуар тайн",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "гримуар",
+    "тайн"
+   ]
+  },
+  {
+   "id": "book_silver",
+   "name": "Серебряный том",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "серебрян",
+    "том"
+   ]
+  },
+  {
+   "id": "book_cloth",
+   "name": "Холщовый сборник",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "сборник",
+    "рецепт"
+   ]
+  },
+  {
+   "id": "book_leather",
+   "name": "Кожаный дневник",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "дневник",
+    "записн"
+   ]
+  },
+  {
+   "id": "book_turquoise",
+   "name": "Бирюзовый трактат",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "трактат"
+   ]
+  },
+  {
+   "id": "book_magenta",
+   "name": "Малиновый фолиант",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "малинов",
+    "фолиант"
+   ]
+  },
+  {
+   "id": "book_star",
+   "name": "Звёздный атлас",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "kw": [
+    "звёздн",
+    "атлас",
+    "астролог"
+   ]
+  },
+  {
+   "id": "scroll_purple",
+   "name": "Лиловый свиток",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "лилов",
+    "свиток"
+   ]
+  },
+  {
+   "id": "scroll_yellow",
+   "name": "Жёлтый свиток",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "жёлт",
+    "свиток"
+   ]
+  },
+  {
+   "id": "scroll_old",
+   "name": "Старый свиток",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "стар",
+    "свиток",
+    "древн",
+    "свиток"
+   ]
+  },
+  {
+   "id": "gem_pale",
+   "name": "Бледный самоцвет",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "бледн",
+    "самоцвет",
+    "лунн"
+   ]
+  },
+  {
+   "id": "gem_pink",
+   "name": "Розовая шпинель",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "шпинел",
+    "розов",
+    "камен"
+   ]
+  },
+  {
+   "id": "gem_cyan",
+   "name": "Аквамарин",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "аквамарин"
+   ]
+  },
+  {
+   "id": "gem_aqua",
+   "name": "Бирюза",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "бирюз"
+   ]
+  },
+  {
+   "id": "gem_peach",
+   "name": "Солнечный камень",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "солнечн",
+    "камен"
+   ]
+  },
+  {
+   "id": "gem_amber",
+   "name": "Янтарь",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "kw": [
+    "янтар"
+   ]
+  }
+ ]
+}

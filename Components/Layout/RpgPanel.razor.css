@@ -1,0 +1,1534 @@
+/* ===== Книга героя — правая панель ===== */
+.rp {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    color: var(--rh-text);
+    font-family: var(--rh-font);
+    --cell: 34px;
+}
+
+/* ===== Герой: аватар + инфо ===== */
+.rp-hero {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+
+.rp-avatar {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    border: 1px solid var(--rh-border-strong);
+    background-color: rgba(14, 12, 10, .55);
+    image-rendering: pixelated;
+    box-shadow: inset 0 0 12px rgba(var(--rh-accent-rgb), .12);
+}
+
+.rp-hero-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    justify-content: center;
+}
+
+/* ===== Кукла героя (слоты экипировки) ===== */
+.rp-doll {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr 1.35fr 1fr 1.35fr;
+    grid-template-rows: repeat(4, 52px);
+    grid-template-areas:
+        "hand1 cloak  helmet amulet hand2"
+        "hand1 cloak  body   ring1  hand2"
+        "hand1 gloves body   ring2  hand2"
+        "hand1 gloves belt   boots  hand2";
+    gap: 5px;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--rh-border);
+    background:
+        radial-gradient(ellipse at 50% 45%, rgba(var(--rh-accent-rgb), .10), transparent 65%),
+        rgba(10, 8, 6, .35);
+}
+
+.a-hand1 { grid-area: hand1; }
+.a-cloak { grid-area: cloak; }
+.a-helmet { grid-area: helmet; }
+.a-amulet { grid-area: amulet; }
+.a-hand2 { grid-area: hand2; }
+.a-gloves { grid-area: gloves; }
+.a-body { grid-area: body; }
+.a-ring1 { grid-area: ring1; }
+.a-ring2 { grid-area: ring2; }
+.a-boots { grid-area: boots; }
+.a-belt { grid-area: belt; }
+
+.rp-slot {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    container-type: size;
+    border: 1px solid var(--rh-border);
+    border-radius: 8px;
+    background:
+        linear-gradient(rgba(14, 12, 10, .55), rgba(14, 12, 10, .55)) padding-box,
+        repeating-linear-gradient(45deg, rgba(235, 226, 211, .06) 0 4px, transparent 4px 8px) padding-box;
+    cursor: pointer;
+    transition: border-color .13s ease, box-shadow .13s ease, background-color .13s ease;
+}
+
+.rp-slot:hover {
+    border-color: rgba(var(--rh-accent-rgb), .45);
+}
+
+.rp-slot.filled {
+    border-color: rgba(var(--rh-accent-rgb), .38);
+    background: radial-gradient(circle at 50% 45%, rgba(var(--rh-accent-rgb), .16), rgba(14, 12, 10, .6) 75%);
+    cursor: grab;
+}
+
+.rp-slot.sel,
+.rp-grid-item.sel {
+    border-color: #d9b25e;
+    box-shadow: 0 0 0 1px #d9b25e, 0 0 14px rgba(212, 154, 74, .35);
+}
+
+/* Двуручное: вторая рука показывает тот же предмет приглушённо */
+.rp-slot.mirror .pix {
+    opacity: .28;
+    filter: grayscale(.6);
+}
+
+.rp-slot.mirror {
+    cursor: pointer;
+}
+
+/* Подсветка подходящих слотов при перетаскивании */
+.rp-slot.can-drop {
+    border-color: var(--rh-success);
+    box-shadow: 0 0 0 1px var(--rh-success), 0 0 14px rgba(143, 174, 106, .35);
+}
+
+.rp-slot-ghost {
+    opacity: .16;
+    filter: grayscale(1);
+}
+
+.rp-slot-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 1px;
+    font-size: .5rem;
+    line-height: 1.1;
+    color: var(--rh-text-3);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.rp-slot.filled .rp-slot-label {
+    display: none;
+}
+
+/* ===== Иконки: вписываются в свою область (слот или прямоугольник предмета) ===== */
+.rp-slot .pix,
+.rp-grid-item .pix {
+    flex: none;
+    width: min(86cqw, 86cqh);
+    height: min(86cqw, 86cqh);
+    pointer-events: none;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .55));
+}
+
+/* Диагональное оружие в высокой области: поворот на −45°, клинок по всей высоте */
+.rp-slot .pix.diag,
+.rp-grid-item .pix.diag {
+    width: min(60cqh, 180cqw);
+    height: min(60cqh, 180cqw);
+    transform: rotate(-45deg);
+}
+
+.rp-slot-ghost.pix {
+    width: min(70cqw, 70cqh);
+    height: min(70cqw, 70cqh);
+    filter: grayscale(1);
+}
+
+.rp-slot-ghost.pix.diag {
+    width: min(56cqh, 160cqw);
+    height: min(56cqh, 160cqw);
+}
+
+/* ===== Инвентарь-тетрис ===== */
+.rp-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(11, var(--cell));
+    grid-auto-rows: var(--cell);
+    gap: 0;
+    width: max-content;
+    max-width: 100%;
+    margin-inline: auto;
+    border: 1px solid var(--rh-border-strong);
+    border-radius: 8px;
+    background: rgba(10, 8, 6, .5);
+    padding: 2px;
+    box-shadow: inset 0 0 16px rgba(0, 0, 0, .4);
+}
+
+.rp-cell {
+    box-sizing: border-box;
+    border: 1px solid rgba(235, 226, 211, .07);
+    background: rgba(235, 226, 211, .015);
+}
+
+.rp-grid.dragging .rp-cell:hover {
+    background: rgba(var(--rh-accent-rgb), .16);
+}
+
+.rp-grid-item {
+    position: absolute;
+    z-index: 2;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    container-type: size;
+    border: 1px solid rgba(var(--rh-accent-rgb), .32);
+    border-radius: 6px;
+    background: radial-gradient(circle at 50% 45%, rgba(var(--rh-accent-rgb), .14), rgba(26, 23, 20, .75) 80%);
+    cursor: grab;
+    transition: border-color .12s ease, box-shadow .12s ease, opacity .12s ease;
+}
+
+.rp-grid-item:hover {
+    border-color: rgba(var(--rh-accent-rgb), .8);
+    box-shadow: 0 0 12px rgba(var(--rh-accent-rgb), .3);
+}
+
+.rp-grid-item:active {
+    cursor: grabbing;
+}
+
+.rp-grid-item.twohanded {
+    border-color: rgba(212, 154, 74, .35);
+}
+
+/* Во время перетаскивания предметы не мешают сбросу на клетки */
+.rp-grid.dragging .rp-grid-item {
+    pointer-events: none;
+}
+
+.rp-grid-item.lifted {
+    opacity: .35;
+}
+
+.rp-item-qty {
+    position: absolute;
+    bottom: 1px;
+    right: 3px;
+    font-size: .62rem;
+    font-weight: 700;
+    color: #f3ead9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, .9);
+    pointer-events: none;
+}
+
+.rp-inv-msg {
+    font-size: .72rem;
+    line-height: 1.35;
+    padding: 5px 8px;
+    border-radius: 7px;
+    color: #f0c4b8;
+    background: rgba(201, 97, 74, .1);
+    border: 1px solid rgba(201, 97, 74, .3);
+}
+
+.rp-inv-msg.ok {
+    color: #b9cf9a;
+    background: rgba(143, 174, 106, .08);
+    border-color: rgba(143, 174, 106, .28);
+}
+
+/* ===== Карточка выбранного предмета ===== */
+.rp-item-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 154, 74, .35);
+    background: rgba(212, 154, 74, .05);
+}
+
+.rp-ic-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rp-ic-icon {
+    flex: none;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid var(--rh-border-strong);
+    background: rgba(14, 12, 10, .6);
+}
+
+.rp-ic-icon .pix {
+    width: 36px;
+    height: 36px;
+}
+
+.rp-ic-title {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.rp-ic-name {
+    font-weight: 600;
+}
+
+.rp-ic-meta {
+    font-size: .68rem;
+    color: var(--rh-text-3);
+}
+
+.rp-ic-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.rp-ic-qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .75rem;
+    color: var(--rh-text-3);
+    margin-right: auto;
+}
+
+.rp-btn {
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--rh-border-strong);
+    background: rgba(var(--rh-accent-rgb), .1);
+    color: var(--rh-text);
+    font-family: inherit;
+    font-size: .75rem;
+    cursor: pointer;
+    transition: background-color .13s ease, border-color .13s ease;
+}
+
+.rp-btn:hover {
+    background: rgba(var(--rh-accent-rgb), .2);
+    border-color: rgba(var(--rh-accent-rgb), .5);
+}
+
+.rp-btn.danger {
+    background: rgba(201, 97, 74, .08);
+    border-color: rgba(201, 97, 74, .3);
+    color: #f0c4b8;
+}
+
+.rp-btn.danger:hover {
+    background: rgba(201, 97, 74, .18);
+}
+
+/* Шапка */
+.rp-head {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 0.9rem;
+    border-bottom: 1px solid var(--rh-border);
+    background: rgba(14, 12, 10, 0.30);
+}
+
+.rp-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rp-close {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--rh-text-3);
+    font-size: 0.8rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.rp-close:hover {
+    background: rgba(235, 226, 211, 0.12);
+    color: #fff;
+}
+
+.rp-close:focus-visible {
+    outline: 2px solid var(--rh-accent);
+    outline-offset: 1px;
+}
+
+/* Тело — единственный скролл-блок панели */
+.rp-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0.6rem 0.65rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    scrollbar-color: rgba(var(--rh-accent-rgb), .35) transparent;
+    scrollbar-width: thin;
+}
+
+/* Пустое состояние */
+.rp-empty {
+    margin: auto;
+    padding: 0 0.6rem;
+    text-align: center;
+    font-size: 0.83rem;
+    line-height: 1.55;
+    color: var(--rh-text-3);
+}
+
+.rp-empty-ico {
+    font-size: 1.6rem;
+    margin-bottom: 0.4rem;
+}
+
+/* Секция-аккордеон */
+.rp-sec {
+    flex: none;
+    border: 1px solid var(--rh-border);
+    border-radius: 12px;
+    background: var(--rh-glass-soft);
+    overflow: hidden;
+}
+
+.rp-sec-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.7rem;
+    border: none;
+    background: transparent;
+    color: var(--rh-text);
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+}
+
+.rp-sec-head:hover {
+    background: rgba(235, 226, 211, 0.08);
+}
+
+.rp-sec-head:focus-visible {
+    outline: 2px solid var(--rh-accent);
+    outline-offset: -2px;
+}
+
+.rp-chevron {
+    flex: none;
+    color: var(--rh-accent);
+    font-size: 0.8rem;
+    line-height: 1;
+    transition: transform 0.15s ease;
+}
+
+.rp-chevron.open {
+    transform: rotate(90deg);
+}
+
+.rp-count {
+    margin-left: auto;
+    flex: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--rh-accent-hover);
+    border: 1px solid rgba(var(--rh-accent-rgb), 0.30);
+    background: rgba(var(--rh-accent-rgb), 0.14);
+    border-radius: 999px;
+    padding: 0 0.5rem;
+}
+
+.rp-sec-body {
+    padding: 0.15rem 0.6rem 0.65rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+/* Поля ввода */
+.rp-in {
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    background: var(--rh-input-bg);
+    border: 1px solid var(--rh-input-border);
+    border-radius: 8px;
+    color: var(--rh-text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    padding: 0.4rem 0.55rem;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rp-in::placeholder {
+    color: var(--rh-text-3);
+}
+
+.rp-in:focus {
+    border-color: var(--rh-accent);
+    box-shadow: 0 0 0 3px var(--rh-accent-ring-soft);
+}
+
+.rp-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.rp-row .rp-in {
+    flex: 1;
+}
+
+.rp-qty {
+    flex: none !important;
+    width: 58px;
+    text-align: center;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.rp-qty::-webkit-outer-spin-button,
+.rp-qty::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.rp-tiny {
+    flex: none !important;
+    width: 52px;
+    text-align: center;
+    padding: 0.2rem 0.35rem;
+    font-size: 0.78rem;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.rp-tiny::-webkit-outer-spin-button,
+.rp-tiny::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.rp-area {
+    resize: vertical;
+    min-height: 4rem;
+    line-height: 1.45;
+}
+
+.rp-pill {
+    flex: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--rh-accent-hover);
+    background: rgba(var(--rh-accent-rgb), 0.12);
+    border: 1px solid rgba(var(--rh-accent-rgb), 0.28);
+    border-radius: 999px;
+    padding: 0.25rem 0.55rem;
+    white-space: nowrap;
+}
+
+/* ===== Полоски HP / маны ===== */
+.rp-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.rp-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+}
+
+.rp-bar-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--rh-text-2);
+    letter-spacing: 0.03em;
+}
+
+.rp-bar-label span {
+    color: var(--rh-text);
+    font-variant-numeric: tabular-nums;
+}
+
+.rp-track {
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.40);
+    border: 1px solid rgba(235, 226, 211, 0.12);
+    overflow: hidden;
+}
+
+.rp-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.35s cubic-bezier(.2, .8, .3, 1);
+}
+
+.rp-fill.hp {
+    background: linear-gradient(90deg, #c9614a, #fb7185 60%, #fda4af);
+    box-shadow: 0 0 10px rgba(201, 97, 74, .5);
+}
+
+.rp-fill.mana {
+    background: linear-gradient(90deg, #7fa0c8, #60a5fa 60%, #9fb8d8);
+    box-shadow: 0 0 10px rgba(95, 139, 192, .5);
+}
+
+.rp-fill.adv {
+    background: linear-gradient(90deg, #f97316, #fb923c);
+    box-shadow: 0 0 10px rgba(249, 115, 22, .45);
+}
+
+.rp-fill.adv.dead {
+    background: #475569;
+    box-shadow: none;
+}
+
+.rp-bar-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.rp-mini {
+    flex: none;
+    width: 22px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--rh-border-strong);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--rh-text-2);
+    font-size: 0.72rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.rp-mini:hover {
+    background: rgba(var(--rh-accent-rgb), 0.14);
+    color: #fff;
+}
+
+.rp-mini:focus-visible {
+    outline: 2px solid var(--rh-accent);
+    outline-offset: 1px;
+}
+
+/* ===== Плитки характеристик ===== */
+.rp-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.3rem;
+}
+
+.rp-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.05rem;
+    padding: 0.35rem 0.2rem;
+    border: 1px solid var(--rh-border);
+    border-radius: 8px;
+    background: rgba(14, 12, 10, 0.40);
+    color: var(--rh-text);
+    font-family: inherit;
+    user-select: none;
+}
+
+.rp-stat-name {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--rh-text-3);
+}
+
+.rp-stat-val {
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #f3ead9;
+    font-variant-numeric: tabular-nums;
+}
+
+.rp-stat-mod {
+    font-size: 0.66rem;
+    font-weight: 600;
+    color: var(--rh-accent);
+}
+
+/* ===== Состояния ===== */
+.rp-status-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.rp-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.22rem 0.5rem;
+    border: 1px solid rgba(212, 154, 74, 0.35);
+    border-radius: 999px;
+    background: rgba(212, 154, 74, 0.12);
+    color: #e8bf85;
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.rp-status:hover {
+    background: rgba(217, 138, 118, 0.18);
+    border-color: rgba(201, 97, 74, 0.45);
+    color: #e7a391;
+}
+
+/* Карточка предмета / NPC / противника / города */
+.rp-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.45rem;
+    border: 1px solid var(--rh-border);
+    border-radius: 10px;
+    background: rgba(14, 12, 10, 0.35);
+}
+
+.rp-card:focus-within {
+    border-color: rgba(var(--rh-accent-rgb), 0.35);
+}
+
+.rp-card-dead {
+    opacity: 0.55;
+}
+
+.rp-del {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--rh-text-3);
+    font-size: 0.72rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.rp-del:hover {
+    background-color: rgba(181, 73, 58, 0.85);
+    color: #fff;
+}
+
+.rp-del:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(var(--rh-accent-rgb), 0.55);
+}
+
+/* Точка интереса в городе */
+.rp-poi {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.rp-poi-type {
+    flex: none;
+    width: 1.4rem;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.rp-poi-note {
+    flex: none !important;
+    width: 72px;
+}
+
+.rp-poi-note-full {
+    margin-left: 1.7rem;
+    width: calc(100% - 1.7rem);
+}
+
+/* Статусы заданий / арок */
+.rp-quest-state {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.rp-state-btn {
+    flex: none;
+    width: 30px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--rh-border);
+    border-radius: 6px;
+    background: transparent;
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+    filter: grayscale(1) opacity(.55);
+    transition: filter 0.12s ease, border-color 0.12s ease, background-color 0.12s ease;
+}
+
+.rp-state-btn:hover {
+    filter: none;
+    border-color: rgba(var(--rh-accent-rgb), 0.4);
+}
+
+.rp-state-btn.sel {
+    filter: none;
+    background: rgba(var(--rh-accent-rgb), 0.16);
+    border-color: rgba(var(--rh-accent-rgb), 0.45);
+}
+
+.rp-state-btn:focus-visible {
+    outline: 2px solid var(--rh-accent);
+    outline-offset: 1px;
+}
+
+.rp-card-active {
+    border-color: rgba(var(--rh-accent-rgb), 0.45);
+    box-shadow: 0 0 0 1px rgba(var(--rh-accent-rgb), 0.25), 0 0 14px rgba(var(--rh-accent-rgb), 0.10);
+}
+
+.rp-card-done {
+    opacity: 0.62;
+}
+
+.rp-count.arc {
+    font-size: 0.75rem;
+}
+
+.rp-beats {
+    margin: 0.15rem 0 0.1rem 1.1rem;
+    padding: 0;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--rh-text-2);
+}
+
+.rp-beats li {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.rp-del-xs {
+    width: 18px;
+    height: 18px;
+    font-size: 0.6rem;
+}
+
+/* Кнопка добавления */
+.rp-add {
+    flex: none;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.45rem 0.6rem;
+    border: 1px dashed var(--rh-border-strong);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--rh-accent);
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+/* Компактная кнопка в строке с полем ввода */
+.rp-add-inline {
+    flex: none;
+    width: auto;
+    min-width: 40px;
+    padding: 0.45rem 0.7rem;
+    border-style: solid;
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.rp-add:hover {
+    background: rgba(var(--rh-accent-rgb), 0.12);
+    border-color: rgba(var(--rh-accent-rgb), 0.45);
+}
+
+.rp-add:focus-visible {
+    outline: 2px solid var(--rh-accent);
+    outline-offset: 1px;
+}
+
+.rp-add-sm {
+    font-size: 0.75rem;
+    padding: 0.32rem 0.5rem;
+}
+
+.rp-add-mana {
+    border-style: dotted;
+}
+
+.rp-hint {
+    font-size: 0.78rem;
+    color: var(--rh-text-3);
+    padding: 0 0.15rem;
+}
+
+/* Футер */
+.rp-foot {
+    flex: none;
+    padding: 0.55rem 0.9rem;
+    border-top: 1px solid var(--rh-border);
+    font-size: 0.72rem;
+    line-height: 1.4;
+    color: var(--rh-text-3);
+}
+
+.rp-storage {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rp-warn {
+    color: #e8bf85;
+}
+
+
+/* ===== Read-only информативные окна (заполняет мастер) ===== */
+
+.rp-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--rh-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rp-tags {
+    gap: 0.3rem;
+}
+
+.rp-tag {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    color: var(--rh-muted);
+    padding: 0.28rem 0.55rem;
+    border: 1px solid var(--rh-border);
+    border-radius: 999px;
+    background: rgba(14, 12, 10, 0.35);
+}
+
+.rp-pill-level {
+    color: var(--rh-accent-hover);
+    border-color: rgba(95, 139, 192, 0.35);
+    background: rgba(95, 139, 192, 0.10);
+}
+
+.rp-info-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.rp-info-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--rh-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.rp-chip {
+    flex: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--rh-accent-hover);
+    background: rgba(var(--rh-accent-rgb), 0.10);
+    border: 1px solid rgba(var(--rh-accent-rgb), 0.25);
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+    white-space: nowrap;
+}
+
+.rp-chip-dead {
+    color: #e7a391;
+    border-color: rgba(201, 97, 74, 0.35);
+    background: rgba(201, 97, 74, 0.10);
+}
+
+.rp-info-text {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--rh-text);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.rp-info-text.muted {
+    color: var(--rh-muted);
+}
+
+.rp-world-state {
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--rh-border);
+    border-radius: 8px;
+    background: rgba(14, 12, 10, 0.35);
+}
+
+.rp-poi-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.28rem;
+    margin-top: 0.15rem;
+}
+
+.rp-poi-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    color: var(--rh-text);
+    min-width: 0;
+}
+
+.rp-poi-name {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.rp-poi-kind {
+    font-weight: 400;
+    color: var(--rh-muted);
+    font-size: 0.72rem;
+}
+
+.rp-poi-note-text {
+    color: var(--rh-muted);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ===== Лавка NPC ===== */
+.rp-shop-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+
+/* ============================================================
+   Гримуар: доводка панели (перекрывает правила выше)
+   ============================================================ */
+.rp-title {
+    font-family: var(--rh-serif);
+    font-size: 1.12rem;
+    font-weight: 500;
+    letter-spacing: .01em;
+}
+.rp-track{position:relative}.rp-fill.shield{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#d8a928,#ffe476);opacity:.82;box-shadow:0 0 7px #ffd84d}
+.rp-skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}.rp-skill{display:flex;flex-direction:column;padding:6px;background:#171b21;border:1px solid #46505f}.rp-skill small{color:#9ea9b8}.rp-party-head{display:flex;gap:9px;align-items:center}.rp-party-portrait{width:44px;height:44px;display:grid;place-items:center;background:linear-gradient(135deg,#5b4631,#252933);border:2px solid #90744a;font:700 20px Georgia}.rp-party-inventory{display:grid;grid-template-columns:repeat(8,30px);grid-auto-rows:30px;gap:2px;max-height:96px;overflow:auto;background:#11151a;padding:4px}.rp-party-item{position:relative;display:grid;place-items:center;border:1px solid #39414d;background:#202630}.rp-party-item .pix{transform:scale(.72)}.rp-party-item small{position:absolute;right:1px;bottom:0}.rp-party-card details{margin-top:6px}.rp-party-card summary{cursor:pointer;color:#bcb29d}
+
+.rp-subtitle {
+    margin: 12px 2px 6px;
+    color: var(--gold, #d6b36a);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.rp-arc-lead {
+    margin-top: 7px;
+    padding: 7px 8px;
+    border-left: 2px solid #d6b36a;
+    background: rgba(214, 179, 106, .08);
+}
+
+svg.rp-empty-ico {
+    display: block;
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 12px;
+    color: var(--rh-accent);
+    opacity: .7;
+}
+
+.rp-sec-head {
+    font-family: var(--rh-serif);
+    letter-spacing: .01em;
+}
+
+.rp-bar-label,
+.rp-pill {
+    position: relative;
+}
+
+.rp-pill small {
+    font-size: .68em;
+    color: var(--rh-text-3);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.rp-pill,
+.rp-bar-label span,
+.rp-stat-val {
+    font-variant-numeric: tabular-nums;
+}
+
+.rp-coin {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: 5px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ecd39a, var(--rh-accent) 60%, #8e6f33);
+    box-shadow: 0 0 0 1px rgba(59, 42, 12, .5);
+}
+
+.rp-fill {
+    transition: width .6s var(--rh-ease);
+}
+
+/* Всплывающие изменения показателей (элементы из RenderFragment — нужен ::deep) */
+.rp-bar-label ::deep .rp-float,
+.rp-pill ::deep .rp-float {
+    position: absolute;
+    right: 4px;
+    top: -2px;
+    font-family: var(--rh-mono);
+    font-size: .8rem;
+    font-weight: 600;
+    pointer-events: none;
+    white-space: nowrap;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .8);
+    animation: rh-float-up 1.8s var(--rh-ease) forwards;
+}
+
+.rp-bar-label ::deep .rp-float.up,
+.rp-pill ::deep .rp-float.up {
+    color: #b9cf9a;
+}
+
+.rp-bar-label ::deep .rp-float.down,
+.rp-pill ::deep .rp-float.down {
+    color: #e8836d;
+}
+
+.rp-pill-gold ::deep .rp-float.up {
+    color: #ecd39a;
+}
+
+/* Урон: полоса вздрагивает и вспыхивает */
+.rp-bar.is-hit .rp-track {
+    animation: rp-hit .5s ease;
+}
+
+.rp-bar.is-hit .rp-fill.hp {
+    animation: rp-hit-glow .9s ease;
+}
+
+@keyframes rp-hit {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-3px); }
+    40% { transform: translateX(3px); }
+    60% { transform: translateX(-2px); }
+    80% { transform: translateX(1px); }
+}
+
+@keyframes rp-hit-glow {
+    0% { filter: brightness(2.2) saturate(1.4); }
+    100% { filter: none; }
+}
+
+.rp-sec-body {
+    animation: rh-fade .25s ease both;
+}
+
+/* ===== Характеристики с учётом вещей ===== */
+.rp-stat {
+    position: relative;
+}
+
+.rp-stat.buffed .rp-stat-val {
+    color: #b9cf9a;
+}
+
+.rp-stat.nerfed .rp-stat-val {
+    color: #e7a391;
+}
+
+.rp-stat-gear {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: #b9cf9a;
+    font-family: var(--rh-mono, monospace);
+}
+
+.rp-stat.nerfed .rp-stat-gear {
+    color: #e7a391;
+}
+
+.rp-combat {
+    display: flex;
+    align-items: stretch;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+}
+
+.rp-combat-ac {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+    padding: 0.3rem 0.4rem;
+    border: 1px solid rgba(var(--rh-accent-rgb), 0.45);
+    border-radius: 8px 8px 16px 16px;
+    background: linear-gradient(180deg, rgba(var(--rh-accent-rgb), 0.12), transparent);
+}
+
+.rp-combat-num {
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #f3ead9;
+    font-variant-numeric: tabular-nums;
+}
+
+.rp-combat-ac small {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--rh-accent);
+}
+
+.rp-combat-atk {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    padding: 0.3rem 0.55rem;
+    border: 1px solid var(--rh-border);
+    border-radius: 8px;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    color: var(--rh-text-2, #cfc6b4);
+}
+
+.rp-effects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+}
+
+.rp-effect {
+    padding: 0.18rem 0.5rem;
+    border: 1px solid rgba(var(--rh-accent-rgb), 0.4);
+    border-radius: 999px;
+    font-size: 0.68rem;
+    color: var(--rh-accent);
+    background: rgba(var(--rh-accent-rgb), 0.08);
+    animation: rh-fade 0.4s ease both;
+}
+
+/* ===== Характеристики предмета в карточке ===== */
+.rp-item-card ::deep .rp-ic-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 8px;
+    border-left: 2px solid var(--rh-border);
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.74rem;
+}
+
+.rp-item-card ::deep .rp-ic-stats.rar-uncommon { border-left-color: #8fb573; }
+.rp-item-card ::deep .rp-ic-stats.rar-rare { border-left-color: #6f93c2; }
+.rp-item-card ::deep .rp-ic-stats.rar-epic { border-left-color: #a986d6; }
+.rp-item-card ::deep .rp-ic-stats.rar-legendary {
+    border-left-color: #e0913f;
+    background: linear-gradient(90deg, rgba(224, 145, 63, 0.12), rgba(0, 0, 0, 0.18) 70%);
+}
+
+.rp-item-card ::deep .rp-ic-rarity {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rh-text-3);
+}
+
+.rp-item-card ::deep .rar-uncommon .rp-ic-rarity span { color: #b9cf9a; }
+.rp-item-card ::deep .rar-rare .rp-ic-rarity span { color: #9fb8d8; }
+.rp-item-card ::deep .rar-epic .rp-ic-rarity span { color: #c7aee6; }
+.rp-item-card ::deep .rar-legendary .rp-ic-rarity span { color: #f0b36a; }
+
+.rp-item-card ::deep .rp-ic-rarity small {
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    font-family: var(--rh-mono, monospace);
+}
+
+.rp-item-card ::deep .rp-ic-base {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: #f3ead9;
+}
+
+.rp-item-card ::deep .rp-ic-base small {
+    color: var(--rh-text-3);
+    margin-right: 2px;
+}
+
+.rp-item-card ::deep .rp-ic-bonuses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.rp-item-card ::deep .rp-ic-bonus {
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(143, 181, 115, 0.14);
+    color: #b9cf9a;
+    font-family: var(--rh-mono, monospace);
+    font-size: 0.68rem;
+}
+
+.rp-item-card ::deep .rp-ic-bonus.neg {
+    background: rgba(201, 97, 74, 0.14);
+    color: #e7a391;
+}
+
+.rp-item-card ::deep .rp-ic-effect {
+    color: var(--rh-accent);
+    font-style: italic;
+    font-family: var(--rh-serif, serif);
+}
+
+.rp-item-card ::deep .rp-ic-none {
+    color: var(--rh-text-3);
+    font-style: italic;
+}
+.rp-skill{display:grid;grid-template-columns:28px 1fr;column-gap:5px}.rp-skill-icon{grid-row:1/3;width:26px;height:26px;background-repeat:no-repeat}
+
+.rp-char-details{margin-top:8px;border-top:1px solid var(--rh-border);padding-top:6px}.rp-char-details>summary{cursor:pointer;color:var(--rh-text-2);font-weight:600;padding:5px 0}.rp-char-details[open]>summary{color:var(--rh-gold)}
+/* ===== Счётчик контекста над оглавлением книги героя ===== */
+.rp-ctx{display:flex;flex-direction:column;gap:4px;margin:2px 0 8px;padding:6px 7px 7px;border:1px solid var(--rh-border-strong);background:rgba(14,12,10,.34)}
+.rp-ctx-top{display:flex;align-items:baseline;gap:6px;font-size:.72rem;line-height:1.2}
+.rp-ctx-label{color:var(--rh-text-2);text-transform:uppercase;letter-spacing:.08em;font-size:.62rem}
+.rp-ctx-num{margin-left:auto;color:var(--rh-text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rp-ctx-pct{min-width:3.2em;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:var(--rh-accent-3)}
+.rp-ctx-track{position:relative;height:5px;background:rgba(235,226,211,.10);overflow:hidden}
+.rp-ctx-fill{height:100%;background:var(--rh-accent-3);transition:width .3s var(--rh-ease),background-color .3s var(--rh-ease)}
+/* Порог автосокращения истории: за ним мастер начнёт забывать старые ходы. */
+.rp-ctx-mark{position:absolute;top:0;bottom:0;width:1px;background:rgba(235,226,211,.5);pointer-events:none}
+.rp-ctx.is-warn .rp-ctx-fill{background:var(--rh-warning)}
+.rp-ctx.is-warn .rp-ctx-pct{color:var(--rh-warning)}
+.rp-ctx.is-full .rp-ctx-fill{background:var(--rh-danger)}
+.rp-ctx.is-full .rp-ctx-pct{color:var(--rh-danger)}
+
+.rp-menu-block{padding:8px;border-top:1px solid var(--rh-border)}.rp-menu-title{font:700 11px Georgia,serif;text-transform:uppercase;letter-spacing:.1em;color:var(--rh-gold);margin:5px 0}.rp-menu-title.secondary{margin-top:12px;color:var(--rh-text-2)}.rp-menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.rp-menu-grid ::deep .rp-menu-btn{position:relative;display:grid;grid-template-columns:38px 1fr;align-items:center;min-height:48px;text-align:left;background:#171b21;color:var(--rh-text);border:1px solid #414957;padding:4px 23px 4px 4px;cursor:pointer}.rp-menu-grid ::deep .rp-menu-btn:hover{border-color:var(--rh-gold);background:#202630}.rp-menu-grid ::deep .rp-menu-btn>small{position:absolute;right:6px;top:5px;color:var(--rh-gold)}.rp-menu-grid ::deep .rp-menu-icon{width:36px;height:36px;background-repeat:no-repeat;border:1px solid #5d4b36}
+.rp-modal-backdrop{position:fixed;inset:0;z-index:2050;background:#06080bba}.rp-modal-section{display:none!important}.rp-modal-section.is-open{display:block!important;position:fixed;z-index:2060;left:50%;top:50%;transform:translate(-50%,-50%);width:min(930px,94vw);max-height:90vh;overflow:auto;background:#14181e;border:2px solid #8b7044;box-shadow:0 20px 80px #000;padding:0}.rp-modal-section>.rp-sec-head{position:sticky;top:0;z-index:2;background:#211c17;font-size:16px;border-bottom:1px solid #8b7044}.rp-modal-section>.rp-sec-body{padding:14px}.rp-modal-x{margin-left:auto;color:#d6b979}
+.rp-party-tabs{display:flex;gap:5px;margin-bottom:10px;overflow:auto}.rp-party-tabs button{display:flex;align-items:center;gap:5px;background:#171b21;color:var(--rh-text-2);border:1px solid #414957;padding:4px 9px;cursor:pointer}.rp-party-tabs button.active{color:#fff;border-color:var(--rh-gold);background:#33291d}.rp-party-tab-face{width:28px;height:28px;background-size:400% 400%;flex:none}.rp-party-inventory{position:relative!important;display:grid!important;grid-template-columns:repeat(11,30px)!important;grid-template-rows:repeat(5,30px);gap:0!important;width:330px;max-width:100%;height:150px;max-height:none!important;overflow:auto;background:#11151a;padding:0!important}.rp-party-cell{width:30px;height:30px;border:1px solid #303946;box-sizing:border-box}.rp-party-item{position:absolute!important;z-index:1;box-sizing:border-box;border:1px solid transparent;background:transparent;color:var(--rh-text);padding:0;cursor:pointer}.rp-party-item:hover,.rp-party-item.sel{border-color:var(--rh-gold);background:rgba(var(--rh-accent-rgb), .094)}.rp-party-item small{position:absolute;right:2px;bottom:0;color:#fff;text-shadow:0 1px 2px #000}.rp-party-item-card{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;padding:8px;border:1px solid #414957;background:#101419}.rp-party-item-card p{flex-basis:100%;margin:0;color:var(--rh-text-2)}.rp-party-item-card .rp-btn{margin-left:auto}.rp-party-leave{margin-top:12px;width:100%}
+.rp-leave-backdrop{position:fixed;inset:0;z-index:2300;background:#05070be6;display:grid;place-items:center;padding:16px}.rp-leave-modal{width:min(560px,94vw);background:#171b21;border:2px solid #8b3340;color:var(--rh-text);padding:18px;box-shadow:0 20px 70px #000}.rp-leave-modal h3{margin-top:0;color:#e5c27c}.rp-leave-modal p{color:var(--rh-text-2)}
+.rp-item-action-modal{border-color:#8b7044}.rp-item-targets{display:grid;gap:7px;margin:12px 0}.rp-item-targets .rp-btn{text-align:left}.rp-item-targets .rp-btn:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:560px){.rp-menu-grid{grid-template-columns:1fr}.rp-modal-section.is-open{width:98vw;max-height:94vh}.rp-party-inventory{transform-origin:top left}}
+
+/* Снаряжение спутника (recruit_companion): иконка + название, цвет рамки — по редкости. */
+.rp-party-gear { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+.rp-party-gear-item { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px 2px 2px; font-size: 12px;
+    border: 1px solid rgba(160, 140, 110, .35); border-radius: 6px; background: rgba(14, 12, 10, .45); }
+.rp-party-gear-item .pix { width: 22px; height: 22px; }
+.rp-party-gear-item.rar-uncommon { border-color: #5f9a52; }
+.rp-party-gear-item.rar-rare { border-color: #4f7fc4; }
+.rp-party-gear-item.rar-epic { border-color: #9a5cc9; }
+.rp-party-gear-item.rar-legendary { border-color: #d49a3a; }
+
+/* Кандидат виден заранее, но карточка не притворяется полноценным листом бойца. */
+.rp-candidates-title { margin-top: 16px; }
+.rp-candidate-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; }
+.rp-candidate-card { border-left: 3px solid var(--rh-border-strong); }
+.rp-candidate-card.stage-proven { border-left-color: var(--rh-accent-3); }
+.rp-candidate-card.stage-ready { border-left-color: var(--rh-accent); }
+.rp-candidate-hook { margin: 7px 0; padding: 7px 9px; border-left: 1px solid var(--rh-accent); background: rgba(var(--rh-accent-rgb), .08); color: var(--rh-text-2); font-style: italic; }
+.rp-candidate-progress { display: flex; align-items: center; gap: 5px; margin-top: 8px; font-size: .67rem; color: var(--rh-text-3); text-transform: uppercase; letter-spacing: .04em; }
+.rp-candidate-progress span.done { color: var(--rh-accent); }
+.rp-candidate-progress i { font-style: normal; color: var(--rh-border-strong); }
+
+/* ===== Время, часы угрозы, фракции (раздел «Мир») ===== */
+
+.rp-time-row {
+    margin: 0.4rem 0 0.2rem;
+}
+
+.rp-clock-pips {
+    display: flex;
+    gap: 3px;
+    margin: 0.3rem 0 0.15rem;
+}
+
+.rp-clock-pips i {
+    flex: 1;
+    height: 7px;
+    border-radius: 2px;
+    border: 1px solid var(--rh-border-strong);
+    background: transparent;
+}
+
+.rp-clock.is-progress .rp-clock-pips i.on {
+    background: var(--rh-success);
+    border-color: var(--rh-success);
+}
+
+.rp-clock.is-threat .rp-clock-pips i.on {
+    background: var(--rh-danger);
+    border-color: var(--rh-danger);
+}
+
+.rp-clock.is-rival .rp-clock-pips i.on {
+    background: var(--rh-warning);
+    border-color: var(--rh-warning);
+}
+
+.rp-factions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-top: 0.35rem;
+}
+
+.rp-faction {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 70px auto;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.rp-faction-bar {
+    position: relative;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--rh-surface-3);
+    overflow: hidden;
+}
+
+.rp-faction-bar i {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--rh-text-3);
+}
+
+.rp-faction-bar i.good {
+    background: var(--rh-success);
+}
+
+.rp-faction-bar i.bad {
+    background: var(--rh-danger);
+}

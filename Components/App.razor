@@ -1,0 +1,114 @@
+@inject SettingsService SettingsSvc
+<!DOCTYPE html>
+<html lang="@Lang.HtmlLang" data-theme="@Theme">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <ResourcePreloader />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Exo+2:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Russo+One&family=JetBrains+Mono:wght@400;600&family=Oswald:wght@400;500;600&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Roboto+Mono:wght@400;500&display=swap" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="stylesheet" href="@Assets["lib/bootstrap/dist/css/bootstrap.min.css"]" />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["css/themes.css"]" />
+    <link rel="stylesheet" href="@Assets["css/pixel-items.css"]" />
+    <link rel="stylesheet" href="@Assets["css/pixel-cyber.css"]" />
+    <link rel="stylesheet" href="@Assets["css/pixel-modern.css"]" />
+    <link rel="stylesheet" href="@Assets["RPG_Harness.styles.css"]" />
+    <ImportMap />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <HeadOutlet @rendermode="InteractiveServer" />
+</head>
+
+<body>
+    <Routes @rendermode="InteractiveServer" />
+
+    <script>
+        window.harness = {
+            isNarrow: () => window.matchMedia('(max-width: 1249.98px)').matches,
+            clickFileInput: (el) => { if (el) el.click(); },
+            readFileAsDataUri: (file, maxBytes) => new Promise((resolve, reject) => {
+                if (!file) { resolve(''); return; }
+                if (file.size > maxBytes) {
+                    reject(new Error((document.documentElement.lang === 'en' ? 'The image is larger than 4 MB: ' : 'Изображение больше 4 МБ: ') + file.name));
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error((document.documentElement.lang === 'en' ? 'Could not read the file: ' : 'Не удалось прочитать файл: ') + file.name));
+                reader.readAsDataURL(file);
+            }),
+            // Запоминает, «прилип» ли пользователь к низу ленты. Пока он листает вверх,
+            // автоскролл не дёргает его обратно. Флаг обновляется на каждом scroll.
+            trackPin: (el) => {
+                if (!el || el._harnessPin) return;
+                el._harnessPin = true;
+                const update = () => { el._harnessPinned = (el.scrollHeight - el.scrollTop - el.clientHeight) < 28; };
+                el.addEventListener('scroll', update, { passive: true });
+                update();
+            },
+            // force === true — прокрутить безусловно (открытие окна, свой ход игрока).
+            scrollBottom: (el, force) => {
+                if (!el) return;
+                if (force === true || el._harnessPinned !== false) el.scrollTop = el.scrollHeight;
+            },
+            focusEl: (el) => { try { if (el) el.focus(); } catch { } },
+            watchEnter: (dotnet, el) => {
+                if (!el) return;
+                if (el._harnessEnter) el.removeEventListener('keydown', el._harnessEnter);
+                const handler = (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        dotnet.invokeMethodAsync('HandleEnter').catch(() => { });
+                    }
+                };
+                el._harnessEnter = handler;
+                el.addEventListener('keydown', handler);
+            },
+            // Варианты ответа: цифры 1–9 (вне поля ввода) или Alt+цифра (откуда угодно).
+            watchChoiceKeys: () => {
+                if (window._harnessChoiceKeys) return;
+                window._harnessChoiceKeys = true;
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey || e.metaKey || e.shiftKey || e.repeat) return;
+                    const digit = /^Digit([1-9])$/.exec(e.code);
+                    if (!digit) return;
+                    const t = e.target;
+                    const typing = t && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.isContentEditable);
+                    if (typing && !e.altKey) return;
+                    if (!typing && e.altKey === false && document.querySelector('.tw-modal, .cc-modal, .dice-overlay')) return;
+                    const options = document.querySelectorAll('.choices.is-active .choice');
+                    const btn = options[Number(digit[1]) - 1];
+                    if (!btn) return;
+                    e.preventDefault();
+                    btn.classList.add('is-picked');
+                    btn.click();
+                });
+            },
+            // Атрибут data-theme на <html>: тема из настроек, которую докручивает
+            // настройка оформления, не дожидаясь перезагрузки страницы.
+            setTheme: (id) => { document.documentElement.setAttribute('data-theme', id || 'fantasy'); },
+            unwatchEnter: (el) => {
+                if (el && el._harnessEnter) {
+                    el.removeEventListener('keydown', el._harnessEnter);
+                    el._harnessEnter = null;
+                }
+            }
+        };
+    </script>
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+</body>
+
+</html>
+
+@code {
+    /// <summary>
+    /// Тема из настроек — ставится на &lt;html&gt; при каждой полной загрузке страницы,
+    /// чтобы первый кадр уже был оформлен (без мигания базовой темы). Живое переключение
+    /// на странице настроек вызывает window.harness.setTheme.
+    /// </summary>
+    private string Theme => UiThemes.Normalize(SettingsSvc.Current.Theme);
+}

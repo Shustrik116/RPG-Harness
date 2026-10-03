@@ -1,0 +1,2228 @@
+{
+ "cols": 16,
+ "rows": 8,
+ "items": [
+  {
+   "id": "md_pistol",
+   "name": "Пистолет 9 мм",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "пистолет",
+    "ствол",
+    "пушк",
+    "глок",
+    "макаров",
+    "пм"
+   ],
+   "genre": "modern",
+   "price": 15,
+   "trade": "ranged",
+   "damage": "1d6 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_compact",
+   "name": "Компактный пистолет",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "компактн",
+    "карманн"
+   ],
+   "genre": "modern",
+   "price": 12,
+   "trade": "ranged",
+   "damage": "1d6 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_revolver",
+   "name": "Револьвер",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "револьвер",
+    "наган"
+   ],
+   "genre": "modern",
+   "price": 25,
+   "trade": "ranged",
+   "damage": "1d8 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_magnum",
+   "name": "Тяжёлый пистолет",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "тяжёл",
+    "пистолет",
+    "магнум",
+    "кольт"
+   ],
+   "genre": "modern",
+   "price": 30,
+   "trade": "ranged",
+   "damage": "1d8 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_smg",
+   "name": "Пистолет-пулемёт",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "пистолет-пулем",
+    "пп",
+    "узи"
+   ],
+   "genre": "modern",
+   "price": 35,
+   "trade": "ranged",
+   "damage": "1d6 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_rifle",
+   "name": "Автомат",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "автомат",
+    "калаш",
+    "ак",
+    "штурмов",
+    "винтовк"
+   ],
+   "genre": "modern",
+   "price": 60,
+   "trade": "ranged",
+   "damage": "1d10 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_carbine",
+   "name": "Карабин",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "карабин"
+   ],
+   "genre": "modern",
+   "price": 45,
+   "trade": "ranged",
+   "damage": "1d8 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_shotgun",
+   "name": "Помповое ружьё",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "помпов",
+    "дробовик",
+    "ружь"
+   ],
+   "genre": "modern",
+   "price": 40,
+   "trade": "ranged",
+   "damage": "1d10 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_hunting",
+   "name": "Охотничье ружьё",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "охотнич",
+    "двустволк"
+   ],
+   "genre": "modern",
+   "price": 30,
+   "trade": "ranged",
+   "damage": "1d10 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_sawn",
+   "name": "Обрез",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "обрез"
+   ],
+   "genre": "modern",
+   "price": 15,
+   "trade": "ranged",
+   "damage": "1d8 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_sniper",
+   "name": "Снайперская винтовка",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "снайпер",
+    "винтовк"
+   ],
+   "genre": "modern",
+   "price": 120,
+   "trade": "ranged",
+   "damage": "1d12 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_mg",
+   "name": "Ручной пулемёт",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "пулемёт",
+    "пулемет"
+   ],
+   "genre": "modern",
+   "price": 200,
+   "trade": "polearms",
+   "damage": "2d6 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_launcher",
+   "name": "Гранатомёт",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "гранатом",
+    "рпг"
+   ],
+   "genre": "modern",
+   "price": 220,
+   "trade": "polearms",
+   "damage": "2d6 взрыв",
+   "ranged": true
+  },
+  {
+   "id": "md_knife",
+   "name": "Нож",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "нож",
+    "ножик"
+   ],
+   "genre": "modern",
+   "price": 3,
+   "trade": "blades",
+   "damage": "1d4 режущий",
+   "finesse": true
+  },
+  {
+   "id": "md_combat_knife",
+   "name": "Боевой нож",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "боев",
+    "нож"
+   ],
+   "genre": "modern",
+   "price": 10,
+   "trade": "blades",
+   "damage": "1d4 режущий",
+   "finesse": true
+  },
+  {
+   "id": "md_machete",
+   "name": "Мачете",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "мачете",
+    "тесак"
+   ],
+   "genre": "modern",
+   "price": 8,
+   "trade": "blades",
+   "damage": "1d8 режущий"
+  },
+  {
+   "id": "md_axe",
+   "name": "Пожарный топор",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "топор",
+    "пожарн"
+   ],
+   "genre": "modern",
+   "price": 20,
+   "trade": "weapons",
+   "damage": "1d12 режущий"
+  },
+  {
+   "id": "md_bat",
+   "name": "Бита",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "бит",
+    "бейсбол"
+   ],
+   "genre": "modern",
+   "price": 3,
+   "trade": "weapons",
+   "damage": "1d6 ударный"
+  },
+  {
+   "id": "md_crowbar",
+   "name": "Монтировка",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "монтировк",
+    "фомк",
+    "лом"
+   ],
+   "genre": "modern",
+   "price": 2,
+   "trade": "weapons",
+   "damage": "1d6 ударный"
+  },
+  {
+   "id": "md_baton",
+   "name": "Полицейская дубинка",
+   "cat": "weapon",
+   "w": 1,
+   "h": 3,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": true,
+   "kw": [
+    "дубинк",
+    "тонфа"
+   ],
+   "genre": "modern",
+   "price": 5,
+   "trade": "weapons",
+   "damage": "1d6 ударный"
+  },
+  {
+   "id": "md_knuckles",
+   "name": "Кастет",
+   "cat": "weapon",
+   "w": 1,
+   "h": 1,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кастет"
+   ],
+   "genre": "modern",
+   "price": 3,
+   "trade": "weapons",
+   "damage": "1d4 ударный"
+  },
+  {
+   "id": "md_taser",
+   "name": "Электрошокер",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "шокер",
+    "тазер",
+    "электрошок"
+   ],
+   "genre": "modern",
+   "price": 20,
+   "trade": "weapons",
+   "damage": "1d6 электричество"
+  },
+  {
+   "id": "md_laptop",
+   "name": "Ноутбук хакера",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "ноутбук",
+    "лэптоп",
+    "компьютер"
+   ],
+   "genre": "modern",
+   "price": 60,
+   "trade": "magic",
+   "damage": "1d6 электричество"
+  },
+  {
+   "id": "md_drone_ctrl",
+   "name": "Квадрокоптер с пультом",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "квадрокоптер",
+    "дрон",
+    "пульт"
+   ],
+   "genre": "modern",
+   "price": 80,
+   "trade": "magic",
+   "damage": "1d6 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_leather",
+   "name": "Кожаная куртка",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кожан",
+    "куртк",
+    "косух"
+   ],
+   "genre": "modern",
+   "price": 10,
+   "trade": "light_armor",
+   "armor": 1
+  },
+  {
+   "id": "md_hoodie",
+   "name": "Худи",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "худи",
+    "толстовк"
+   ],
+   "genre": "modern",
+   "price": 3,
+   "trade": "clothing"
+  },
+  {
+   "id": "md_suit",
+   "name": "Деловой костюм",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "костюм",
+    "пиджак"
+   ],
+   "genre": "modern",
+   "price": 40,
+   "trade": "clothing"
+  },
+  {
+   "id": "md_vest_hidden",
+   "name": "Скрытый бронежилет",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "скрыт",
+    "бронежилет"
+   ],
+   "genre": "modern",
+   "price": 40,
+   "trade": "light_armor",
+   "armor": 3,
+   "weight": "medium"
+  },
+  {
+   "id": "md_police_vest",
+   "name": "Полицейский бронежилет",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "полицейск",
+    "бронежилет"
+   ],
+   "genre": "modern",
+   "price": 70,
+   "trade": "heavy_armor",
+   "armor": 4,
+   "weight": "medium"
+  },
+  {
+   "id": "md_plate_carrier",
+   "name": "Плитник",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "плитник",
+    "плитоноск",
+    "бронеплит"
+   ],
+   "genre": "modern",
+   "price": 120,
+   "trade": "heavy_armor",
+   "armor": 5,
+   "weight": "medium"
+  },
+  {
+   "id": "md_heavy_armor",
+   "name": "Штурмовой бронекостюм",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "штурмов",
+    "бронекостюм",
+    "сапёр"
+   ],
+   "genre": "modern",
+   "price": 300,
+   "trade": "heavy_armor",
+   "armor": 7,
+   "weight": "heavy"
+  },
+  {
+   "id": "md_coat",
+   "name": "Пальто",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "пальто"
+   ],
+   "genre": "modern",
+   "price": 25,
+   "trade": "clothing"
+  },
+  {
+   "id": "md_raincoat",
+   "name": "Плащ",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "плащ",
+    "тренч",
+    "дождевик"
+   ],
+   "genre": "modern",
+   "price": 10,
+   "trade": "clothing"
+  },
+  {
+   "id": "md_helmet",
+   "name": "Армейская каска",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "каска",
+    "шлем"
+   ],
+   "genre": "modern",
+   "price": 20,
+   "trade": "heavy_armor",
+   "armor": 1
+  },
+  {
+   "id": "md_balaclava",
+   "name": "Балаклава",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "балаклав",
+    "маск"
+   ],
+   "genre": "modern",
+   "price": 2,
+   "trade": "clothing"
+  },
+  {
+   "id": "md_cap",
+   "name": "Кепка",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кепк",
+    "бейсболк"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "clothing"
+  },
+  {
+   "id": "md_sunglasses",
+   "name": "Солнцезащитные очки",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Helmet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "очки",
+    "солнцезащит"
+   ],
+   "genre": "modern",
+   "price": 5,
+   "trade": "clothing"
+  },
+  {
+   "id": "md_gloves",
+   "name": "Тактические перчатки",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Gloves",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "перчатк"
+   ],
+   "genre": "modern",
+   "price": 4,
+   "trade": "light_armor"
+  },
+  {
+   "id": "md_boots",
+   "name": "Берцы",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "берц",
+    "ботинк",
+    "сапог"
+   ],
+   "genre": "modern",
+   "price": 8,
+   "trade": "light_armor"
+  },
+  {
+   "id": "md_sneakers",
+   "name": "Кроссовки",
+   "cat": "armor",
+   "w": 2,
+   "h": 2,
+   "slot": "Boots",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кроссовк",
+    "кеды"
+   ],
+   "genre": "modern",
+   "price": 5,
+   "trade": "clothing"
+  },
+  {
+   "id": "md_rig",
+   "name": "Разгрузка",
+   "cat": "armor",
+   "w": 2,
+   "h": 1,
+   "slot": "Belt",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "разгрузк",
+    "пояс"
+   ],
+   "genre": "modern",
+   "price": 10,
+   "trade": "light_armor"
+  },
+  {
+   "id": "md_holster",
+   "name": "Пояс с кобурой",
+   "cat": "armor",
+   "w": 2,
+   "h": 1,
+   "slot": "Belt",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кобур",
+    "ремень"
+   ],
+   "genre": "modern",
+   "price": 6,
+   "trade": "light_armor"
+  },
+  {
+   "id": "md_riot_shield",
+   "name": "Полицейский щит",
+   "cat": "shield",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand2",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "щит",
+    "полицейск"
+   ],
+   "genre": "modern",
+   "price": 30,
+   "trade": "shields",
+   "armor": 2
+  },
+  {
+   "id": "md_ballistic",
+   "name": "Баллистический щит",
+   "cat": "shield",
+   "w": 2,
+   "h": 3,
+   "slot": "Hand2",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "баллистич",
+    "щит"
+   ],
+   "genre": "modern",
+   "price": 80,
+   "trade": "shields",
+   "armor": 3
+  },
+  {
+   "id": "md_dogtag",
+   "name": "Армейский жетон",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "жетон"
+   ],
+   "genre": "modern",
+   "price": 15,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_cross",
+   "name": "Нательный крест",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "крест",
+    "крестик"
+   ],
+   "genre": "modern",
+   "price": 20,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_chain",
+   "name": "Золотая цепь",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "цеп",
+    "цепочк"
+   ],
+   "genre": "modern",
+   "price": 60,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_pendant",
+   "name": "Кулон",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кулон",
+    "медальон"
+   ],
+   "genre": "modern",
+   "price": 40,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_watch",
+   "name": "Часы",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "часы"
+   ],
+   "genre": "modern",
+   "price": 30,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_watch_lux",
+   "name": "Дорогие часы",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "дорог",
+    "часы",
+    "ролекс"
+   ],
+   "genre": "modern",
+   "price": 120,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_ring",
+   "name": "Перстень",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "перстень",
+    "печатк",
+    "кольц"
+   ],
+   "genre": "modern",
+   "price": 50,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_bracelet",
+   "name": "Браслет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "браслет"
+   ],
+   "genre": "modern",
+   "price": 25,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_fitness",
+   "name": "Фитнес-браслет",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "фитнес",
+    "трекер",
+    "смарт-час"
+   ],
+   "genre": "modern",
+   "price": 20,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_bandage",
+   "name": "Бинты и обезболивающее",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "бинт",
+    "перевяз"
+   ],
+   "genre": "modern",
+   "price": 6,
+   "trade": "potions"
+  },
+  {
+   "id": "md_medkit",
+   "name": "Аптечка",
+   "cat": "potion",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "аптечк"
+   ],
+   "genre": "modern",
+   "price": 25,
+   "trade": "potions"
+  },
+  {
+   "id": "md_army_medkit",
+   "name": "Армейская аптечка",
+   "cat": "potion",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "армейск",
+    "аптечк"
+   ],
+   "genre": "modern",
+   "price": 60,
+   "trade": "potions"
+  },
+  {
+   "id": "md_painkillers",
+   "name": "Обезболивающее",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "обезбол",
+    "таблетк"
+   ],
+   "genre": "modern",
+   "price": 8,
+   "trade": "potions"
+  },
+  {
+   "id": "md_energy",
+   "name": "Энергетик",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "энергетик",
+    "кофеин"
+   ],
+   "genre": "modern",
+   "price": 7,
+   "trade": "potions"
+  },
+  {
+   "id": "md_adrenaline",
+   "name": "Шприц адреналина",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "адреналин",
+    "шприц"
+   ],
+   "genre": "modern",
+   "price": 28,
+   "trade": "potions"
+  },
+  {
+   "id": "md_antidote",
+   "name": "Противоядие",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "противояд",
+    "антидот"
+   ],
+   "genre": "modern",
+   "price": 8,
+   "trade": "potions"
+  },
+  {
+   "id": "md_sedative",
+   "name": "Успокоительное",
+   "cat": "potion",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "успокоит",
+    "седатив"
+   ],
+   "genre": "modern",
+   "price": 12,
+   "trade": "potions"
+  },
+  {
+   "id": "md_frag",
+   "name": "Граната",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "граната",
+    "осколочн",
+    "лимонк"
+   ],
+   "genre": "modern",
+   "price": 15,
+   "trade": "scrolls"
+  },
+  {
+   "id": "md_flashbang",
+   "name": "Светошумовая граната",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "светошум"
+   ],
+   "genre": "modern",
+   "price": 12,
+   "trade": "scrolls"
+  },
+  {
+   "id": "md_smoke",
+   "name": "Дымовая шашка",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "дымов",
+    "шашк"
+   ],
+   "genre": "modern",
+   "price": 8,
+   "trade": "scrolls"
+  },
+  {
+   "id": "md_molotov",
+   "name": "Коктейль Молотова",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "молотов",
+    "зажигат",
+    "бутылк"
+   ],
+   "genre": "modern",
+   "price": 5,
+   "trade": "scrolls"
+  },
+  {
+   "id": "md_pepper",
+   "name": "Перцовый баллончик",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "перцов",
+    "баллончик"
+   ],
+   "genre": "modern",
+   "price": 6,
+   "trade": "scrolls"
+  },
+  {
+   "id": "md_flash_drive",
+   "name": "Флешка",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "флешк",
+    "носител"
+   ],
+   "genre": "modern",
+   "price": 2,
+   "trade": "scrolls"
+  },
+  {
+   "id": "md_docs",
+   "name": "Документы",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "документ",
+    "бумаг",
+    "договор",
+    "паспорт"
+   ],
+   "genre": "modern",
+   "price": 5,
+   "trade": "scrolls"
+  },
+  {
+   "id": "md_map",
+   "name": "Карта местности",
+   "cat": "scroll",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "карт",
+    "схем"
+   ],
+   "genre": "modern",
+   "price": 3,
+   "trade": "scrolls"
+  },
+  {
+   "id": "md_notebook",
+   "name": "Блокнот с записями",
+   "cat": "book",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "блокнот",
+    "записн",
+    "дневник"
+   ],
+   "genre": "modern",
+   "price": 5,
+   "trade": "books"
+  },
+  {
+   "id": "md_manual",
+   "name": "Справочник",
+   "cat": "book",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "справочник",
+    "учебник",
+    "руководств"
+   ],
+   "genre": "modern",
+   "price": 15,
+   "trade": "books"
+  },
+  {
+   "id": "md_case_file",
+   "name": "Папка с делом",
+   "cat": "book",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "дело",
+    "папк",
+    "досье"
+   ],
+   "genre": "modern",
+   "price": 20,
+   "trade": "books"
+  },
+  {
+   "id": "md_burger",
+   "name": "Бургер",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "бургер",
+    "гамбургер"
+   ],
+   "genre": "modern",
+   "price": 2,
+   "trade": "food"
+  },
+  {
+   "id": "md_shawarma",
+   "name": "Шаурма",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "шаурм",
+    "шаверм"
+   ],
+   "genre": "modern",
+   "price": 2,
+   "trade": "food"
+  },
+  {
+   "id": "md_coffee",
+   "name": "Кофе",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "кофе"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "food"
+  },
+  {
+   "id": "md_soda",
+   "name": "Газировка",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "газиров",
+    "кол"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "food"
+  },
+  {
+   "id": "md_water",
+   "name": "Вода",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "вода"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "food"
+  },
+  {
+   "id": "md_beer",
+   "name": "Пиво",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "пив"
+   ],
+   "genre": "modern",
+   "price": 2,
+   "trade": "food"
+  },
+  {
+   "id": "md_chips",
+   "name": "Чипсы",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "чипс"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "food"
+  },
+  {
+   "id": "md_mre",
+   "name": "Сухпаёк",
+   "cat": "food",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "сухпаёк",
+    "сухпаек",
+    "паёк",
+    "ирп"
+   ],
+   "genre": "modern",
+   "price": 3,
+   "trade": "food"
+  },
+  {
+   "id": "md_phone",
+   "name": "Смартфон",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "смартфон",
+    "телефон",
+    "мобильн"
+   ],
+   "genre": "modern",
+   "price": 15,
+   "trade": "tools"
+  },
+  {
+   "id": "md_burner",
+   "name": "Одноразовый телефон",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "одноразов",
+    "кнопочн"
+   ],
+   "genre": "modern",
+   "price": 5,
+   "trade": "tools"
+  },
+  {
+   "id": "md_car_keys",
+   "name": "Ключи от машины",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "ключи",
+    "от",
+    "машин",
+    "автоключ",
+    "брелок",
+    "сигнализац"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "tools"
+  },
+  {
+   "id": "md_keychain",
+   "name": "Связка ключей",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "связк",
+    "ключ"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "tools"
+  },
+  {
+   "id": "md_flashlight",
+   "name": "Фонарик",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "фонар",
+    "фонарик"
+   ],
+   "genre": "modern",
+   "price": 3,
+   "trade": "tools"
+  },
+  {
+   "id": "md_multitool",
+   "name": "Мультитул",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "мультитул"
+   ],
+   "genre": "modern",
+   "price": 6,
+   "trade": "tools"
+  },
+  {
+   "id": "md_lockpicks",
+   "name": "Отмычки",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "отмычк"
+   ],
+   "genre": "modern",
+   "price": 15,
+   "trade": "tools"
+  },
+  {
+   "id": "md_radio",
+   "name": "Рация",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "рация",
+    "рацию"
+   ],
+   "genre": "modern",
+   "price": 20,
+   "trade": "tools"
+  },
+  {
+   "id": "md_binoculars",
+   "name": "Бинокль",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "бинокл"
+   ],
+   "genre": "modern",
+   "price": 15,
+   "trade": "tools"
+  },
+  {
+   "id": "md_rope",
+   "name": "Верёвка",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "верёвк",
+    "веревк",
+    "трос"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "tools"
+  },
+  {
+   "id": "md_lighter",
+   "name": "Зажигалка",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "зажигалк"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "tools"
+  },
+  {
+   "id": "md_toolbox",
+   "name": "Ящик с инструментами",
+   "cat": "tool",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "ящик",
+    "инструмент"
+   ],
+   "genre": "modern",
+   "price": 12,
+   "trade": "tools"
+  },
+  {
+   "id": "md_handcuffs",
+   "name": "Наручники",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "наручник"
+   ],
+   "genre": "modern",
+   "price": 5,
+   "trade": "tools"
+  },
+  {
+   "id": "md_canister",
+   "name": "Канистра бензина",
+   "cat": "tool",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "канистр",
+    "бензин",
+    "топлив"
+   ],
+   "genre": "modern",
+   "price": 4,
+   "trade": "tools"
+  },
+  {
+   "id": "md_bag",
+   "name": "Спортивная сумка",
+   "cat": "tool",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "сумк",
+    "рюкзак"
+   ],
+   "genre": "modern",
+   "price": 2,
+   "trade": "tools"
+  },
+  {
+   "id": "md_jewelry",
+   "name": "Ювелирные украшения",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "ювелир",
+    "украшен",
+    "золот",
+    "серёжк"
+   ],
+   "genre": "modern",
+   "price": 50,
+   "trade": "gems"
+  },
+  {
+   "id": "md_diamond",
+   "name": "Бриллиант",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "бриллиант",
+    "алмаз",
+    "камен"
+   ],
+   "genre": "modern",
+   "price": 150,
+   "trade": "gems"
+  },
+  {
+   "id": "md_painting",
+   "name": "Картина",
+   "cat": "valuable",
+   "w": 2,
+   "h": 2,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "картин",
+    "полотн"
+   ],
+   "genre": "modern",
+   "price": 120,
+   "trade": "gems"
+  },
+  {
+   "id": "md_cigar_box",
+   "name": "Коробка сигар",
+   "cat": "valuable",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "сигар"
+   ],
+   "genre": "modern",
+   "price": 30,
+   "trade": "gems"
+  },
+  {
+   "id": "md_cigs",
+   "name": "Сигареты",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "сигарет",
+    "курев"
+   ],
+   "genre": "modern",
+   "price": 2,
+   "trade": "curios"
+  },
+  {
+   "id": "md_photo",
+   "name": "Фотография",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "фото",
+    "снимок"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "curios"
+  },
+  {
+   "id": "md_lottery",
+   "name": "Лотерейный билет",
+   "cat": "misc",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "лотер",
+    "билет"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "curios"
+  },
+  {
+   "id": "md_parts",
+   "name": "Автозапчасти",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "запчаст",
+    "детал"
+   ],
+   "genre": "modern",
+   "price": 8,
+   "trade": "materials"
+  },
+  {
+   "id": "md_electronics",
+   "name": "Электроника",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "электрон",
+    "плат",
+    "микросхем"
+   ],
+   "genre": "modern",
+   "price": 10,
+   "trade": "materials"
+  },
+  {
+   "id": "md_battery",
+   "name": "Аккумулятор",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "аккумулятор",
+    "батаре"
+   ],
+   "genre": "modern",
+   "price": 10,
+   "trade": "materials"
+  },
+  {
+   "id": "md_chem",
+   "name": "Химикаты",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "химикат",
+    "реагент"
+   ],
+   "genre": "modern",
+   "price": 8,
+   "trade": "materials"
+  },
+  {
+   "id": "md_ammo_box",
+   "name": "Ящик патронов",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "патрон",
+    "боеприпас"
+   ],
+   "genre": "modern",
+   "price": 15,
+   "trade": "materials"
+  },
+  {
+   "id": "md_hide",
+   "name": "Шкура",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "шкур",
+    "мех"
+   ],
+   "genre": "modern",
+   "price": 6,
+   "trade": "curios"
+  },
+  {
+   "id": "md_meat",
+   "name": "Мясо",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "мяс"
+   ],
+   "genre": "modern",
+   "price": 1,
+   "trade": "food"
+  },
+  {
+   "id": "md_fang",
+   "name": "Клыки",
+   "cat": "material",
+   "w": 1,
+   "h": 1,
+   "slot": null,
+   "twoHanded": false,
+   "art": false,
+   "diag": false,
+   "kw": [
+    "клык",
+    "зуб"
+   ],
+   "genre": "modern",
+   "price": 4,
+   "trade": "curios"
+  },
+  {
+   "id": "md_art_pistol",
+   "name": "Пистолет «Последний аргумент»",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "последн",
+    "аргумент"
+   ],
+   "genre": "modern",
+   "price": 380,
+   "trade": "ranged",
+   "damage": "1d8 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_art_revolver",
+   "name": "Револьвер «Шериф»",
+   "cat": "weapon",
+   "w": 2,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "шериф"
+   ],
+   "genre": "modern",
+   "price": 360,
+   "trade": "ranged",
+   "damage": "1d8 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_art_rifle",
+   "name": "Автомат «Ветеран»",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": true,
+   "diag": true,
+   "kw": [
+    "ветеран"
+   ],
+   "genre": "modern",
+   "price": 450,
+   "trade": "ranged",
+   "damage": "1d10 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_art_knife",
+   "name": "Нож «Тайга»",
+   "cat": "weapon",
+   "w": 1,
+   "h": 2,
+   "slot": "Hand1",
+   "twoHanded": false,
+   "art": true,
+   "diag": true,
+   "kw": [
+    "тайга"
+   ],
+   "genre": "modern",
+   "price": 300,
+   "trade": "blades",
+   "damage": "1d4 режущий",
+   "finesse": true
+  },
+  {
+   "id": "md_art_sniper",
+   "name": "Винтовка «Тихий»",
+   "cat": "weapon",
+   "w": 2,
+   "h": 4,
+   "slot": "Hand1",
+   "twoHanded": true,
+   "art": true,
+   "diag": true,
+   "kw": [
+    "тихий"
+   ],
+   "genre": "modern",
+   "price": 520,
+   "trade": "ranged",
+   "damage": "1d12 огнестрельный",
+   "ranged": true
+  },
+  {
+   "id": "md_art_watch",
+   "name": "Часы «Счастливые»",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Ring1",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "счастлив"
+   ],
+   "genre": "modern",
+   "price": 500,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_art_dogtag",
+   "name": "Жетон «Седьмой»",
+   "cat": "jewelry",
+   "w": 1,
+   "h": 1,
+   "slot": "Amulet",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "седьмой"
+   ],
+   "genre": "modern",
+   "price": 480,
+   "trade": "jewelry"
+  },
+  {
+   "id": "md_art_vest",
+   "name": "Бронежилет «Последний рубеж»",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Body",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "последний",
+    "рубеж"
+   ],
+   "genre": "modern",
+   "price": 800,
+   "trade": "heavy_armor",
+   "armor": 6,
+   "weight": "medium"
+  },
+  {
+   "id": "md_art_coat",
+   "name": "Плащ «Нуар»",
+   "cat": "armor",
+   "w": 2,
+   "h": 3,
+   "slot": "Cloak",
+   "twoHanded": false,
+   "art": true,
+   "diag": false,
+   "kw": [
+    "нуар"
+   ],
+   "genre": "modern",
+   "price": 600,
+   "trade": "clothing",
+   "armor": 1
+  }
+ ]
+}

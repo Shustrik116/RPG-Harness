@@ -1,0 +1,447 @@
+@implements IDisposable
+@inject TradeFlow Trade
+@inject RpgStateStore RpgStore
+@inject ItemEconomy Economy
+@inject ItemCatalog Catalog
+
+@if (_open && Npc is { Shop: { } shop } npc)
+{
+    var hero = _state.Character;
+    var kind = ItemEconomy.Merchant(shop.Kind);
+    <div class="tw-backdrop" @onclick="Finish">
+        <div class="tw-modal" @onclick:stopPropagation="true">
+            <div class="tw-head">
+                <div class="tw-title">
+                    <span class="tw-title-main">🛒 @(string.IsNullOrWhiteSpace(shop.Title) ? Lang.T("Лавка: ", "Shop: ") + npc.Name : shop.Title)</span>
+                    <span class="tw-title-sub">@npc.Name · @kind.Title.ToLowerInvariant()@(string.IsNullOrWhiteSpace(npc.Location) ? "" : $" · {npc.Location}")</span>
+                </div>
+                <button class="tw-x" title="@Lang.T("Завершить сделку", "Finish the deal")" @onclick="Finish">✕</button>
+            </div>
+
+            <div class="tw-terms">
+                <span title="@Lang.T("Свои товары торговец покупает по этой доле цены", "The merchant buys their own kind of goods at this share of the price")">@Lang.T("Торгует:", "Trades in:") <b>@Cats(Economy.MainOf(shop))</b> — @Lang.T("берёт за", "buys at") @Pct(shop.BuyRate)</span>
+                @if (shop.OffRate > 0 && Economy.AlsoOf(shop).Length > 0)
+                {
+                    <span>@Lang.T("Задёшево", "Cheaply") (@Pct(shop.OffRate)): @Cats(Economy.AlsoOf(shop))</span>
+                }
+                <span>@Lang.T("Остальное не берёт.", "Does not buy anything else.")</span>
+                @if (DndStatNames.Modifier(hero.Cha) != 0)
+                {
+                    <span class="tw-cha" title="@Lang.T("Харизма героя влияет на цены (±3% за единицу модификатора, до 15%)", "The hero's Charisma affects prices (±3% per modifier point, up to 15%)")">
+                        @DndStatNames.Short[5] @DndStatNames.ModText(hero.Cha): @Lang.T("цены", "prices") @(DndStatNames.Modifier(hero.Cha) > 0 ? Lang.T("лучше", "better") : Lang.T("хуже", "worse"))
+                    </span>
+                }
+            </div>
+
+            <div class="tw-cols">
+                @* ===== Прилавок ===== *@
+                <section class="tw-side">
+                    <div class="tw-side-head">
+                        <span>@Lang.T("Прилавок", "Counter")</span>
+                        <span class="tw-gold" title="@Lang.T("Деньги торговца", "The merchant's money")">@Genre.Pick("🪙", "€$", "$") @shop.Gold</span>
+                    </div>
+                    <div class="tw-grid shop @(_drag is not null ? "dragging" : "") @(_drag?.FromShop == false ? "drop-target" : "")"
+                         style="--cols:@MerchantShop.ShopCols"
+                         @ondragover:preventDefault @ondrop:preventDefault>
+                        @for (var row = 0; row < MerchantShop.ShopRows; row++)
+                        {
+                            for (var col = 0; col < MerchantShop.ShopCols; col++)
+                            {
+                                var c = col;
+                                var r = row;
+                                <div class="tw-cell" @ondrop="() => Drop(true, c, r)" @ondrop:preventDefault></div>
+                            }
+                        }
+                        @foreach (var ware in shop.Items.ToList())
+                        {
+                            var w = ware;
+                            <div class="tw-item rar-@ItemEconomy.RarityKey(w.Rarity) @(IsSel(true, w) ? "sel" : "") @(_drag?.Item == w ? "lifted" : "")"
+                                 style="@ItemStyle(w)" draggable="true"
+                                 @ondragstart="e => DragStart(e, w, true)" @ondragend="DragEnd"
+                                 @onclick="() => Select(true, w)" @ondblclick="() => BuyAsync(w, 1)"
+                                 title="@Tip(w, true)">
+                                <span class="pix pix-@w.Icon @IconClass(w)"></span>
+                                @if (w.Quantity > 1)
+                                {
+                                    <span class="tw-qty">@w.Quantity</span>
+                                }
+                                <span class="tw-price">@Economy.BuyPrice(shop, w, hero)</span>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                @* ===== Сумка героя ===== *@
+                <section class="tw-side">
+                    <div class="tw-side-head">
+                        <span>@Lang.T("Сумка:", "Bag:") @(string.IsNullOrWhiteSpace(hero.Name) ? Lang.T("герой", "hero") : hero.Name)</span>
+                        <span class="tw-gold" title="@Genre.PickT("Золото героя", "Эдди героя", "Деньги героя", "The hero's gold", "The hero's eddies", "The hero's money")">@Genre.Pick("🪙", "€$", "$") @hero.Gold</span>
+                    </div>
+                    <div class="tw-grid bag @(_drag is not null ? "dragging" : "") @(_drag?.FromShop == true ? "drop-target" : "")"
+                         style="--cols:@RpgState.GridCols"
+                         @ondragover:preventDefault @ondrop:preventDefault>
+                        @for (var row = 0; row < RpgState.GridRows; row++)
+                        {
+                            for (var col = 0; col < RpgState.GridCols; col++)
+                            {
+                                var c = col;
+                                var r = row;
+                                <div class="tw-cell" @ondrop="() => Drop(false, c, r)" @ondrop:preventDefault></div>
+                            }
+                        }
+                        @foreach (var item in _state.Grid.ToList())
+                        {
+                            var it = item;
+                            var offer = Economy.SellPrice(shop, it, hero);
+                            <div class="tw-item rar-@ItemEconomy.RarityKey(it.Rarity) @(offer <= 0 ? "refused" : "") @(IsSel(false, it) ? "sel" : "") @(_drag?.Item == it ? "lifted" : "")"
+                                 style="@ItemStyle(it)" draggable="true"
+                                 @ondragstart="e => DragStart(e, it, false)" @ondragend="DragEnd"
+                                 @onclick="() => Select(false, it)" @ondblclick="() => SellAsync(it, 1)"
+                                 title="@Tip(it, false)">
+                                <span class="pix pix-@it.Icon @IconClass(it)"></span>
+                                @if (it.Quantity > 1)
+                                {
+                                    <span class="tw-qty">@it.Quantity</span>
+                                }
+                                <span class="tw-price">@(offer > 0 ? offer.ToString() : "✗")</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="tw-hint">@Lang.T("Перетащите предмет между сеткой лавки и сумкой (по 1 шт.), двойной клик — купить / продать 1.", "Drag an item between the shop grid and the bag (1 piece at a time), double-click — buy / sell 1.")</div>
+                </section>
+            </div>
+
+            @if (!string.IsNullOrEmpty(_msg))
+            {
+                <div class="tw-msg @(_msgOk ? "ok" : "")">@_msg</div>
+            }
+
+            @if (Selected is { } sel)
+            {
+                var fromShop = _selShop;
+                var unit = fromShop ? Economy.BuyPrice(shop, sel, hero) : Economy.SellPrice(shop, sel, hero);
+                <div class="tw-card">
+                    <span class="tw-card-icon"><span class="pix pix-@sel.Icon"></span></span>
+                    <div class="tw-card-body">
+                        <div class="tw-card-name rar-text-@ItemEconomy.RarityKey(sel.Rarity)">@sel.Name@(sel.Quantity > 1 ? $" ×{sel.Quantity}" : "")</div>
+                        <div class="tw-card-meta">
+                            @ItemEconomy.RarityTitle(sel.Rarity) · @(ItemEconomy.Category(Economy.CategoryOf(sel.Icon))?.Title ?? Lang.T("диковина", "curiosity")) · @sel.W×@sel.H
+                            · @Lang.T("стоимость", "value") @Economy.UnitValue(sel) @Genre.Coin
+                        </div>
+                        @if (ItemStats.HasStats(sel))
+                        {
+                            <div class="tw-card-stats">@ItemStats.Describe(sel)</div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(sel.Note))
+                        {
+                            <div class="tw-card-note">@sel.Note</div>
+                        }
+                    </div>
+                    <div class="tw-card-actions">
+                        @if (fromShop)
+                        {
+                            <button class="tw-btn buy" disabled="@(hero.Gold < unit)" @onclick="() => BuyAsync(sel, 1)">@Lang.T("Купить за", "Buy for") @unit @Genre.Coin</button>
+                            @if (sel.Quantity > 1)
+                            {
+                                <button class="tw-btn buy" disabled="@(hero.Gold < unit * sel.Quantity)" @onclick="() => BuyAsync(sel, sel.Quantity)">@Lang.T("Все", "All") ×@sel.Quantity — @(unit * sel.Quantity) @Genre.Coin</button>
+                            }
+                        }
+                        else if (unit > 0)
+                        {
+                            <button class="tw-btn sell" @onclick="() => SellAsync(sel, 1)">@Lang.T("Продать за", "Sell for") @unit @Genre.Coin</button>
+                            @if (sel.Quantity > 1)
+                            {
+                                <button class="tw-btn sell" @onclick="() => SellAsync(sel, sel.Quantity)">@Lang.T("Все", "All") ×@sel.Quantity — @(unit * sel.Quantity) @Genre.Coin</button>
+                            }
+                        }
+                        else
+                        {
+                            <span class="tw-refuse">@Economy.RefuseReason(shop, sel)</span>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="tw-foot">
+                <div class="tw-log">
+                    @if (_deals.Count == 0)
+                    {
+                        <span class="tw-log-empty">@Lang.T("Сделок пока нет.", "No deals yet.")</span>
+                    }
+                    else
+                    {
+                        <span>@Lang.T("Итог:", "Total:") @string.Join("; ", _deals.Select(d => d.Text))</span>
+                        <span class="tw-log-gold">@Genre.PickT("Золото", "Эдди", "Деньги", "Gold", "Eddies", "Money"): @_goldBefore → @hero.Gold</span>
+                    }
+                </div>
+                <button class="tw-btn done" @onclick="Finish">@(_deals.Count == 0 ? Lang.T("Уйти, ничего не купив", "Leave without buying") : Lang.T("Завершить сделку", "Finish the deal"))</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private const int CellPx = 34;
+
+    private sealed record Deal(bool Bought, string Name, int Qty, int Gold)
+    {
+        public string Text => Lang.T($"{(Bought ? "куплено" : "продано")} «{Name}»{(Qty > 1 ? $" ×{Qty}" : "")} за {Gold} {Genre.Coin}", $"{(Bought ? "bought" : "sold")} \"{Name}\"{(Qty > 1 ? $" ×{Qty}" : "")} for {Gold} {Genre.Coin}");
+    }
+
+    private sealed record DragInfo(GridItem Item, bool FromShop, int GrabCol, int GrabRow);
+
+    private bool _open;
+    private string? _chatId;
+    private string _npcName = "";
+    private RpgState _state = new();
+    private int _goldBefore;
+    private readonly List<Deal> _deals = new();
+
+    private DragInfo? _drag;
+    private GridItem? _sel;
+    private bool _selShop;
+    private string? _msg;
+    private bool _msgOk;
+
+    private ImportantNpc? Npc => _state.ImportantCharacters.FirstOrDefault(n => n.Name.Equals(_npcName, StringComparison.OrdinalIgnoreCase));
+
+    private GridItem? Selected =>
+        _sel is null ? null
+        : _selShop ? (Npc?.Shop?.Items.Contains(_sel) == true ? _sel : null)
+        : (_state.Grid.Contains(_sel) ? _sel : null);
+
+    protected override void OnInitialized()
+    {
+        Trade.OpenRequested += OnOpenRequested;
+        RpgStore.StateChanged += OnStateChanged;
+    }
+
+    public void Dispose()
+    {
+        Trade.OpenRequested -= OnOpenRequested;
+        RpgStore.StateChanged -= OnStateChanged;
+    }
+
+    private void OnOpenRequested(string chatId, string npcName) => _ = InvokeAsync(() =>
+    {
+        var reopen = _open && _chatId == chatId && _npcName.Equals(npcName, StringComparison.OrdinalIgnoreCase);
+        _chatId = chatId;
+        _npcName = npcName.Trim();
+        _state = RpgStore.GetOrCreate(chatId);
+        if (!reopen)
+        {
+            _deals.Clear();
+            _goldBefore = _state.Character.Gold;
+            _sel = null;
+            _msg = null;
+        }
+
+        _open = Npc?.Shop is not null;
+        StateHasChanged();
+    });
+
+    private void OnStateChanged(string sessionId)
+    {
+        if (_open && sessionId == _chatId)
+        {
+            _ = InvokeAsync(() =>
+            {
+                _state = RpgStore.GetOrCreate(_chatId);
+                StateHasChanged();
+            });
+        }
+    }
+
+    // ===== Сделки =====
+
+    private void Save() => RpgStore.Save(_chatId, _state);
+
+    private Task BuyAsync(GridItem ware, int qty, int? col = null, int? row = null)
+    {
+        if (Npc?.Shop is not { } shop)
+        {
+            return Task.CompletedTask;
+        }
+
+        var name = ware.Name;
+        qty = Math.Clamp(qty, 1, Math.Max(1, ware.Quantity));
+        var ok = Economy.Buy(_state, shop, ware, qty, col, row, out var message, out var paid);
+        Say(message, ok);
+        if (ok)
+        {
+            _deals.Add(new Deal(true, name, qty, paid));
+            Merge();
+            Save();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task SellAsync(GridItem item, int qty, int? col = null, int? row = null)
+    {
+        if (Npc?.Shop is not { } shop)
+        {
+            return Task.CompletedTask;
+        }
+
+        var name = item.Name;
+        qty = Math.Clamp(qty, 1, Math.Max(1, item.Quantity));
+        var ok = Economy.Sell(_state, shop, item, qty, col, row, out var message, out var got);
+        Say(message, ok);
+        if (ok)
+        {
+            _deals.Add(new Deal(false, name, qty, got));
+            Merge();
+            Save();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>Сворачивает повторные сделки с одним предметом: «куплено Зелье ×3» вместо трёх строк.</summary>
+    private void Merge()
+    {
+        if (_deals.Count < 2)
+        {
+            return;
+        }
+
+        var last = _deals[^1];
+        var same = _deals.Take(_deals.Count - 1).LastOrDefault(d => d.Bought == last.Bought && d.Name == last.Name);
+        if (same is null)
+        {
+            return;
+        }
+
+        _deals.Remove(last);
+        _deals[_deals.IndexOf(same)] = same with { Qty = same.Qty + last.Qty, Gold = same.Gold + last.Gold };
+    }
+
+    private void Say(string message, bool ok)
+    {
+        _msg = message;
+        _msgOk = ok;
+    }
+
+    /// <summary>Итог уходит мастеру (он отыграет реакцию торговца); без сделок окно просто закрывается.</summary>
+    private void Finish()
+    {
+        _open = false;
+        _drag = null;
+        if (_chatId is { } chatId)
+        {
+            if (_deals.Count == 0)
+            {
+                Trade.Complete(chatId, Lang.T($"🚪 Герой ушёл от {_npcName}, ничего не купив. Отыграй это без выдуманной покупки и продолжи сцену.", $"🚪 The hero left {_npcName} without buying anything. Play it out without an invented purchase and continue the scene."));
+                return;
+            }
+
+            var bought = _deals.Where(d => d.Bought).Select(d => Lang.T($"«{d.Name}»{(d.Qty > 1 ? $" ×{d.Qty}" : "")} за {d.Gold} {Genre.Coin}", $"\"{d.Name}\"{(d.Qty > 1 ? $" ×{d.Qty}" : "")} for {d.Gold} {Genre.Coin}")).ToList();
+            var sold = _deals.Where(d => !d.Bought).Select(d => Lang.T($"«{d.Name}»{(d.Qty > 1 ? $" ×{d.Qty}" : "")} за {d.Gold} {Genre.Coin}", $"\"{d.Name}\"{(d.Qty > 1 ? $" ×{d.Qty}" : "")} for {d.Gold} {Genre.Coin}")).ToList();
+            var parts = new List<string>();
+            if (bought.Count > 0)
+            {
+                parts.Add(Lang.T("куплено ", "bought ") + string.Join(", ", bought));
+            }
+
+            if (sold.Count > 0)
+            {
+                parts.Add(Lang.T("продано ", "sold ") + string.Join(", ", sold));
+            }
+
+            var summary = Lang.IsEn
+                ? $"🛒 Deal with {_npcName}: {string.Join("; ", parts)}. Hero's {Genre.Pick("gold", "eddies", "money")}: {_goldBefore} → {_state.Character.Gold}.\n" +
+                  $"(The trade window has already moved the items and {Genre.Money} into the hero book and the shop — do not call " +
+                  "update_grid_item, update_character or update_shop_item for this deal, only play out the merchant's reaction.)"
+                : $"🛒 Сделка с {_npcName}: {string.Join("; ", parts)}. {Genre.Pick("Золото", "Эдди", "Деньги")} героя: {_goldBefore} → {_state.Character.Gold}.\n" +
+                  $"(Окно торговли уже перенесло предметы и {Genre.Money} в книгу героя и лавку — не вызывай для этой сделки " +
+                  "update_grid_item, update_character или update_shop_item, только отыграй реакцию торговца.)";
+            _deals.Clear();
+            Trade.Complete(chatId, summary);
+        }
+    }
+
+    // ===== Перетаскивание =====
+
+    private void DragStart(DragEventArgs e, GridItem item, bool fromShop)
+    {
+        _drag = new DragInfo(item, fromShop,
+            Math.Clamp((int)(e.OffsetX / CellPx), 0, item.W - 1),
+            Math.Clamp((int)(e.OffsetY / CellPx), 0, item.H - 1));
+        Select(fromShop, item);
+    }
+
+    private void DragEnd() => _drag = null;
+
+    private async Task Drop(bool toShop, int col, int row)
+    {
+        if (_drag is not { } drag || Npc?.Shop is not { } shop)
+        {
+            return;
+        }
+
+        _drag = null;
+        var c = col - drag.GrabCol;
+        var r = row - drag.GrabRow;
+
+        if (drag.FromShop == toShop)
+        {
+            // Перекладывание внутри своей сетки.
+            var items = toShop ? shop.Items : _state.Grid;
+            var (cols, rows) = toShop ? (MerchantShop.ShopCols, MerchantShop.ShopRows) : (RpgState.GridCols, RpgState.GridRows);
+            if (c >= 0 && r >= 0 && c + drag.Item.W <= cols && r + drag.Item.H <= rows &&
+                InventoryOps.Fits(items, c, r, drag.Item.W, drag.Item.H, drag.Item, cols, rows))
+            {
+                (drag.Item.Col, drag.Item.Row) = (c, r);
+                Save();
+            }
+
+            return;
+        }
+
+        if (toShop)
+        {
+            await SellAsync(drag.Item, 1, c, r);
+        }
+        else
+        {
+            await BuyAsync(drag.Item, 1, c, r);
+        }
+    }
+
+    // ===== Отображение =====
+
+    private void Select(bool fromShop, GridItem item)
+    {
+        _sel = item;
+        _selShop = fromShop;
+    }
+
+    private bool IsSel(bool fromShop, GridItem item) => _sel == item && _selShop == fromShop;
+
+    private static string ItemStyle(GridItem item) =>
+        $"left:calc({item.Col} * var(--cell) + 2px); top:calc({item.Row} * var(--cell) + 2px);" +
+        $"width:calc({item.W} * var(--cell) - 2px); height:calc({item.H} * var(--cell) - 2px);";
+
+    private string IconClass(GridItem item) =>
+        Catalog.Get(item.Icon) is { Diag: true } && item.H > item.W ? "diag" : "fit";
+
+    private string Tip(GridItem item, bool fromShop)
+    {
+        if (Npc?.Shop is not { } shop)
+        {
+            return item.Name;
+        }
+
+        var price = fromShop ? Economy.BuyPrice(shop, item, _state.Character) : Economy.SellPrice(shop, item, _state.Character);
+        var deal = fromShop ? Lang.T("цена ", "price ") + $"{price} {Genre.Coin}" : price > 0 ? Lang.T("торговец даст ", "the merchant pays ") + $"{price} {Genre.Coin}" : Lang.T("торговец не покупает", "the merchant does not buy it");
+        return $"{item.Name}{(item.Quantity > 1 ? $" ×{item.Quantity}" : "")} — {deal}" +
+               (ItemStats.HasStats(item) ? $"\n{ItemStats.Describe(item)}" : "") +
+               (string.IsNullOrWhiteSpace(item.Note) ? "" : $"\n{item.Note}");
+    }
+
+    private static string Cats(IEnumerable<string> keys) =>
+        string.Join(", ", keys.Select(k => ItemEconomy.Category(k)?.Title.ToLowerInvariant() ?? k));
+
+    private static string Pct(double rate) => $"{Math.Round(rate * 100)}%";
+}

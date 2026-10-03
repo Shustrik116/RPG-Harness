@@ -1,0 +1,600 @@
+/* ===== Страница настроек ===== */
+.settings-page {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 32px;
+    max-width: 860px;
+    width: 100%;
+    margin-inline: auto;
+    background: transparent;
+    color: var(--rh-text);
+    font-family: var(--rh-font);
+}
+
+.settings-page > * {
+    flex-shrink: 0;
+}
+
+.settings-page h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #fff;
+}
+
+/* ===== Алерты ===== */
+.alert {
+    margin: 0;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    border-radius: var(--rh-radius-btn);
+    font-size: 13.5px;
+    line-height: 1.45;
+    background: var(--rh-glass-soft);
+}
+
+.alert-success {
+    background: rgba(143, 174, 106, 0.12);
+    border-color: rgba(143, 174, 106, 0.38);
+    color: #b9cf9a;
+}
+
+.alert-danger {
+    background: rgba(201, 97, 74, 0.12);
+    border-color: rgba(201, 97, 74, 0.38);
+    color: #e7a391;
+}
+
+/* ===== Карточки-секции ===== */
+.card {
+    background: var(--rh-card);
+    border: 1px solid var(--rh-border);
+    border-radius: var(--rh-radius-card);
+    box-shadow: var(--rh-shadow-card);
+    -webkit-
+    overflow: hidden;
+}
+
+.card-header {
+    background: rgba(14, 12, 10, 0.35);
+    border-bottom: 1px solid var(--rh-border);
+    border-radius: var(--rh-radius-card) var(--rh-radius-card) 0 0;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* ===== Подзаголовок подгруппы внутри карточки ===== */
+.subhead {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--rh-border);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--rh-text-2);
+}
+
+.subhead + .field {
+    margin-top: 12px;
+}
+
+/* ===== Раскрывающийся заголовок карточки (системный промпт) ===== */
+.card-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    border: none;
+    border-bottom: 1px solid var(--rh-border);
+    transition: background-color .15s ease;
+}
+
+.card-toggle:hover {
+    background: rgba(var(--rh-accent-rgb), 0.10);
+}
+
+.card-toggle:focus-visible {
+    outline: 2px solid var(--rh-accent);
+    outline-offset: -2px;
+}
+
+/* Свёрнутая карточка — разделитель не нужен, рамка снизу дублировала бы границу карточки. */
+.card-toggle:not(.is-open) {
+    border-bottom-color: transparent;
+}
+
+.toggle-arrow {
+    flex: none;
+    font-size: 12px;
+    color: var(--rh-accent);
+}
+
+.toggle-hint {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--rh-text-3);
+}
+
+/* ===== Поля формы ===== */
+.field + .field {
+    margin-top: 16px;
+}
+
+.field-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--rh-text-2);
+}
+
+.ctl {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--rh-text);
+    background: var(--rh-input-bg);
+    border: 1px solid var(--rh-input-border);
+    border-radius: var(--rh-radius-btn);
+    padding: .5rem .75rem;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.ctl:focus {
+    border-color: var(--rh-accent);
+    box-shadow: 0 0 0 3px var(--rh-accent-ring-soft);
+}
+
+textarea.ctl {
+    resize: vertical;
+    min-height: 6rem;
+}
+
+.ctl-help {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--rh-text-3);
+}
+
+.ctl-help code {
+    background: rgba(235, 226, 211, 0.10);
+    border: 1px solid var(--rh-border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 11.5px;
+    color: var(--rh-text-2);
+    word-break: break-word;
+}
+
+/* ===== Статус системного промпта ===== */
+.prompt-state {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 6px 10px;
+    border: 1px solid var(--rh-border);
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--rh-text-2);
+}
+
+.prompt-state::before {
+    content: "";
+    flex: 0 0 auto;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.prompt-state.is-default {
+    color: var(--rh-accent-3);
+    border-color: rgba(143, 174, 106, .35);
+    background: rgba(143, 174, 106, .10);
+}
+
+.prompt-state.is-custom {
+    color: var(--rh-accent);
+    border-color: rgba(var(--rh-accent-rgb), .35);
+    background: rgba(var(--rh-accent-rgb), .10);
+}
+
+/* ===== Чекбоксы ===== */
+.check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--rh-text);
+    cursor: pointer;
+}
+
+.check input {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    margin: 2px 0 0;
+    accent-color: var(--rh-accent);
+    cursor: pointer;
+}
+
+/* ===== Проверка соединения ===== */
+.probe-area {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.probe {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 6px;
+    max-width: 100%;
+    min-width: 0;
+    padding: .4rem .7rem;
+    border-radius: var(--rh-radius-btn);
+    border: 1px solid transparent;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.probe-ok {
+    background: rgba(143, 174, 106, 0.12);
+    border-color: rgba(143, 174, 106, 0.38);
+    color: #b9cf9a;
+}
+
+.probe-fail {
+    background: rgba(201, 97, 74, 0.12);
+    border-color: rgba(201, 97, 74, 0.38);
+    color: #e7a391;
+}
+
+.probe-icon {
+    flex: none;
+    font-weight: 700;
+}
+
+.probe-ok .probe-icon {
+    color: var(--rh-success);
+}
+
+.probe-fail .probe-icon {
+    color: var(--rh-danger);
+}
+
+.probe-text {
+    min-width: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* ===== Список моделей после проверки подключения ===== */
+.model-picker {
+    margin-top: 16px;
+}
+
+.model-picker-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--rh-text-2);
+}
+
+.model-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-top: 8px;
+}
+
+.model-link {
+    display: inline-flex;
+    align-items: baseline;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    color: var(--rh-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color .15s ease;
+}
+
+.model-link:hover {
+    color: #fff;
+}
+
+/* Выбранная модель — заметно отличается от остальных ссылок. */
+.model-link.is-active {
+    color: #fff;
+    font-weight: 700;
+    text-decoration-thickness: 2px;
+}
+
+.model-ctx {
+    margin-left: 4px;
+    font-size: 11px;
+    color: var(--rh-accent-3);
+}
+
+.model-more {
+    margin-top: 10px;
+}
+
+/* ===== Кнопки ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    padding: .5rem .95rem;
+    border: 1px solid transparent;
+    border-radius: var(--rh-radius-btn);
+    cursor: pointer;
+    text-decoration: none;
+    transition: filter .15s ease, background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--rh-accent);
+    outline-offset: 2px;
+}
+
+.btn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--rh-gradient);
+    border: none;
+    color: #1b1509;
+    font-weight: 700;
+    box-shadow: 0 2px 10px rgba(var(--rh-accent-rgb), .28);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--rh-gradient);
+    filter: brightness(1.08);
+    color: #1b1509;
+    box-shadow: 0 4px 16px rgba(var(--rh-accent-rgb), .40);
+}
+
+.btn-outline {
+    background: var(--rh-glass-soft);
+    border-color: var(--rh-border-strong);
+    color: var(--rh-text-2);
+}
+
+.btn-outline:hover:not(:disabled) {
+    background: rgba(var(--rh-accent-rgb), 0.14);
+    border-color: rgba(var(--rh-accent-rgb), 0.45);
+    color: var(--rh-text);
+}
+
+/* ===== Нижняя панель действий ===== */
+.actions {
+    margin-top: auto;
+    padding-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ctl-prompt {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.ctl-narrow {
+    max-width: 140px;
+}
+
+/* ===== Рассуждения и профили запросов ===== */
+.reason-box {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--rh-border);
+    background: rgba(14, 12, 10, .35);
+    transition: opacity .15s ease;
+}
+
+.reason-box.is-off {
+    opacity: .5;
+}
+
+.radio-row,
+.level-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+}
+
+.level-chip {
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--rh-border);
+    background: rgba(14, 12, 10, .45);
+}
+
+.prof-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .88rem;
+}
+
+.prof-table th {
+    text-align: left;
+    font-weight: 600;
+    font-size: .76rem;
+    color: var(--rh-text-3);
+    padding: 4px 6px;
+    border-bottom: 1px solid var(--rh-border);
+}
+
+.prof-table td {
+    padding: 7px 6px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--rh-border);
+}
+
+.prof-name {
+    font-weight: 600;
+}
+
+.prof-hint {
+    font-size: .74rem;
+    color: var(--rh-text-3);
+}
+
+.ctl-temp {
+    width: 92px;
+}
+
+.ctl-effort {
+    width: 150px;
+}
+
+/* ===== Выбор темы оформления ===== */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+}
+
+.theme-card {
+    display: grid;
+    justify-items: start;
+    gap: 7px;
+    padding: 12px;
+    text-align: left;
+    cursor: pointer;
+    color: var(--rh-text);
+    font-family: inherit;
+    background: var(--rh-input-bg);
+    border: 1px solid var(--rh-input-border);
+    border-radius: var(--rh-radius-card);
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.theme-card:hover {
+    border-color: var(--rh-accent);
+}
+
+.theme-card.is-active {
+    border-color: var(--rh-accent);
+    box-shadow: 0 0 0 3px var(--rh-accent-ring-soft);
+}
+
+.theme-card:focus-visible {
+    outline: 2px solid var(--rh-accent);
+    outline-offset: 2px;
+}
+
+/* Лента палитры: на span висит data-theme чужой темы, поэтому фон и кружки
+   берут её настоящие токены — превью не копирует цвета руками. */
+.theme-swatches {
+    display: inline-flex;
+    gap: 6px;
+    padding: 7px 9px;
+    background: var(--rh-bg);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: var(--rh-radius-btn);
+}
+
+.theme-swatches i {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14);
+}
+
+.sw-bg {
+    background: var(--rh-bg);
+}
+
+.sw-surface {
+    background: var(--rh-surface-3);
+}
+
+.sw-accent {
+    background: var(--rh-accent);
+}
+
+.sw-text {
+    background: var(--rh-text);
+}
+
+.theme-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--rh-text);
+}
+
+.theme-hint {
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--rh-text-3);
+}
+
+@media (max-width: 560px) {
+    .prof-table thead {
+        display: none;
+    }
+
+    .prof-table tr {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--rh-border);
+    }
+
+    .prof-table td {
+        border: none;
+        padding: 0;
+    }
+
+    .prof-table td:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .ctl-temp,
+    .ctl-effort {
+        width: 100%;
+    }
+}
