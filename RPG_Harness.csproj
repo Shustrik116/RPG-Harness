@@ -29,4 +29,12 @@
   <ItemGroup>
     <PackageReference Include="Markdig" Version="1.4.0" />
   </ItemGroup>
+
+  <!-- Результаты публикации и временная диагностика не являются входными файлами проекта. -->
+  <ItemGroup>
+    <Compile Remove="artifacts\**" />
+    <Content Remove="artifacts\**" />
+    <EmbeddedResource Remove="artifacts\**" />
+    <None Remove="artifacts\**" />
+  </ItemGroup>
 </Project>

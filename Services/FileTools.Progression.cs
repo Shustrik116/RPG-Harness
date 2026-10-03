@@ -573,7 +573,9 @@ public sealed partial class FileTools
 
         var arch = Progression.ArchetypeOf(who);
         var conMod = DndStatNames.Modifier(who.Stat(DndStat.Con));
-        var hpGain = Progression.HpPerLevel(arch, conMod);
+        var hpGain = isHero
+            ? Progression.HeroHpPerLevel(arch, conMod)
+            : Progression.CompanionHpPerLevel(arch, conMod);
         var manaGain = arch.ManaPerLevel;
         if (who is CharacterSheet h)
         {
@@ -1278,7 +1280,7 @@ public sealed partial class FileTools
 
         var conMod = DndStatNames.Modifier(member.Con);
         var keyMod = DndStatNames.Modifier(member.Stat(arch.Priority[0]));
-        member.HpMax = member.HpCurrent = Progression.HpAtLevel(arch, conMod, level);
+        member.HpMax = member.HpCurrent = Progression.CompanionHpAtLevel(arch, conMod, level);
         member.ManaMax = member.ManaCurrent = Progression.ManaAtLevel(arch, keyMod, level);
 
         // Снаряжение по уровню: обычное на 1–4, добротное на 5–9, редкое на 10–14, эпическое с 15-го.

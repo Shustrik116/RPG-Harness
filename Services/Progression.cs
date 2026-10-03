@@ -281,6 +281,13 @@ public static class Progression
     public static int HpAtLevel(ClassArchetype a, int conMod, int level) =>
         Math.Max(1, a.HitDie + conMod) + (Math.Max(1, level) - 1) * HpPerLevel(a, conMod);
 
+    /// <summary>Герой живучее базового архетипа вдвое, спутник — в полтора раза.</summary>
+    public static int HeroHpPerLevel(ClassArchetype a, int conMod) => HpPerLevel(a, conMod) * 2;
+    public static int CompanionHpPerLevel(ClassArchetype a, int conMod) => ScaleCompanionHp(HpPerLevel(a, conMod));
+    public static int HeroHpAtLevel(ClassArchetype a, int conMod, int level) => HpAtLevel(a, conMod, level) * 2;
+    public static int CompanionHpAtLevel(ClassArchetype a, int conMod, int level) => ScaleCompanionHp(HpAtLevel(a, conMod, level));
+    public static int ScaleCompanionHp(int hp) => Math.Max(0, (int)Math.Round(hp * 1.5, MidpointRounding.AwayFromZero));
+
     public static int ManaAtLevel(ClassArchetype a, int keyMod, int level) =>
         Math.Max(0, a.ManaBase + Math.Max(0, keyMod) * (a.Spellcaster ? 2 : 1) + (Math.Max(1, level) - 1) * a.ManaPerLevel);
 

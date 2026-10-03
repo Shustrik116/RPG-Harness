@@ -705,16 +705,26 @@ public sealed partial class FileTools
 
     private (bool Ok, string Result) ExecuteCore(string workDir, string name, string argumentsJson, string? chatId)
     {
+        JsonObject? args;
         try
         {
             // События журнала живут ровно один вызов: остатки прошлого (если журнал их не забрал) не должны всплыть.
             if (chatId is not null) CombatEvents.Drain(chatId);
-            var args = JsonNode.Parse(string.IsNullOrWhiteSpace(argumentsJson) ? "{}" : argumentsJson) as JsonObject;
+            args = JsonNode.Parse(string.IsNullOrWhiteSpace(argumentsJson) ? "{}" : argumentsJson) as JsonObject;
             if (args is null)
             {
                 return (false, L("Ошибка: аргументы не являются JSON-объектом.", "Error: the arguments are not a JSON object."));
             }
+        }
+        catch (JsonException)
+        {
+            return (false, L(
+                "Ошибка: модель прислала оборванные или некорректные JSON-аргументы инструмента. Повтори весь вызов инструмента заново; сократи длинные поля и не продолжай оборванный JSON.",
+                "Error: the model sent truncated or invalid JSON tool arguments. Repeat the entire tool call from scratch; shorten long fields and do not continue the truncated JSON."));
+        }
 
+        try
+        {
             return name switch
             {
                 "create_file" => Create(workDir, Arg(args, "path"), Arg(args, "content") ?? "", OptBool(args, "overwrite")),
@@ -844,7 +854,9 @@ public sealed partial class FileTools
         var count = CountOccurrences(text, find);
         if (count == 0)
         {
-            return (false, L("Ошибка: фрагмент find не найден в файле. Нужное точное совпадение (с учётом регистра и переводов строк).", "Error: the find fragment was not found in the file. An exact match is required (case and line breaks matter)."));
+            return (false, L(
+                "Ошибка: фрагмент find не найден в файле. Сначала вызови read_file для актуального содержимого, затем повтори edit_file с коротким точным фрагментом (регистр и переводы строк важны). Не останавливай ход на этой ошибке.",
+                "Error: the find fragment was not found in the file. Call read_file for the current contents first, then retry edit_file with a short exact fragment (case and line breaks matter). Do not stop the turn on this error."));
         }
 
         text = all ? text.Replace(find, replace) : ReplaceFirst(text, find, replace);
@@ -2427,7 +2439,9 @@ public sealed partial class FileTools
         var cityName = (Arg(args, "city") ?? "").Trim();
         var state = _rpg.GetOrCreate(chatId);
         var city = state.Cities.FirstOrDefault(c => c.Name.Equals(cityName, StringComparison.OrdinalIgnoreCase));
-        if (city?.AdventureGuild is null || !city.IsMajor) return (false, L($"Ошибка: в «{cityName}» нет отделения гильдии.", $"Error: \"{cityName}\" has no guild branch."));
+        if (city?.AdventureGuild is null || !city.IsMajor) return (false, L(
+            $"Ошибка: в «{cityName}» нет отделения гильдии. Не останавливай ход: сообщи игроку это в повествовании и предложи другие действия; не повторяй open_adventure_guild для этого места.",
+            $"Error: \"{cityName}\" has no guild branch. Do not stop the turn: tell the player in the narrative and offer other actions; do not retry open_adventure_guild for this place."));
         var count = city.AdventureGuild.Jobs.Count(j => j.State == "available" && GuildRanks.CanTake(state.Character.GuildReputation, j.MinRank));
         return (true, L($"OK: открыто меню гильдии «{city.AdventureGuild.Name}». Ранг героя {GuildRanks.TitleFor(state.Character.GuildReputation)}, доступно заданий: {count}.", $"OK: the guild menu \"{city.AdventureGuild.Name}\" is open. The hero's rank {GuildRanks.TitleFor(state.Character.GuildReputation)}, jobs available: {count}."));
     }

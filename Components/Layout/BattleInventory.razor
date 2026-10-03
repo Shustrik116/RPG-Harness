@@ -190,17 +190,17 @@
 
  private static (EquipSlot Slot, string Label, string Ghost)[] EquipLayout => new[]
  {
-  (EquipSlot.Hand1, Lang.T("Оружие", "Weapon"), "sword"),
-  (EquipSlot.Cloak, Lang.T("Плащ", "Cloak"), "cloak"),
-  (EquipSlot.Helmet, Lang.T("Шлем", "Helmet"), "helmet"),
-  (EquipSlot.Amulet, Lang.T("Амулет", "Amulet"), "amulet"),
-  (EquipSlot.Hand2, Lang.T("Щит / 2-я рука", "Shield / off hand"), "shield"),
-  (EquipSlot.Gloves, Lang.T("Перчатки", "Gloves"), "gloves"),
-  (EquipSlot.Body, Lang.T("Доспех", "Armor"), "body"),
-  (EquipSlot.Ring1, Lang.T("Кольцо", "Ring"), "ring"),
-  (EquipSlot.Ring2, Lang.T("Кольцо", "Ring"), "ring2"),
-  (EquipSlot.Boots, Lang.T("Сапоги", "Boots"), "boots"),
-  (EquipSlot.Belt, Lang.T("Пояс", "Belt"), "belt"),
+  (EquipSlot.Hand1, Lang.T("Оружие", "Weapon"), Genre.Pick("sword", "cy_pistol", "md_pistol")),
+  (EquipSlot.Cloak, Lang.T("Плащ", "Cloak"), Genre.Pick("cloak", "cy_coat", "md_coat")),
+  (EquipSlot.Helmet, Lang.T("Шлем", "Helmet"), Genre.Pick("helmet", "cy_helmet", "md_helmet")),
+  (EquipSlot.Amulet, Lang.T("Амулет", "Amulet"), Genre.Pick("amulet", "cy_neuroport", "md_dogtag")),
+  (EquipSlot.Hand2, Lang.T("Щит / 2-я рука", "Shield / off hand"), Genre.Pick("shield", "cy_riot_shield", "md_riot_shield")),
+  (EquipSlot.Gloves, Lang.T("Перчатки", "Gloves"), Genre.Pick("gloves", "cy_gloves", "md_gloves")),
+  (EquipSlot.Body, Lang.T("Доспех", "Armor"), Genre.Pick("body", "cy_combat_armor", "md_heavy_armor")),
+  (EquipSlot.Ring1, Lang.T("Кольцо", "Ring"), Genre.Pick("ring", "cy_reflex", "md_watch")),
+  (EquipSlot.Ring2, Lang.T("Кольцо", "Ring"), Genre.Pick("ring2", "cy_subdermal", "md_ring")),
+  (EquipSlot.Boots, Lang.T("Сапоги", "Boots"), Genre.Pick("boots", "cy_boots", "md_boots")),
+  (EquipSlot.Belt, Lang.T("Пояс", "Belt"), Genre.Pick("belt", "cy_belt", "md_rig")),
  };
 
  private static (int W, int H) SlotShape(EquipSlot slot) => slot switch

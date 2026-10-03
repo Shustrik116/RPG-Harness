@@ -276,9 +276,31 @@ public sealed class ChatSession
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public List<ChatMessage> Messages { get; set; } = new();
 
+    /// <summary>Расход токенов за всю сохранённую сессию и за последний полный ход игрока.</summary>
+    public TokenUsageStats TotalUsage { get; set; } = new();
+    public TokenUsageStats LastTurnUsage { get; set; } = new();
+
     /// <summary>Флаг «идёт генерация», в файл не сохраняется.</summary>
     [JsonIgnore]
     public bool Busy { get; set; }
+}
+
+/// <summary>Usage одного или нескольких запросов к модели; cache hit/miss считаются в токенах.</summary>
+public sealed class TokenUsageStats
+{
+    public long InputTokens { get; set; }
+    public long OutputTokens { get; set; }
+    public long CacheHitTokens { get; set; }
+    public long CacheMissTokens { get; set; }
+
+    public void Add(TokenUsageStats? other)
+    {
+        if (other is null) return;
+        InputTokens += other.InputTokens;
+        OutputTokens += other.OutputTokens;
+        CacheHitTokens += other.CacheHitTokens;
+        CacheMissTokens += other.CacheMissTokens;
+    }
 }
 
 // ===== RPG-состояние кампании =====
@@ -286,6 +308,9 @@ public sealed class ChatSession
 /// <summary>RPG-заметки кампании, привязанные к конкретному чату.</summary>
 public sealed class RpgState
 {
+    /// <summary>Версия коэффициентов ХП: 1 = герой ×2, спутники ×1.5.</summary>
+    public int HpScaleVersion { get; set; }
+
     /// <summary>
     /// Сеттинг кампании (Genre.*), фиксируется при создании героя. Пусто — старое сохранение, это фэнтези.
     /// Кампания открывается только в теме своего сеттинга.

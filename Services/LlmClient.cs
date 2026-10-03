@@ -16,8 +16,13 @@ public sealed record ProbeResult(bool Ok, string Message, List<string> Models)
     public Dictionary<string, int> Contexts { get; init; } = new(StringComparer.OrdinalIgnoreCase);
 }
 
-/// <summary>Результат одного раунда генерации: текст, накопленные вызовы инструментов и рассуждения модели.</summary>
-public sealed record AssistantTurn(string Content, IReadOnlyList<ToolCall> ToolCalls, string Reasoning = "");
+/// <summary>Результат одного раунда генерации: текст, вызовы инструментов, рассуждения и причина остановки модели.</summary>
+public sealed record AssistantTurn(
+    string Content,
+    IReadOnlyList<ToolCall> ToolCalls,
+    string Reasoning = "",
+    string FinishReason = "",
+    TokenUsageStats? Usage = null);
 
 /// <summary>
 /// Прогресс «невидимой» части ответа: размышления модели (reasoning) и стриминг аргументов инструментов.
@@ -195,7 +200,15 @@ public sealed class LlmClient
             ["model"] = settings.Model,
             ["messages"] = BuildApiMessages(settings, history, toolsEnabled, settings.VisionEnabled, rpgNote),
             ["stream"] = true,
+            ["stream_options"] = new { include_usage = true },
         };
+        // У OpenAI-совместимых локальных серверов значение по умолчанию нередко слишком мало
+        // для reasoning + длинного tool call: сервер ставит finish_reason=tool_calls, но обрывает
+        // arguments посреди JSON. Явный запас укладывается в контекст и предотвращает такой EOF.
+        if (!settings.ApiBaseUrl.Contains("api.openai.com", StringComparison.OrdinalIgnoreCase))
+        {
+            payload["max_tokens"] = 16_384;
+        }
         if (toolsEnabled)
         {
             payload["tools"] = _fileTools.Definitions;
@@ -221,6 +234,8 @@ public sealed class LlmClient
         var toolCalls = new List<ToolCall>();
         var reasoningChars = 0;
         var lastProgressKey = "";
+        var finishReason = "";
+        var usage = new TokenUsageStats();
 
         // Сообщаем о прогрессе крупными шагами (≈ каждые 400 символов), чтобы не дёргать UI на каждом токене.
         void ReportProgress()
@@ -271,7 +286,9 @@ public sealed class LlmClient
             JsonObject? choice = null;
             try
             {
-                choice = ((JsonNode.Parse(data)?["choices"] as JsonArray)?.FirstOrDefault()) as JsonObject;
+                var root = JsonNode.Parse(data) as JsonObject;
+                ReadUsage(root?["usage"] as JsonObject, usage);
+                choice = ((root?["choices"] as JsonArray)?.FirstOrDefault()) as JsonObject;
             }
             catch
             {
@@ -315,11 +332,24 @@ public sealed class LlmClient
             var finish = TryGetString(choice["finish_reason"]);
             if (!string.IsNullOrEmpty(finish))
             {
-                break;
+                finishReason = finish;
+                // Некоторые OpenAI-совместимые серверы присылают последние фрагменты arguments
+                // уже после чанка с finish_reason. Читаем поток до [DONE]/EOF, иначе JSON инструмента
+                // остаётся оборванным и падает с Expected end of string.
             }
         }
 
-        return new AssistantTurn(content.ToString(), toolCalls, reasoning.ToString());
+        for (var index = 0; index < toolCalls.Count; index++)
+        {
+            // Несколько совместимых серверов не присылают id. Для следующего запроса важна только
+            // согласованность id между assistant.tool_calls и role=tool, поэтому создаём локальный.
+            if (string.IsNullOrWhiteSpace(toolCalls[index].Id))
+            {
+                toolCalls[index].Id = $"call_{Guid.NewGuid():N}_{index}";
+            }
+        }
+
+        return new AssistantTurn(content.ToString(), toolCalls, reasoning.ToString(), finishReason, usage);
     }
 
     /// <summary>
@@ -588,7 +618,7 @@ public sealed class LlmClient
                     var args = TryGetString(fn["arguments"]);
                     if (!string.IsNullOrEmpty(args))
                     {
-                        call.Arguments += args;
+                        call.Arguments = MergeStringFragment(call.Arguments, args!);
                     }
                 }
             }
@@ -597,6 +627,74 @@ public sealed class LlmClient
                 // некорректный фрагмент — пропускаем
             }
         }
+    }
+
+    /// <summary>
+    /// OpenAI присылает arguments дельтами, но некоторые совместимые серверы шлют накопленную
+    /// строку целиком либо перекрывающиеся куски. Не дублируем уже полученный префикс/суффикс.
+    /// </summary>
+    private static string MergeStringFragment(string current, string fragment)
+    {
+        if (current.Length == 0) return fragment;
+        // Надёжно распознаётся только накопительный снимок, который содержит уже собранную
+        // строку целиком. Искать произвольное перекрытие нельзя: обычные JSON-дельты часто
+        // случайно начинаются теми же кавычками/скобками, которыми закончился прошлый чанк.
+        if (fragment.Length > current.Length && fragment.StartsWith(current, StringComparison.Ordinal)) return fragment;
+        return current + fragment;
+    }
+
+    /// <summary>Все аргументы вызовов должны быть законченными JSON-объектами до исполнения.</summary>
+    public static bool HasInvalidToolArguments(AssistantTurn turn)
+    {
+        foreach (var call in turn.ToolCalls)
+        {
+            if (string.IsNullOrWhiteSpace(call.Name) || string.IsNullOrWhiteSpace(call.Arguments))
+            {
+                return true;
+            }
+
+            try
+            {
+                if (JsonNode.Parse(call.Arguments) is not JsonObject)
+                {
+                    return true;
+                }
+            }
+            catch (JsonException)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>Читает OpenAI/vLLM usage, включая токены prompt-cache, из финального SSE-чанка.</summary>
+    private static void ReadUsage(JsonObject? node, TokenUsageStats usage)
+    {
+        if (node is null) return;
+
+        var input = Long(node["prompt_tokens"] ?? node["input_tokens"]);
+        var output = Long(node["completion_tokens"] ?? node["output_tokens"]);
+        var details = node["prompt_tokens_details"] as JsonObject;
+        var hit = Long(details?["cached_tokens"] ?? node["cache_read_input_tokens"] ?? node["prompt_cache_hit_tokens"]);
+        var explicitMiss = Long(node["cache_creation_input_tokens"] ?? node["prompt_cache_miss_tokens"]);
+        var miss = explicitMiss > 0 ? explicitMiss : Math.Max(0, input - hit);
+
+        // Usage одного ответа иногда повторяется в нескольких финальных чанках — берём максимум.
+        usage.InputTokens = Math.Max(usage.InputTokens, input);
+        usage.OutputTokens = Math.Max(usage.OutputTokens, output);
+        usage.CacheHitTokens = Math.Max(usage.CacheHitTokens, hit);
+        usage.CacheMissTokens = Math.Max(usage.CacheMissTokens, miss);
+    }
+
+    private static long Long(JsonNode? node)
+    {
+        if (node is null) return 0;
+        try { return node.GetValue<long>(); } catch { }
+        return long.TryParse(node.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)
+            ? Math.Max(0, value)
+            : 0;
     }
 
     private static string? TryGetString(JsonNode? node)

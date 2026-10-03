@@ -569,6 +569,10 @@
                     </div>
                 </div>
             </div>
+            <div class="token-stats" aria-label="@Lang.T("Статистика токенов", "Token usage")">
+                <div><b>@Lang.T("Всего (за сессию):", "Total (session):")</b> @UsageText(_session?.TotalUsage)</div>
+                <div><b>@Lang.T("Последний ход:", "Last turn:")</b> @UsageText(_session?.LastTurnUsage)</div>
+            </div>
         </div>
     </div>
 
@@ -1222,6 +1226,7 @@
         Battle.SetStream(session.Id, "");
         Store.Persist(session);
         var keepReasoning = settings.ReasoningEnabled && settings.ReasoningFormat == "deepseek";
+        var turnUsage = new TokenUsageStats();
 
         void OnProgress(StreamProgress progress)
         {
@@ -1246,6 +1251,11 @@
         {
             // Агентный цикл: генерация → вызовы инструментов → результаты → генерация…
             var round = 0;
+            var pendingRecoveryNote = "";
+            var recoveryAttempts = 0;
+            var phaseRecoveryAttempts = 0;
+            var incompleteResponseAttempts = 0;
+            var previousToolErrors = new List<string>();
             while (true)
             {
                 round++;
@@ -1272,16 +1282,96 @@
                 {
                     stateNote = FileToolsSvc.BuildStateNote(session.Id, RpgStore.ReadJournalTail(session.Id, 2500));
                 }
+                if (!string.IsNullOrWhiteSpace(pendingRecoveryNote))
+                {
+                    stateNote = (stateNote ?? "") + "\n\n" + pendingRecoveryNote;
+                    pendingRecoveryNote = "";
+                }
 
                 _progress = null;
                 // Вид запроса пересчитывается каждый раунд: бой может начаться посреди хода мастера.
                 _kind = DetectKind(session.Id, ooc, kind);
                 var profile = settings.ProfileFor(_kind);
                 var turn = await Llm.StreamChatAsync(settings, history, OnDelta, toolsEnabled, _cts.Token, stateNote, OnProgress, profile);
+                turnUsage.Add(turn.Usage);
                 _progress = null;
+
+                // Некоторые совместимые API завершают поток с finish_reason=tool_calls, хотя
+                // arguments оборвались посреди JSON. Не показываем и не исполняем такой вызов:
+                // повторяем генерацию в рамках того же хода с явным указанием причины.
+                if (turn.ToolCalls.Count > 0 && LlmClient.HasInvalidToolArguments(turn) &&
+                    incompleteResponseAttempts < 2 && round < MaxToolRounds)
+                {
+                    incompleteResponseAttempts++;
+                    pendingRecoveryNote = Lang.T(
+                        "СЛУЖЕБНОЕ ВОССТАНОВЛЕНИЕ: предыдущий поток завершился с оборванными аргументами инструмента. Повтори нужный вызов заново одним коротким, полным JSON-объектом. Не продолжай прежний фрагмент и не повторяй уже показанный игроку текст.",
+                        "RECOVERY NOTE: the previous stream ended with truncated tool arguments. Repeat the required call from scratch as one short, complete JSON object. Do not continue the old fragment or repeat text already shown to the player.");
+                    session.Messages.Remove(reply);
+                    reply = NewReply();
+                    session.Messages.Add(reply);
+                    continue;
+                }
 
                 if (turn.ToolCalls.Count == 0)
                 {
+                    // EOF без текста, инструмента и явной отмены — тоже повреждённый ответ API.
+                    if (string.IsNullOrWhiteSpace(turn.Content) && incompleteResponseAttempts < 2 &&
+                        round < MaxToolRounds)
+                    {
+                        incompleteResponseAttempts++;
+                        pendingRecoveryNote = Lang.T(
+                            "СЛУЖЕБНОЕ ВОССТАНОВЛЕНИЕ: API завершил предыдущий поток без текста и без вызова инструмента. Повтори ответ полностью и обязательно заверши ход текстом либо корректным вызовом инструмента.",
+                            "RECOVERY NOTE: the API ended the previous stream without text or a tool call. Repeat the response in full and finish the turn with either text or a valid tool call.");
+                        session.Messages.Remove(reply);
+                        reply = NewReply();
+                        session.Messages.Add(reply);
+                        continue;
+                    }
+
+                    // Некоторые совместимые модели после ошибки инструмента возвращают пустой ответ.
+                    // Делаем до двух внутренних попыток продолжить, вместо молчаливой остановки хода.
+                    if (string.IsNullOrWhiteSpace(turn.Content) && previousToolErrors.Count > 0 &&
+                        recoveryAttempts < 2 && round < MaxToolRounds)
+                    {
+                        recoveryAttempts++;
+                        pendingRecoveryNote = Lang.T(
+                            "СЛУЖЕБНОЕ ВОССТАНОВЛЕНИЕ: предыдущий инструмент завершился ошибкой, а твой следующий ответ оказался пустым. Не останавливайся. Исправь вызов инструмента либо объясни ситуацию игроку и обязательно продолжи ход. Ошибки: " + string.Join(" | ", previousToolErrors),
+                            "RECOVERY NOTE: the previous tool failed and your next response was empty. Do not stop. Correct the tool call or explain the situation to the player and continue the turn. Errors: " + string.Join(" | ", previousToolErrors));
+                        session.Messages.Remove(reply);
+                        reply = NewReply();
+                        session.Messages.Add(reply);
+                        continue;
+                    }
+
+                    // На этапах настройки мира текстовый вопрос без карточек выглядит как зависание:
+                    // игроку нечего нажать, а фаза не продвигается. Один раз просим модель дослать
+                    // обязательный инструмент, не повторяя уже показанный текст.
+                    var phase = !ooc ? FileToolsSvc.GetPhase(session.Id) : FileTools.CampaignPhase.Adventure;
+                    if (!string.IsNullOrWhiteSpace(turn.Content) && !ooc &&
+                        phase is FileTools.CampaignPhase.SessionZero or FileTools.CampaignPhase.ArcChoice &&
+                        phaseRecoveryAttempts < 1 && round < MaxToolRounds)
+                    {
+                        phaseRecoveryAttempts++;
+                        pendingRecoveryNote = phase == FileTools.CampaignPhase.SessionZero
+                            ? Lang.T(
+                                "СЛУЖЕБНОЕ ВОССТАНОВЛЕНИЕ: ты закончил вопросом на сессии ноль, но не вызвал offer_choices. Не повторяй уже показанный текст; сейчас вызови offer_choices с 2–4 короткими вариантами ответа игрока.",
+                                "RECOVERY NOTE: you ended with a session-zero question but did not call offer_choices. Do not repeat the text already shown; call offer_choices now with 2–4 short player answers.")
+                            : Lang.T(
+                                "СЛУЖЕБНОЕ ВОССТАНОВЛЕНИЕ: этап выбора арки нельзя завершать одним текстом. Не повторяй уже показанный текст; сейчас вызови propose_arcs либо, если игрок уже выбрал, update_arc и продолжи.",
+                                "RECOVERY NOTE: the arc-choice stage cannot end with text alone. Do not repeat the text already shown; call propose_arcs now, or if the player has already chosen, call update_arc and continue.");
+                        Store.Persist(session);
+                        reply = NewReply();
+                        session.Messages.Add(reply);
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(turn.Content))
+                    {
+                        throw new InvalidOperationException(Lang.T(
+                            "API несколько раз завершил генерацию без ответа. Повторите ход; если это повторяется, уменьшите глубину рассуждений для этого типа запроса.",
+                            "The API ended generation without a response several times. Retry the turn; if this keeps happening, reduce the reasoning effort for this request type."));
+                    }
+
                     if (activeBefore is not null)
                     {
                         activeBefore.Messages.Add(new ChatMessage("assistant", turn.Content)
@@ -1340,6 +1430,15 @@
                         StateHasChanged();
                         await ScrollToBottomAsync();
                     });
+                }
+
+                previousToolErrors = reply.ToolCalls
+                    .Where(c => c.Ok == false)
+                    .Select(c => $"{c.Name}: {c.Result}")
+                    .ToList();
+                if (previousToolErrors.Count == 0)
+                {
+                    recoveryAttempts = 0;
                 }
 
                 if (activeBefore is not null)
@@ -1417,6 +1516,9 @@
             _kind = null;
             _progress = null;
             session.Busy = false;
+            session.LastTurnUsage = turnUsage;
+            session.TotalUsage ??= new TokenUsageStats();
+            session.TotalUsage.Add(turnUsage);
             Battle.SetStatus(session.Id, "");
             Battle.SetStream(session.Id, "");
             Store.Persist(session);
@@ -1448,6 +1550,16 @@
         InstanceId = source.InstanceId,
         Images = source.Images?.ToList(),
     };
+
+    private static string UsageText(TokenUsageStats? usage)
+    {
+        usage ??= new TokenUsageStats();
+        var culture = System.Globalization.CultureInfo.GetCultureInfo(Lang.IsEn ? "en-US" : "ru-RU");
+        string N(long value) => value.ToString("N0", culture);
+        return Lang.T(
+            $"выход {N(usage.OutputTokens)} · вход {N(usage.InputTokens)} · кеш хит {N(usage.CacheHitTokens)} · кеш мисс {N(usage.CacheMissTokens)}",
+            $"output {N(usage.OutputTokens)} · input {N(usage.InputTokens)} · cache hit {N(usage.CacheHitTokens)} · cache miss {N(usage.CacheMissTokens)}");
+    }
 
     private void Stop() => _cts?.Cancel();
 

@@ -1332,7 +1332,7 @@
 
 .composer {
     flex: none;
-    padding: 8px 20px 18px;
+    padding: 8px 20px 24px;
 }
 
 .composer-inner {
@@ -1355,6 +1355,25 @@
 .composer-box:focus-within {
     border-color: rgba(var(--rh-accent-rgb), .55);
     box-shadow: 0 0 0 3px var(--rh-accent-ring-soft);
+}
+
+.token-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 6px;
+    padding: 0 3px;
+    color: var(--rh-text-3);
+    font: 500 .68rem/1.35 var(--rh-mono);
+}
+
+.token-stats > div:last-child {
+    text-align: right;
+}
+
+.token-stats b {
+    color: var(--rh-text-2);
+    font-weight: 600;
 }
 
 .composer-box.is-ooc {
@@ -1748,7 +1767,16 @@
     }
 
     .composer {
-        padding: 6px 10px 10px;
+        padding: 6px 10px 14px;
+    }
+
+    .token-stats {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .token-stats > div:last-child {
+        text-align: left;
     }
 
     .composer-bar {

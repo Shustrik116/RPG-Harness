@@ -180,6 +180,10 @@ public sealed class RpgStateStore
             state = LoadFromDisk(sessionId);
             _cache[sessionId] = state;
             AdoptHeroMd(sessionId, state);
+            if (ApplyHpScaleMigration(state))
+            {
+                Save(sessionId, state);
+            }
             return state;
         }
     }
@@ -381,12 +385,39 @@ public sealed class RpgStateStore
             return false;
         }
 
+        ApplyHpScaleMigration(state);
+
         lock (_lock)
         {
             _cache[sessionId] = state;
         }
 
         Save(sessionId, state);
+        return true;
+    }
+
+    /// <summary>Однократно повышает ХП старых сохранений, сохраняя долю текущего здоровья.</summary>
+    private static bool ApplyHpScaleMigration(RpgState state)
+    {
+        if (state.HpScaleVersion >= 1)
+        {
+            return false;
+        }
+
+        if (state.Character.HpMax > 0)
+        {
+            state.Character.HpMax *= 2;
+            state.Character.HpCurrent *= 2;
+        }
+
+        foreach (var member in state.Party)
+        {
+            if (member.HpMax <= 0) continue;
+            member.HpMax = Progression.ScaleCompanionHp(member.HpMax);
+            member.HpCurrent = Progression.ScaleCompanionHp(member.HpCurrent);
+        }
+
+        state.HpScaleVersion = 1;
         return true;
     }
 

@@ -387,7 +387,7 @@
     private int _rollAttemptsLeft = RollAttempts;
 
     private ClassArchetype SelectedArchetype => Progression.GuessArchetype(_class);
-    private int StartingHp => Progression.HpAtLevel(SelectedArchetype, DndStatNames.Modifier(_stats[(int)DndStat.Con]), 1);
+    private int StartingHp => Progression.HeroHpAtLevel(SelectedArchetype, DndStatNames.Modifier(_stats[(int)DndStat.Con]), 1);
     private int StartingMana => Progression.ManaAtLevel(
         SelectedArchetype,
         DndStatNames.Modifier(_stats[(int)SelectedArchetype.Priority[0]]),

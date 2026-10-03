@@ -466,7 +466,7 @@ input[type="radio"] {
 .bw-inv-msg.ok{color:#9fb08a}
 
 /* Кукла снаряжения */
-.bw-equip{display:grid;grid-template-columns:1.35fr 1fr 1.35fr 1fr 1.35fr;grid-template-rows:repeat(4,52px);grid-template-areas:"hand1 cloak helmet amulet hand2" "hand1 cloak body ring1 hand2" "hand1 gloves body ring2 hand2" "hand1 gloves belt boots hand2";gap:5px;padding:8px;border:1px solid #4a5568;border-radius:8px;background:radial-gradient(ellipse at 50% 45%,rgba(var(--rh-accent-rgb),.08),transparent 65%),#0f141b}
+.bw-equip{display:grid;grid-template-columns:58px 46px 68px 46px 58px;grid-template-rows:repeat(4,40px);grid-template-areas:"hand1 cloak helmet amulet hand2" "hand1 cloak body ring1 hand2" "hand1 gloves body ring2 hand2" "hand1 gloves belt boots hand2";gap:5px;padding:7px;width:max-content;max-width:100%;margin-inline:auto;border:1px solid #4a5568;border-radius:8px;background:radial-gradient(ellipse at 50% 45%,rgba(var(--rh-accent-rgb),.08),transparent 65%),#0f141b}
 .bw-equip .a-hand1{grid-area:hand1}.bw-equip .a-cloak{grid-area:cloak}.bw-equip .a-helmet{grid-area:helmet}.bw-equip .a-amulet{grid-area:amulet}.bw-equip .a-hand2{grid-area:hand2}.bw-equip .a-gloves{grid-area:gloves}.bw-equip .a-body{grid-area:body}.bw-equip .a-ring1{grid-area:ring1}.bw-equip .a-ring2{grid-area:ring2}.bw-equip .a-boots{grid-area:boots}.bw-equip .a-belt{grid-area:belt}
 .bw-slot{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;container-type:size;border:1px solid rgba(160,170,190,.25);border-radius:6px;background:linear-gradient(rgba(16,20,28,.55),rgba(16,20,28,.55)) padding-box,repeating-linear-gradient(45deg,rgba(160,170,190,.05) 0 4px,transparent 4px 8px) padding-box;cursor:pointer;transition:border-color .13s ease,box-shadow .13s ease}
 .bw-slot:hover{border-color:rgba(var(--rh-accent-rgb),.45)}
@@ -478,9 +478,10 @@ input[type="radio"] {
 .bw-slot-ghost{opacity:.16;filter:grayscale(1)}
 .bw-slot-label{position:absolute;left:0;right:0;bottom:1px;font-size:8px;line-height:1.1;color:#7f8794;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
 .bw-slot.filled .bw-slot-label{display:none}
-.bw-equip .pix,.bw-inv-item .pix,.bw-slot-ghost.pix{flex:none;width:min(86cqw,86cqh);height:min(86cqw,86cqh);pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
+.bw-equip .pix,.bw-inv-item .pix{flex:none;width:min(86cqw,86cqh);height:min(86cqw,86cqh);pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
+.bw-slot-ghost.pix{flex:none;width:min(62cqw,62cqh);height:min(62cqw,62cqh);pointer-events:none;filter:grayscale(1) drop-shadow(0 2px 3px rgba(0,0,0,.55))}
 .bw-equip .pix.diag,.bw-inv-item .pix.diag{width:min(60cqh,180cqw);height:min(60cqh,180cqw);transform:rotate(-45deg)}
-.bw-slot-ghost.pix.diag{width:min(56cqh,160cqw);height:min(56cqh,160cqw)}
+.bw-slot-ghost.pix.diag{width:min(50cqh,135cqw);height:min(50cqh,135cqw)}
 .bw-inv-item.dragging,.bw-inv-grid.dragging .bw-inv-item{pointer-events:none}
 .bw-inv-item.lifted{opacity:.35}
 
