@@ -2967,12 +2967,12 @@ public sealed partial class FileTools
         if (moved)
         {
             // Как в travel: соседи без места остаются там, где их встретили, — иначе они пропали бы навсегда.
-            if (!string.IsNullOrWhiteSpace(state.ScenePlace))
+            // При первом назначении места сцены прежнего места ещё нет: созданные на старте NPC относятся
+            // уже к новой сцене. При последующих переходах они, как и раньше, остаются в прежнем месте.
+            var nearbyPlace = string.IsNullOrWhiteSpace(state.ScenePlace) ? place : state.ScenePlace;
+            foreach (var npc in state.ImportantCharacters.Where(n => n.Category == "nearby" && string.IsNullOrWhiteSpace(n.NearbyPlace)))
             {
-                foreach (var npc in state.ImportantCharacters.Where(n => n.Category == "nearby" && string.IsNullOrWhiteSpace(n.NearbyPlace)))
-                {
-                    npc.NearbyPlace = state.ScenePlace;
-                }
+                npc.NearbyPlace = nearbyPlace;
             }
 
             state.ScenePlace = place;

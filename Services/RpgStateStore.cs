@@ -180,7 +180,7 @@ public sealed class RpgStateStore
             state = LoadFromDisk(sessionId);
             _cache[sessionId] = state;
             AdoptHeroMd(sessionId, state);
-            if (ApplyHpScaleMigration(state))
+            if (ApplyHpScaleMigration(state) | ApplyNearbyPlaceMigration(state))
             {
                 Save(sessionId, state);
             }
@@ -386,6 +386,7 @@ public sealed class RpgStateStore
         }
 
         ApplyHpScaleMigration(state);
+        ApplyNearbyPlaceMigration(state);
 
         lock (_lock)
         {
@@ -419,6 +420,28 @@ public sealed class RpgStateStore
 
         state.HpScaleVersion = 1;
         return true;
+    }
+
+    /// <summary>
+    /// Восстанавливает сохранения, где nearby-NPC были созданы до первого назначения ScenePlace.
+    /// Пустая привязка при уже известном месте сцены нарушает инвариант: такой NPC нигде не виден.
+    /// </summary>
+    private static bool ApplyNearbyPlaceMigration(RpgState state)
+    {
+        if (string.IsNullOrWhiteSpace(state.ScenePlace))
+        {
+            return false;
+        }
+
+        var changed = false;
+        foreach (var npc in state.ImportantCharacters.Where(n =>
+                     n.Category == "nearby" && string.IsNullOrWhiteSpace(n.NearbyPlace)))
+        {
+            npc.NearbyPlace = state.ScenePlace;
+            changed = true;
+        }
+
+        return changed;
     }
 
     private (int Index, string Json)? ReadSnapshot(string sessionId)
